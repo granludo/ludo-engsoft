@@ -1,3 +1,9 @@
+<!-- =============================================================================================================== -->
+<!-- Plan de Generación de Talento Digital 2025 - INTIA/UEx                                                          -->
+<!-- Actividad financiada por la Consejería de Economía, Empleo y Transformación Digital de la Junta de Extremadura  -->
+<!-- Dirección General de Digitalización Regional de la Junta de Extremadura                                         -->
+<!-- =============================================================================================================== -->
+
 # 🐷 OpenAI Function Calling Demo: The Three Little Pigs 🐺
 
 A didactic Python script that demonstrates the difference between a regular LLM conversation and one with **function calling** capabilities, using the classic Three Little Pigs tale.

@@ -1,3 +1,9 @@
+<!-- =============================================================================================================== -->
+<!-- Plan de Generación de Talento Digital 2025 - INTIA/UEx                                                          -->
+<!-- Actividad financiada por la Consejería de Economía, Empleo y Transformación Digital de la Junta de Extremadura  -->
+<!-- Dirección General de Digitalización Regional de la Junta de Extremadura                                         -->
+<!-- =============================================================================================================== -->
+
 # 🎓 Software Engineering Educational Demos
 
 A collection of interactive demos for teaching software engineering concepts, focusing on LLM APIs and AI integration.

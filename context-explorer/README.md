@@ -1,3 +1,9 @@
+<!-- =============================================================================================================== -->
+<!-- Plan de Generación de Talento Digital 2025 - INTIA/UEx                                                          -->
+<!-- Actividad financiada por la Consejería de Economía, Empleo y Transformación Digital de la Junta de Extremadura  -->
+<!-- Dirección General de Digitalización Regional de la Junta de Extremadura                                         -->
+<!-- =============================================================================================================== -->
+
 # 📚 Context Explorer
 
 A simple interactive demo to visualize how LLM context works.
@@ -44,3 +50,11 @@ python context_explorer.py
 3. **Assistant Messages** - Responses get added to context
 4. **Context Growth** - Each exchange adds 2 messages
 5. **Token Usage** - See how many tokens each request uses
+
+## 📖 License
+
+Public Domain
+
+## 👤 Author
+
+[@granludo](https://github.com/granludo) - Marc Alier
