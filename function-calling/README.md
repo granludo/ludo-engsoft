@@ -1,8 +1,3 @@
-<!-- =============================================================================================================== -->
-<!-- Plan de Generación de Talento Digital 2025 - INTIA/UEx                                                          -->
-<!-- Actividad financiada por la Consejería de Economía, Empleo y Transformación Digital de la Junta de Extremadura  -->
-<!-- Dirección General de Digitalización Regional de la Junta de Extremadura                                         -->
-<!-- =============================================================================================================== -->
 
 # 🐷 OpenAI Function Calling Demo: The Three Little Pigs 🐺
 
@@ -140,7 +135,11 @@ Without function calling, the pig can only *say* "I'll call the hunter." With fu
 - [OpenAI Function Calling Documentation](https://platform.openai.com/docs/guides/function-calling)
 - [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
 
-# Licensed under public domain 
+## 📖 License
 
-@granludo Marc Alier 
+This repository is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](../LICENSE) (`CC BY-NC-SA 4.0`).
+
+## 👤 Author
+
+[@granludo](https://github.com/granludo) - Marc Alier
 

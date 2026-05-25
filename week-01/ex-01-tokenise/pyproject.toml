@@ -1,0 +1,9 @@
+[project]
+name = "ex-01-tokenise"
+version = "0.1.0"
+description = "Week 1 Exercise 1 — Hugging Face tokenizers, locally"
+requires-python = ">=3.10"
+dependencies = [
+    "transformers>=4.48.0",
+    "tokenizers>=0.20.0",
+]

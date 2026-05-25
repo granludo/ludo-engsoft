@@ -1,16 +1,21 @@
-<!-- =============================================================================================================== -->
-<!-- Plan de Generación de Talento Digital 2025 - INTIA/UEx                                                          -->
-<!-- Actividad financiada por la Consejería de Economía, Empleo y Transformación Digital de la Junta de Extremadura  -->
-<!-- Dirección General de Digitalización Regional de la Junta de Extremadura                                         -->
-<!-- =============================================================================================================== -->
-
 # 🎓 Software Engineering Educational Demos
 
-A collection of interactive demos for teaching software engineering concepts, focusing on LLM APIs and AI integration.
+A collection of interactive demos and course materials for teaching software engineering concepts, focusing on LLM APIs and AI integration.
 
-## 📚 Available Demos
+This is the **public student-facing companion repo** for the [BSC Agents Course](https://www.bsc.es/) (UPC × BSC AI Factory) and the [AI-Augmented Software Engineering](https://github.com/granludo/) course. Standalone tools at the repo root are reused across multiple weeks and courses; course-specific exercises live under `week-NN/` folders.
 
-### 1. [Context Explorer](./context-explorer/)
+## 🗂️ Course materials
+
+| Folder | What's there |
+|---|---|
+| [`week-01/`](./week-01/) | **Week 1 — Foundations.** Tokenization, base-vs-aligned model comparison (GPT-2 vs Qwen3-1.7B), and the first API call via `context-explorer`. |
+| [`vm/`](./vm/) | **Course VM setup.** Ubuntu Server 24.04 VirtualBox image with the BSC tool baseline (uv, `llm`, transformers, torch-CPU, opencode, gh). Instructors build the OVA; students import. |
+
+More weeks land here as the course progresses.
+
+## 🧰 Standalone demos (used across weeks)
+
+### Context Explorer — [`./context-explorer/`](./context-explorer/)
 
 A simple interactive demo to visualize how LLM conversation context works.
 
@@ -25,7 +30,7 @@ uv venv && source .venv/bin/activate && uv sync
 python context_explorer.py
 ```
 
-### 2. [Function Calling Demo](./function-calling/)
+### Function Calling Demo — [`./function-calling/`](./function-calling/)
 
 The Three Little Pigs 🐷🐺 - An interactive demo showing the difference between LLMs with and without function calling.
 
@@ -73,7 +78,7 @@ These demos work with any OpenAI-compatible API:
 
 ## 📖 License
 
-Public Domain
+This repository is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](LICENSE) (`CC BY-NC-SA 4.0`).
 
 ## 👤 Author
 

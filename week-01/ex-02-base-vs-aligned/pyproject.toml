@@ -1,0 +1,9 @@
+[project]
+name = "ex-02-base-vs-aligned"
+version = "0.1.0"
+description = "Week 1 Exercise 2 — GPT-2 (base) vs Qwen3-1.7B (aligned)"
+requires-python = ">=3.10"
+dependencies = [
+    "transformers>=4.48.0",
+    "torch>=2.5.0",
+]
