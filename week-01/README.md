@@ -37,3 +37,10 @@ If you don't have a working Python 3.10+ environment, the canonical course VM bu
 ## License
 
 [CC BY-NC-SA 4.0](../LICENSE) — share + adapt for non-commercial use, with attribution and same-license redistribution.
+
+
+---
+
+© 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
+BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

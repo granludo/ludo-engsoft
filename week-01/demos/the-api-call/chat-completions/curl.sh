@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
+# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
+# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+
 # Chat Completions API — the classic OpenAI endpoint.
 # No SDK. Just HTTP. JSON in, JSON out.
 curl https://api.openai.com/v1/chat/completions \

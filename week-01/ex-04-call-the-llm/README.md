@@ -53,3 +53,10 @@ You should get a one-sentence reply, plus the token `usage` and the
   fails on Ollama. Why? Because `/v1/responses` is OpenAI-specific;
   `/v1/chat/completions` is the format everyone speaks.
 
+
+
+---
+
+© 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
+BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.
