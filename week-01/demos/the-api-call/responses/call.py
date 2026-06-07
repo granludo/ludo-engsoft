@@ -3,12 +3,21 @@
 # Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
 
 """Responses API — OpenAI's newer endpoint, via the openai SDK."""
+import os
+
 from openai import OpenAI
 
-client = OpenAI()  # reads OPENAI_API_KEY from the environment
+# OPENAI_ENDPOINT + MODEL come from .env. Note: the Responses API is
+# OpenAI-specific — most OpenAI-compatible providers (Ollama included) do not
+# implement /v1/responses, so this one usually needs to point at OpenAI.
+client = OpenAI(
+    base_url=os.environ.get("OPENAI_ENDPOINT", "https://api.openai.com/v1"),
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
+model = os.environ.get("MODEL", "gpt-4.1-mini")
 
 resp = client.responses.create(
-    model="gpt-4.1-mini",
+    model=model,
     instructions="You are a terse assistant.",
     input="Say hello in one sentence.",
 )

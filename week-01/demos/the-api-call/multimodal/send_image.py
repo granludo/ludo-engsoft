@@ -29,7 +29,7 @@ import sys
 from openai import OpenAI
 
 client = OpenAI(
-    base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+    base_url=os.environ.get("OPENAI_ENDPOINT", "https://api.openai.com/v1"),
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 model = os.environ.get("MODEL", "gpt-4.1-mini")  # must be able to see images

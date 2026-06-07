@@ -38,7 +38,7 @@ client = None
 
 # Configuration from .env
 MODEL = os.getenv("MODEL", "gpt-4.1-mini")
-OPENAI_API_ENDPOINT = os.getenv("OPENAI_API_ENDPOINT")  # Optional: for alternative API endpoints
+OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")  # Optional: for alternative API endpoints
 
 SYSTEM_PROMPT = "You are a helpful assistant."
 
@@ -140,8 +140,8 @@ def run_chat():
             "messages": messages,
             "temperature": 0.7
         }
-        if OPENAI_API_ENDPOINT:
-            request_data["_endpoint"] = OPENAI_API_ENDPOINT
+        if OPENAI_ENDPOINT:
+            request_data["_endpoint"] = OPENAI_ENDPOINT
         console.print()
         console.print(show_api_request(request_data))
         
@@ -204,14 +204,14 @@ def main():
         return
     
     # Initialize client with optional custom endpoint
-    if OPENAI_API_ENDPOINT:
-        client = OpenAI(api_key=api_key, base_url=OPENAI_API_ENDPOINT)
+    if OPENAI_ENDPOINT:
+        client = OpenAI(api_key=api_key, base_url=OPENAI_ENDPOINT)
     else:
         client = OpenAI(api_key=api_key)
     
     # Show configuration
     console.print(Panel(
-        Text(f"Model: {MODEL}\nEndpoint: {OPENAI_API_ENDPOINT or 'https://api.openai.com/v1'}", 
+        Text(f"Model: {MODEL}\nEndpoint: {OPENAI_ENDPOINT or 'https://api.openai.com/v1'}", 
              style="bright_white on grey23"),
         title="⚙️ Configuration",
         border_style="cyan",

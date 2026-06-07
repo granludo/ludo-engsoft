@@ -57,8 +57,8 @@ OPENAI_API_KEY=your-api-key-here
 MODEL=gpt-4.1-mini
 
 # Optional: use alternative OpenAI-compatible API endpoint
-OPENAI_API_ENDPOINT=http://localhost:11434/v1  # Ollama
-# OPENAI_API_ENDPOINT=https://your-azure-endpoint.openai.azure.com/v1
+OPENAI_ENDPOINT=http://localhost:11434/v1  # Ollama
+# OPENAI_ENDPOINT=https://your-azure-endpoint.openai.azure.com/v1
 ```
 
 ### Compatible Endpoints

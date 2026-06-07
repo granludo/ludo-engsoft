@@ -13,7 +13,7 @@ print each chunk the moment it arrives — that is the typewriter effect you see
 in ChatGPT. Nothing about the model changes; only how the bytes reach you.
 
 Run it:
-    cp ../.env.example .env   # set OPENAI_BASE_URL / OPENAI_API_KEY / MODEL
+    cp ../.env.example .env   # set OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL
     uv run --with openai python stream.py
 """
 
@@ -22,7 +22,7 @@ import os
 from openai import OpenAI
 
 client = OpenAI(
-    base_url=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+    base_url=os.environ.get("OPENAI_ENDPOINT", "https://api.openai.com/v1"),
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 model = os.environ.get("MODEL", "gpt-4.1-mini")

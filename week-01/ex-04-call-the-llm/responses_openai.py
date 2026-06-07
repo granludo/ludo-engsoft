@@ -10,13 +10,17 @@ so this script only runs against OpenAI (or a provider that supports it).
 That is the lesson: chat/completions is the portable wire format that runs
 on your laptop; the Responses API is not (yet) universal.
 
-Needs a real OPENAI_API_KEY (and OPENAI_BASE_URL unset or pointing at OpenAI).
+Needs a real OPENAI_API_KEY and OPENAI_ENDPOINT pointing at OpenAI (or another
+provider that implements the Responses API).
 """
 import os
 
 from openai import OpenAI
 
-client = OpenAI()  # reads OPENAI_API_KEY from the environment
+client = OpenAI(
+    base_url=os.environ.get("OPENAI_ENDPOINT", "https://api.openai.com/v1"),
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
 
 resp = client.responses.create(
     model=os.environ.get("MODEL", "gpt-4.1-mini"),

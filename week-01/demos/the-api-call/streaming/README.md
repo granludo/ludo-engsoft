@@ -13,7 +13,7 @@ to get a final chunk with the token `usage`, which a streamed response otherwise
 ## Run it
 
 ```bash
-cp ../.env.example .env        # OPENAI_BASE_URL / OPENAI_API_KEY / MODEL
+cp ../.env.example .env        # OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL
 uv run --with openai python stream.py
 ```
 

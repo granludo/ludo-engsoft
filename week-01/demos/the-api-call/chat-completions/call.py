@@ -3,12 +3,21 @@
 # Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
 
 """Chat Completions API — the classic endpoint, via the openai SDK."""
+import os
+
 from openai import OpenAI
 
-client = OpenAI()  # reads OPENAI_API_KEY from the environment
+# OPENAI_ENDPOINT points the SDK at any OpenAI-compatible API (OpenAI,
+# OpenRouter, Groq, a local Ollama, ...); MODEL picks the model. Both come from
+# .env — the defaults below hit OpenAI itself.
+client = OpenAI(
+    base_url=os.environ.get("OPENAI_ENDPOINT", "https://api.openai.com/v1"),
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
+model = os.environ.get("MODEL", "gpt-4.1-mini")
 
 resp = client.chat.completions.create(
-    model="gpt-4.1-mini",
+    model=model,
     messages=[
         {"role": "system", "content": "You are a terse assistant."},
         {"role": "user",   "content": "Say hello in one sentence."},

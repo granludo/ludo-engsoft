@@ -3,13 +3,17 @@
 # BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
 # Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
 
-# Chat Completions API — the classic OpenAI endpoint.
+# Chat Completions API — the classic OpenAI-compatible endpoint.
 # No SDK. Just HTTP. JSON in, JSON out.
-curl https://api.openai.com/v1/chat/completions \
+# OPENAI_ENDPOINT / MODEL come from your .env; defaults below hit OpenAI.
+ENDPOINT="${OPENAI_ENDPOINT:-https://api.openai.com/v1}"
+MODEL="${MODEL:-gpt-4.1-mini}"
+
+curl "$ENDPOINT/chat/completions" \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-4.1-mini",
+    "model": "'"$MODEL"'",
     "messages": [
       {"role": "system", "content": "You are a terse assistant."},
       {"role": "user",   "content": "Say hello in one sentence."}
