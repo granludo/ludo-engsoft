@@ -2,56 +2,69 @@
 <!-- Universitat Politècnica de Catalunya (UPC)                                                                      -->
 <!-- =============================================================================================================== -->
 
-# 📚 Context Explorer — RAG edition
+# 📚 Context Explorer — single-file RAG
 
-The [Context Explorer](../../../week-01/demos/context-explorer/) from week 1, with one
-thing added: **retrieval**.
+Single-file RAG is the crudest thing that earns the name: paste a whole file into the
+prompt as context and ask. This explorer shows the part everyone gets wrong — **the
+difference between the conversation the chat UI keeps and the call the LLM actually
+receives.** They are not the same, and the gap is the lesson.
 
-Before every call, a `Retriever` reads a knowledge file and pastes it into the
-prompt. The single-file retriever does the most trivial thing that earns the name
-RAG — it returns the **whole file, every turn, ignoring your question**. The model
-answers because the answer is sitting in its context window. This is *cheating at
-our own solitaire*: you already hold the answer card, so you slide it where the
-model can see it.
+## The three layers
 
-It works. The catch is made visible here.
+This is the same shape as serving an assistant over an OpenAI-compatible API (e.g. LAMB):
 
-## What you'll see each turn
+```
+🖥️  CHAT UI        sends:  history (bare) + your latest message
+                       │   history = what you see; no system prompt, no augmentation
+                       ▼
+🛠️  ASSISTANT ENDPOINT  (STATELESS; the model id selects system prompt + template + RAG)
+        builds:  [system] + [history] + [ template(your message, RAG augmentation) ]
+                       │   rebuilt every call — it has no state to keep it in
+                       ▼
+🧠  LLM            returns:  the response only
+                       ▲
+🖥️  CHAT UI        appends (your message, response) → history   ✗ augmentation NOT saved
+```
 
-- **📥 Retrieval** — what the retriever pulled in (here: the whole file)
-- **📤 API Request** — the prompt the model actually receives (context + question)
-- **📥 API Response** — the answer plus `usage` (token counts)
-- **📚 Context** — the message stack, growing
-- **💸 Token cost** — `prompt_tokens` per turn, as a bar chart, climbing
+Because the endpoint is **stateless**, the augmentation is built fresh every turn and
+thrown away. The UI history stays bare. The system prompt and the file the LLM sees are
+**never** in the conversation the user sees. Watch the two panels each turn:
 
-The whole file rides in the prompt on **every turn**, so `prompt_tokens` only goes
-up. That is the cost of single-file RAG. We come back to it later in the course —
-for now, just watch the number.
+- **`🛠️ → 🧠 Endpoint builds the LLM call`** — system + history + this turn's augmented message
+- **`🖥️ Chat UI history`** — just the bare turns
 
-## The thing to notice
+The gap between them — the system prompt and the augmentation — is exactly what the app
+does not remember.
 
-1. Ask a question the file answers (e.g. *"Where is Acme Robotics headquartered?"*) →
-   correct, grounded in the context.
-2. Ask one the file does **not** answer (e.g. *"Who is the CEO of Tesla?"*) → a
-   grounded model says it doesn't know. That refusal is the proof: the model is
-   reading the context, not its training data.
+## Two placement modes (switch live with `/mode`)
+
+| Mode | The file goes… | Per-turn user message | What it shows |
+|---|---|---|---|
+| **`user-augment`** *(default)* | into the **user message**, every turn | augmented (file + question) | the app-vs-LLM gap; the file rides the volatile tail, re-sent and re-billed every call |
+| **`system-grounding`** | into the **system prompt**, **once** | bare question | retrieve once at the start → a "pure" conversation → the file sits in the stable, cacheable prefix (KV cache) |
+
+Flip between them on camera and re-ask the same questions: in `user-augment` the file is
+rebuilt into every call; in `system-grounding` it is retrieved once and the conversation
+stays clean.
+
+The counterfactual: to **keep** the augmentation you would have to store augmented history
+and make the chat **stateful** — `/stateful` toggles that so you can see what it costs.
 
 ## Setup
 
 ```bash
 cd context-explorer-rag
-uv venv
-source .venv/bin/activate
-uv sync
+uv venv && source .venv/bin/activate && uv sync
 ```
 
-Copy `.env.example` to `.env` and fill it in:
+Copy `.env.example` to `.env`:
 
 ```bash
 OPENAI_API_KEY=your-key-here
 MODEL=gpt-4.1-mini
 OPENAI_ENDPOINT=https://api.openai.com/v1
 KNOWLEDGE_FILE=knowledge.txt
+RAG_MODE=user-augment            # or system-grounding
 ```
 
 Ollama-first option (no key, no money, no internet):
@@ -71,33 +84,33 @@ In-chat commands:
 
 | Command | What it does |
 |---|---|
-| `/file <path>` | load a different knowledge file (try your own notes) |
+| `/mode user-augment` · `/mode system-grounding` | switch where the file goes (resets the conversation) |
+| `/stateful` | toggle storing augmented history (the stateful alternative) |
+| `/file <path>` | load a different knowledge file |
 | `/context` | print the loaded knowledge file |
 | *(empty line)* | quit |
 
-## How embeddings RAG slots in later
+## The thing to notice
 
-The retrieval step is one class, `WholeFileRetriever`. Everything else — the chat
-loop, the panels, the token accounting — is independent of how retrieval works.
-Later in the course we replace it with an `EmbeddingsRetriever` that embeds your
-question, finds the nearest chunks, and returns only those. **The loop does not
-change. Only the retriever does.** That is the whole architecture of RAG in one
-swap.
+1. Ask a question the file answers, then a follow-up. In `user-augment`, look at the
+   endpoint build on turn 2: the *previous* turns are passed through **bare** — last turn's
+   augmentation is gone. The file is re-injected only into the current message.
+2. The UI history never contains the system prompt or the augmentation. The model reads a
+   lot more than the app remembers.
+3. Switch to `system-grounding`. Now the file is in the system prompt, the user turns are
+   bare, and retrieval happens once — the conversation is "pure."
 
-```python
-class Retriever:
-    def retrieve(self, question: str) -> str: ...
+## How embeddings RAG slots in next
 
-class WholeFileRetriever(Retriever):   # this lecture: the whole file, every turn
-    def retrieve(self, question): return self.text
-
-class EmbeddingsRetriever(Retriever):  # later: top-k nearest chunks
-    def retrieve(self, question): return nearest(embed(question), self.chunks, k=4)
-```
+The retrieval step is one class, `WholeFileRetriever`. Everything else — the UI, the
+stateless endpoint, the panels, the token accounting — is independent of how retrieval
+works. The next rung swaps in an `EmbeddingsRetriever` that embeds the question, finds the
+nearest chunks, and returns only those. **The loop does not change. Only the retriever
+does.** That is the architecture of RAG in one swap.
 
 ## 📖 License
 
-This repository is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](../../../week-01/demos/context-explorer/LICENSE) (`CC BY-NC-SA 4.0`).
+Licensed under [Creative Commons BY-NC-SA 4.0](../../../week-01/demos/context-explorer/LICENSE) (`CC BY-NC-SA 4.0`).
 
 ## 👤 Author
 
