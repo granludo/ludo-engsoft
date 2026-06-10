@@ -1,0 +1,11 @@
+[project]
+name = "context-explorer-rag"
+version = "0.1.0"
+description = "Context Explorer, RAG edition — watch the context grow when you cheat at solitaire"
+license = "CC-BY-NC-SA-4.0"
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "rich>=13.0.0",
+]

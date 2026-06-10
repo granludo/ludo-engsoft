@@ -1,0 +1,14 @@
+Acme Robotics is a fictional company founded in 2019 in Girona, Catalonia. It
+designs and manufactures small autonomous warehouse robots. Its headquarters
+are in Girona, with a second assembly plant in Lleida.
+
+The flagship product is the Pallet Pup, a knee-high mobile robot that ferries
+pallets between shelving and loading docks. The Pallet Pup has a top speed of
+2.4 metres per second and a battery that lasts nine hours on a single charge.
+
+Acme Robotics employs 140 people. Its CEO is Berta Comas, a former logistics
+engineer. The company's motto is "small robots, heavy lifting."
+
+In 2024 Acme shipped 3,200 Pallet Pup units, mostly to fruit and textile
+warehouses across southern Europe. The robots run on an in-house operating
+system called PupOS.
