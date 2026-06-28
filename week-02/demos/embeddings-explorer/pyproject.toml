@@ -1,0 +1,12 @@
+[project]
+name = "embeddings-explorer"
+version = "0.1.0"
+description = "Watch text become coordinates — embed a sentence, see the vector, measure closeness by cosine similarity and Euclidean distance"
+license = "CC-BY-NC-SA-4.0"
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "numpy>=1.26.0",
+    "rich>=13.0.0",
+]
