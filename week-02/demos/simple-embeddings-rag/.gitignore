@@ -1,0 +1,13 @@
+# Environment variables
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Chroma on-disk store (this demo runs in-memory, but just in case)
+chroma/
+*.sqlite3

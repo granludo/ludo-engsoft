@@ -1,0 +1,38 @@
+Acme Robotics is a fictional company founded in 2019 in Girona, Catalonia. It
+designs and manufactures small autonomous warehouse robots. Its headquarters are
+in Girona, with a second assembly plant in Lleida opened in 2023.
+
+The flagship product is the Pallet Pup, a knee-high mobile robot that ferries
+pallets between shelving and loading docks. The Pallet Pup has a top speed of 2.4
+metres per second and a payload capacity of 600 kilograms. Its battery lasts nine
+hours on a single charge and recharges to full in about 90 minutes.
+
+The Pallet Pup finds its way using LiDAR together with floor markers, and it runs
+on an in-house operating system called PupOS. PupOS receives an over-the-air
+update roughly once a month, and every update is signed so a robot will refuse
+firmware that is not from Acme.
+
+Acme's second product is the Shelf Owl, a small camera drone that flies the aisles
+at night and counts stock on the shelves. The Shelf Owl shares the PupOS software
+stack with the Pallet Pup, which is why a warehouse can manage both from one
+dashboard.
+
+Acme Robotics employs 140 people. Its CEO is Berta Comas, a former logistics
+engineer who co-founded the company. The head of engineering is Nil Bass. The
+company's motto is "small robots, heavy lifting."
+
+In 2024 Acme shipped 3,200 Pallet Pup units, mostly to fruit and textile
+warehouses across southern Europe. Italy and the south of France were the two
+largest markets that year.
+
+A Pallet Pup is sold with a two-year warranty that covers parts and labour.
+Batteries are treated as a consumable and are covered separately for twelve
+months. Acme offers a support contract that adds next-business-day on-site repair.
+
+The list price of a single Pallet Pup is 18,900 euros. Fleets of ten or more
+receive a volume discount, and the support contract is priced per robot per year.
+
+Every Pallet Pup ships with an emergency stop that any nearby worker can press,
+and the robot is certified to the European machinery safety standard for
+collaborative mobile robots. It slows automatically when a person is detected
+within two metres.

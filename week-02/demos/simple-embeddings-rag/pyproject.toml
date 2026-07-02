@@ -1,0 +1,11 @@
+[project]
+name = "simple-embeddings-rag"
+version = "0.1.0"
+description = "Simple embeddings RAG — chunk, embed, store in Chroma, retrieve by meaning, inject only the nearest chunks"
+license = "CC-BY-NC-SA-4.0"
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "chromadb==1.5.9",
+]
