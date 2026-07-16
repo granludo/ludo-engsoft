@@ -1,18 +1,18 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
-"""Chat Completions API — the classic endpoint, via the openai SDK."""
+"""Chat Completions API – el clàssic endpoint, a través de la openai SDK."""
 import os
 
 from openai import OpenAI
 from dotenv import load_dotenv
 
-load_dotenv()  # pull OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL from a local .env
+load_dotenv()  # extreure la variable `OPENAI_ENDPOINT`, `OPENAI_API_KEY` i `MODEL` d'un fitxer `.env` local.
 
-# OPENAI_ENDPOINT points the SDK at any OpenAI-compatible API (OpenAI,
-# OpenRouter, Groq, a local Ollama, ...); MODEL picks the model. Both come from
-# .env — the defaults below hit OpenAI itself.
+# `OPENAI_ENDPOINT` apunta al SDK cap a qualsevol OpenAI compatible amb API (OpenAI,
+# OpenRouter, Groq, un exemple local Ollama, ...); El MODEL selecciona el model. Tots dos provenen de
+# .env — els valors per defecte següents afecten directament a OpenAI.
 client = OpenAI(
     base_url=os.environ.get("OPENAI_ENDPOINT", "https://api.openai.com/v1"),
     api_key=os.environ.get("OPENAI_API_KEY"),
@@ -29,4 +29,4 @@ resp = client.chat.completions.create(
 )
 
 print(resp.choices[0].message.content)
-print(resp.usage)  # prompt / completion / total tokens
+print(resp.usage)  # prompt / finalització / total tokens

@@ -1,40 +1,40 @@
 
-# 🐷 OpenAI Function Calling Demo: The Three Little Pigs 🐺
+# 🐷 OpenAI Function Calling Demostració: Els tres petits conills 🐺
 
-A didactic Python script that demonstrates the difference between a regular LLM conversation and one with **function calling** capabilities, using the classic Three Little Pigs tale.
+Un script de Python didàctic que demostra la diferència entre una conversa normal amb [LLM, i una altra amb [function calling, utilitzant la història clàssica dels tres porcs.
 
-## 📚 What You'll Learn
+## 📚 Què aprendreш
 
-- How to define **tools/functions** for the OpenAI API
-- How the LLM **decides when** to call functions based on context
-- How to **process function calls** and feed results back to the LLM
-- The difference between an LLM that can only talk vs. one that can **take action**
+- Com definir les **eines/funcions** per a OpenAI i API.
+- Com decideix el LLM quan cridar funcions en funció del context.
+- Com **processar les crides a funcions** i retornar els resultats al LLM.
+- La diferència entre un model de llenguatge que només pot parlar i un que pot **prendre accions**.
 
-## 🎭 The Demo
+## 🎭 La demostració
 
-The script runs two scenarios with the same conversation:
+El guió presenta dos escenaris amb la mateixa conversa:
 
-| Scenario | Tools Available | What Happens |
+| Escenari | Eines disponibles | Què passa? |
 |----------|----------------|--------------|
-| **Scenario 1** | ❌ None | The pig can only *talk* about calling for help |
-| **Scenario 2** | ✅ `call_hunter()` | The pig can *actually* call the hunter! |
+| **Escenari 1** | ❌ No hi ha cap | El porc només pot parlar sobre la necessitat de demanar ajuda. |
+| **Escenari 2** | ✅ `call_hunter()` | En fet, el porc pot *realment* trucar al caçador! |
 
-### The Conversation
+### La conversa
 
-1. **User:** "knock knock..."
-2. **Pig:** *(cautiously asks who's there)*
-3. **User:** "I am the wolf! Open the door or I will blow away your house!"
-4. **Pig:** *(In Scenario 2, calls the hunter for help!)*
+1. **Usuari:** "Què hi ha?"...
+2. **Porc:** *(pregunta amb cautela qui és)*
+3. **Usuari:** "¡Jo sóc el llop! Obriu la porta o destruiré la vostra casa!"
+4. **Porc:** (En el Escenari 2, crida al caçador per ajudar-se!)
 
-## 🚀 Setup & Run
+## 🚀 Configuració i execució
 
-### Prerequisites
+### Requisits previs
 
-- Python 3.10 or higher
-- An OpenAI API key ([get one here](https://platform.openai.com/api-keys))
-- `uv` package manager ([install uv](https://docs.astral.sh/uv/getting-started/installation/))
+- Python 3.10 o superior
+- Una clau OpenAI API ([trobeu-ne un aquí](https://platform.openai.com/api-keys))
+- `uv` Gestor de paquets ([instal·lar UV](https://docs.astral.sh/uv/getting-started/installation/))
 
-### Step 1: Create and activate the virtual environment
+### Pas 1: Crear i activar l'entorn virtual
 
 ```bash
 cd week-03/demos/01-function-calling
@@ -44,15 +44,15 @@ source .venv/bin/activate  # On macOS/Linux
 .venv\Scripts\activate     # On Windows
 ```
 
-### Step 2: Install dependencies
+### Pas 2: Instal·lar les dependències.
 
 ```bash
 uv sync
 ```
 
-### Step 3: Configure your API key
+### Pas 3: Configureu la vostra clau API
 
-Create a `.env` file in this folder:
+Crea un fitxer anomenat "`.env`" dins aquest directori:
 
 ```bash
 # Required
@@ -66,17 +66,17 @@ MODEL=gpt-4.1-mini
 # OPENAI_ENDPOINT=https://your-azure-endpoint.openai.azure.com/v1
 ```
 
-> ⚠️ **Never commit your `.env` file!** It's already in `.gitignore`.
+> ⚠️ **Mai no commiteu el fitxer `.env`!** Ja està present a `.gitignore`.
 
-### Step 4: Run the demo
+### Pas 4: Executar la demostració
 
 ```bash
 python three_pigs_function_calling.py
 ```
 
-## 🔧 How Function Calling Works
+## 🔧 Com funciona Function Calling
 
-### 1. Define the Tool
+### 1. Definir l'eina
 
 ```python
 AVAILABLE_TOOLS = [
@@ -104,7 +104,7 @@ AVAILABLE_TOOLS = [
 ]
 ```
 
-### 2. Pass Tools to the API
+### 2. Transmetre les eines a la API
 
 ```python
 response = client.chat.completions.create(
@@ -114,7 +114,7 @@ response = client.chat.completions.create(
 )
 ```
 
-### 3. Check if the LLM Wants to Call a Function
+### 3. Comproveu si la funció LLM vol fer una crida.
 
 ```python
 if response.choices[0].message.tool_calls:
@@ -124,29 +124,29 @@ if response.choices[0].message.tool_calls:
         # Execute the function and return results to the LLM
 ```
 
-## 💡 Key Takeaway
+## 💡 L'aspect més important
 
-> **Function calling transforms LLMs from chatbots into agents that can take real-world actions!**
+> **Function calling transforma LLMs de simples programes de conversació en agents que poden prendre accions reals!**
 
-Without function calling, the pig can only *say* "I'll call the hunter." With function calling, the pig can *actually* call the hunter and get a response.
+Sense function calling, el porc només pot dir: "Trucaré al caçador". Amb function calling, el porc pot realment trucar al caçador i rebre una resposta.
 
-## 📖 Further Reading
+## 📚 Referències addicionals
 
-- [OpenAI Function Calling Documentation](https://platform.openai.com/docs/guides/function-calling)
-- [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
+- [OpenAI Function Calling Documentació](https://platform.openai.com/docs/guides/function-calling)
+- [OpenAI API Referència](https://platform.openai.com/docs/api-reference)
 
-## 📖 License
+## 📖 Llicència
 
 This repository is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](../../../LICENSE) (`CC BY-NC-SA 4.0`).
 
-## 👤 Author
+## 👤 Autor
 
-[@granludo](https://github.com/granludo) - Marc Alier
+[@granludo](https://github.com/granludo) – Marc Alier
 
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

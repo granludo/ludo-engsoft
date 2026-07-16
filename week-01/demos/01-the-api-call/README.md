@@ -1,10 +1,10 @@
-# Lecture 3 — calling the LLM
+# Conferència 3 – Crida a LLM
 
-It is all **JSON over HTTP**. The same **Chat Completions** call — `messages`
-in, `choices[0].message.content` out — reaches OpenAI, OpenRouter, Groq, Mistral
-and your laptop's local model alike. One wire format, every provider. Here it is
-two ways (raw `curl` and the Python SDK), plus two variations on the same call:
-streaming and images.
+Tot està **JSON** a punt per **HTTP**. La mateixa **Chat Completions**, la mateixa crida — `messages`
+entrades, `choices[0].message.content`; sortides, OpenAI, OpenRouter, Groq, Mistral.
+i també el model local del teu ordinador portàtil. Cada proveïdor ofereix wire format. Aquí teniu:
+dos maneres (la primera `curl` i la segona SDK), més dues variants de la mateixa funció:
+streaming i imatges.
 
 ```
 chat-completions/   the call itself      (/v1/chat/completions)
@@ -17,37 +17,37 @@ multimodal/         send an image, not just text
   send_image.py       content as a list of parts (text + image)
 ```
 
-## Run it
+## Executar-ho
 
-Each folder is self-contained and reads its own `.env`. Copy the example,
-fill it in, and run **from inside the folder** so the right `.env` is picked up:
+Cada carpeta és autònoma i llegeix el seu propi `.env`. Copia l'exemple.
+Ompliu-ho i executeu l'operació **des de dins del directori**, perquè es triï la opció correcta `.env`:
 
 ```bash
 cd chat-completions
 cp ../.env.example .env        # set OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL
 ```
 
-Raw HTTP — nothing but `curl` (the script sources `.env` for you):
+Font original HTTP – només `curl` (els fonts del guió `.env` per a vosaltres):
 
 ```bash
 bash curl.sh
 ```
 
-Python — via `uv`, no manual install:
+Python – a través de `uv`, sense instal·lació manual:
 
 ```bash
 uv run --with openai --with python-dotenv python call.py
 ```
 
-The same two commands work in `streaming/` and `multimodal/`. One caveat:
-**vision** (`multimodal/`) needs a vision-capable model, so point its `.env` at a
-provider that has one. Plain chat completions (`chat-completions/`, `streaming/`)
-run against anything that speaks the wire format, including a local model.
+Els mateixos dos comandaments funcionen a `streaming/` i `multimodal/`. Una advertència:
+**Visió** (`multimodal/`) necessita un model amb capacitat de visió, per tant, dirigeix el `.env` cap a...
+proveïdor que en tingui. Proveïdor senzill chat completions (`chat-completions/`, `streaming/`)
+operar contra qualsevol cosa que parli de wire format, incloent-hi un model local.
 
-## Same wire, different substrate
+## Més o menys el mateix cable, però amb un substrat diferent.
 
-The Chat Completions shape is not OpenAI-only. Point the same Python code at a
-different `base_url` and it calls a different machine:
+La forma Chat Completions no és exclusiva per a OpenAI. Apliqueu el mateix codi de Python a un
+diferents `base_url` i crida a una màquina diferent:
 
 ```python
 from openai import OpenAI
@@ -56,13 +56,13 @@ from openai import OpenAI
 client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
 ```
 
-Same client, same call, same JSON. The substrate is replaceable; the interface
-is portable. That portability is the whole point — so we build on the format
-everyone speaks, not on any one vendor's proprietary endpoint.
+El mateix client, la mateixa trucada, el mateix JSON. El substrat és substituible; l'interfície
+és portàtil. Aquesta portabilitat és el punt clau, per tant, ens centrem en aquest aspecte.
+Tots parlen, però no en referència a la propietat exclusiva d'un proveïdor específic endpoint.
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

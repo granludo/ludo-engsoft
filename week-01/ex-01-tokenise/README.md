@@ -1,8 +1,8 @@
-# Week 1 · Exercise 1 — Tokenize, locally
+# Setmana 1 · Exercici 1 — Tokenize, local
 
-Load a tokenizer with the Hugging Face `transformers` library and count tokens by hand. See what the model actually sees. Measure the multilingual penalty. Compare two tokenizer families on code-ish inputs.
+Carrega un tokenizer amb la biblioteca Hugging Face `transformers` i comptar manualment les tokens. Veure què realment veu el model. Mesurar la penalització per a múltiples idiomes. Comparar dues tokenizer famílies amb entrades relacionades amb codi.
 
-## Run it
+## Executar-ho
 
 ```bash
 uv venv && source .venv/bin/activate
@@ -10,17 +10,17 @@ uv sync
 python ex_01_tokenise.py
 ```
 
-The first run downloads two small tokenizers from Hugging Face (a few hundred KB each). No model weights, no GPU, no API key.
+La primera execució descarrega dues petites tokenizers de Hugging Face (unes centenars de KB cadascuna). No hi ha pesos del model, tampoc GPU ni la clau API.
 
-## What you may edit
+## Què podeu modificar
 
-- `PARAGRAPH_EN` / `PARAGRAPH_MINE` at the top of `ex_01_tokenise.py` — replace `PARAGRAPH_MINE` with your own language to compute *your* multilingual penalty.
-- `TOKENIZER_A` / `TOKENIZER_B` — any Hugging Face tokenizer id works (`gpt2`, `bert-base-uncased`, `bert-base-multilingual-cased`, …).
+- `PARAGRAPH_EN` / `PARAGRAPH_MINE` a la part superior de `ex_01_tokenise.py` — substitueix `PARAGRAPH_MINE` per la teva pròpia llengua per calcular la penalització multilingüe *per a tu*.
+- `TOKENIZER_A` / `TOKENIZER_B` — qualsevol ID de Hugging Face tokenizer funciona (`gpt2`, `bert-base-uncased`, `bert-base-multilingual-cased`, ...).
 
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

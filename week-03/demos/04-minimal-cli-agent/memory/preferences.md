@@ -1,5 +1,5 @@
-# User preferences
+# Preferències de l'usuari
 
-- The user's working documents live in `workspace/` (relative to the agent's folder).
-- The user likes answers as short bullet lists — no long paragraphs.
-- Dates in ISO format (YYYY-MM-DD).
+- Els documents de treball de l'usuari es troben a `workspace/` (en relació amb la carpeta de l'agent).
+- L'usuari prefereix respostes en forma de llistes concises amb punts—sense paràgrafs llargs.
+- Dates en format ISO (AAAA-MM-JJ).

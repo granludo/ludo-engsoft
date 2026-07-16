@@ -1,28 +1,23 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
-"""Ingestion — how a document gets into a collection.
+"""Procés d'incorporació – com un document entra en una col·lecció.
 
-Ingestion is the process where a document is added to a collection, in four steps:
+La incorporació és el procés per al qual un document s'afegeix a una col·lecció, en quatre passos:
 
-  1. CONVERT the document to markdown (here: markitdown — pdf, docx, pptx, html,
-     txt... all become md). For scanned documents you would use an OCR model
-     instead: mistral-ocr in the cloud, or deepseek-ocr running locally (mlx on
-     Apple Silicon, CUDA on NVIDIA).
-  2. STORE both the original and its markdown distillation somewhere linkable —
-     here `static/` (the same idea as /static in a FastAPI app), so every chunk
-     can point back to its document by URL.
-  3. CHUNK the markdown — see chunking.py: a sliding window of characters with
-     overlap, or the document's own ## sections.
-  4. INSERT each chunk into the collection with its metadata: the document url,
-     the title, the url of the md distilation, the chunk number, the chunking
-     strategy, and the date of ingestion.
+  1. Convertir el document a format Markdown (aquí: markitdown – PDF, .docx, .pptx, HTML)
+     txt… tot es converteix en un fitxer .md). Per a documents escanejats, utilitzareu un model d'OCR en lloc: mistral-ocr a la clou, o deepseek-ocr que funciona localment (mlx a Apple Silicon, CUDA a NVIDIA).
+  2. Guarda tant la versió original com la versió resumida (en format Markdown) en un lloc accessible per a poder-les referenciar.
+     aquí `static/` (la mateixa idea que `/static` en una aplicació FastAPI), de manera que cada chunk pot fer referència al seu document mitjançant URL.
+  3. CHUNK el format Markdown – veure chunking.py: una finestra que es desplassa per caràcters amb
+     superposició, o les seccions pròpies del document.
+  4. Insereix cada chunk a la col·lecció juntament amb les seves metadades: el document url.
+     el títol, el url de la destil·lació, el chunk número, la chunking estratègia, i la data d'ingesta.
 
-Usage:
-    uv run ingest.py path/to/document.pdf
-    uv run ingest.py handbook.md --strategy sections --level 2
-    uv run ingest.py notes.txt   --strategy chars --size 800 --overlap 100
+Ús: `uv run ingest.py /path/to/document.pdf`
+`uv run ingest.py handbook.md --estratègia sections --nivell 2`
+`uv run ingest.py notes.txt   --estratègia chars --mida 800 --sovrapposició 100`
 """
 import argparse
 import datetime
@@ -48,13 +43,13 @@ def ingest(path: str, collection_name: str = "handbook", persist_path: str = "./
         raise SystemExit(f"no such file: {doc}")
     STATIC.mkdir(exist_ok=True)
 
-    # 1 — convert to markdown
+    # 1 – convertir a Markdown
     result = MarkItDown().convert(str(doc))
     markdown = result.text_content
     title = (result.title or doc.stem).strip()
     print(f"1. converted {doc.name} -> markdown ({len(markdown)} chars) · title: {title!r}")
 
-    # 2 — store original + distillation where they can be linked
+    # 2 – Guardar l'original i el destil·lat en un mateix lloc, perquè es puguin connectar.
     doc_url = f"static/{doc.name}"
     md_name = f"{doc.stem}.md" if doc.suffix.lower() != ".md" else f"{doc.stem}.distilled.md"
     md_url = f"static/{md_name}"
@@ -71,7 +66,7 @@ def ingest(path: str, collection_name: str = "handbook", persist_path: str = "./
         strategy_label = f"chars(size={size},overlap={overlap})"
     print(f"3. chunked    {len(chunks)} chunks · strategy {strategy_label}")
 
-    # 4 — insert with metadata
+    # 4 – Incloure amb metadades
     col = create_collection(collection_name, description="simple-dynamic-rag knowledge",
                             metric="cosine", persist_path=persist_path)
     ok = 0

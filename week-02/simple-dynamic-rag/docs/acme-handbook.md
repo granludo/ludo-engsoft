@@ -1,48 +1,48 @@
-# Acme Robotics — Product Handbook
+# Acme Robotics – Manual del producte
 
-Acme Robotics is a fictional company founded in 2019 in Girona, Catalonia. It designs
-and manufactures small autonomous warehouse robots. Its headquarters are in Girona,
-with a second assembly plant in Lleida opened in 2023.
+Acme Robotics és una empresa fictícia fundada el 2019 a Girona, Catalunya. Es dedica al disseny de...
+i fabrica petits robots autònoms per a magatzems. La seva seu principal està a Girona.
+amb una segona planta de fabricació ubicada a Lleida, que va ser inaugurada el 2023.
 
-## The Pallet Pup
+## La caixa de palets
 
-The flagship product is the Pallet Pup, a knee-high mobile robot that ferries pallets
-between shelving and loading docks. The Pallet Pup has a top speed of 2.4 metres per
-second and a payload capacity of 600 kilograms. Its battery lasts nine hours on a
-single charge and recharges to full in about 90 minutes.
+El producte estrella és el "Pallet Pup", un robot mòbil de la gença que transporta palets.
+entre les estanteries i els espais de càrrega. El Pallet Pup té una velocitat màxima de 2,4 metres per
+segon, amb una capacitat de càrrega de 600 quilograms. La seva bateria dura nou hores amb
+Una única càrrega i recàrrega fins a la plena capacitat en aproximadament 90 minuts.
 
-The Pallet Pup finds its way using LiDAR together with floor markers, and it runs on
-an in-house operating system called PupOS. PupOS receives an over-the-air update
-roughly once a month, and every update is signed so a robot will refuse firmware that
-is not from Acme.
+El Pallet Pup utilitza la tecnologia LiDAR juntament amb marques al sòl per trobar el camí, i funciona amb
+un sistema d'operació intern anomenat PupOS. PupOS rep una actualització per mitjà de la xarxa.
+aproximadament una vegada al mes, i cada actualització està signada perquè un robot no accepti el programari.
+No és d'Acme.
 
-## The Shelf Owl
+## L'úbua de la premsa
 
-Acme's second product is the Shelf Owl, a small camera drone that flies the aisles at
-night and counts stock on the shelves. The Shelf Owl shares the PupOS software stack
-with the Pallet Pup, which is why a warehouse can manage both from one dashboard.
+El segon producte d'Acme és l'Owl de prestatgeries, un petit dron càmera que vola pels corredors.
+durant la nit i compta els estocs a les prestatgeries. L'Ocellet de les Prestatgeries comparteix el conjunt de programari PupOS.
+amb el Pallet Pup, per això un magatzem pot gestionar-ho tot des d'un sol panell de control.
 
-## The company
+## L'empresa
 
-Acme Robotics employs 140 people. Its CEO is Berta Comas, a former logistics engineer
-who co-founded the company. The head of engineering is Nil Bass. The company's motto
-is "small robots, heavy lifting."
+Acme Robotics té 140 empleats. La seva directora general és Berta Comas, que abans va treballar com a enginyera logística.
+qui va fundar l'empresa juntament amb un altre. El cap de l'enginyeria és Nil Bass. El lema de l'empresa:
+és "robots petits i capaces de aixecar pesos".
 
-In 2024 Acme shipped 3,200 Pallet Pup units, mostly to fruit and textile warehouses
-across southern Europe. Italy and the south of France were the two largest markets
-that year.
+El 2024, Acme va enviar 3.200 unitats del tipus "Pallet Pup", principalment a magatzems de fruita i tèxtils.
+a través de l'Europa del sud. Itàlia i el sud de França eren els dos mercats més grans.
+Aquest any.
 
-## Warranty and support
+## Garantia i suport tècnic
 
-A Pallet Pup is sold with a two-year warranty that covers parts and labour. Batteries
-are treated as a consumable and are covered separately for twelve months. Acme offers
-a support contract that adds next-business-day on-site repair.
+Un "Pallet Pup" es ven amb una garantia de dos anys que cobreix les peces i la mà d'obra. Bateries.
+són tractats com a productes consumibles i tenen una cobertura específica de 12 mesos. Acme ofereix
+un contracte de suport que inclou la reparació in situ el dia hàbil següent.
 
-The list price of a single Pallet Pup is 18,900 euros. Fleets of ten or more receive
-a volume discount, and the support contract is priced per robot per year.
+El preu de venda d'un sol Pallet Pup és de 18.900 euros. Les flotes amb deu o més unitats reben
+un descompte per a compres en grans quantitats, i el contracte de suport té un preu per robot per any.
 
-## Safety
+## Seguretat
 
-Every Pallet Pup ships with an emergency stop that any nearby worker can press, and
-the robot is certified to the European machinery safety standard for collaborative
-mobile robots. It slows automatically when a person is detected within two metres.
+Cada Pallet Pup inclou un botó d'emergència que qualsevol treballador proper pot prémer, i
+El robot està certificat segons l'estàndard europeu de seguretat per a màquines col·laboratives.
+robots mòbils. Es redueix la velocitat automàticament quan es detecta una persona a menys de dos metres.

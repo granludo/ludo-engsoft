@@ -1,25 +1,16 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
-"""collections_manager — the simplest possible embeddings-database manager.
+"""collections_manager – el gestor de bases de dades més senzill possible per a la creació d'índexs.
 
-An embeddings database implements tables indexed with embeddings. We call these
-tables COLLECTIONS. There are many implementations (open source, local, cloud);
-this package is the whole idea reduced to three functions, on ChromaDB:
+Una base de dades embeddings implementa taules indexades amb embeddings. Anomenem aquestes taules COLLECTIONS. Hi ha moltes implementacions (de codi obert, locals, en núvol); aquest paquet és la idea completa reduïda a tres funcions, que es troben a ChromaDB:
 
-    create_collection(name, ...)            -> Collection   (in memory, or persisted on disk)
-    insert(collection, chunk, metadata)     -> {"ok", "id", "error"}
-    query(collection, query_text, top_k)    -> [{"chunk", "metadata", "similarity"|"distance"}, ...]
+    create_collection(nom, ...) -> Recollida (en memòria, o persistida al disc) insert(recollida, chunk, metadades) -> {"ok", "id", "error"} query(recollida, text_de_consulta, top_k) -> [{"chunk", "metadades", "similitud"|"distància"}, ...]
 
-Basic metadata is at least `source` and `chunk_number` (within the source);
-`chunk_number` is auto-assigned per source when you don't give one.
+Les metadades bàsiques són almenys `source` i `chunk_number` (dins de la font); `chunk_number` es assigna automàticament per a cada font quan no s'especifica.
 
-This is a provided utility, not a demo: build your applications against THIS
-interface. Chroma is more than enough for small-to-medium projects (keep it
-simple) — and because your code talks to this abstraction layer, you can swap
-in a beefier engine later, if someone is happy to pay for it, without touching
-the application code.
+Aquest és un conjunt d'eines, no una demostració: desenvolupa les teves aplicacions utilitzant AQUESTA interfície. Chroma és suficient per a projectes de petites a mitanes dimensions (mantén-ho senzill) — i perquè el teu codi interactua amb aquest nivell d'abstracció, pots canviar per un motor més potent en el futur, si algú està disposat a pagar-ne, sense modificar el codi de l'aplicació.
 """
 import math
 import os
@@ -34,14 +25,14 @@ load_dotenv()
 
 __all__ = ["Collection", "create_collection", "insert", "query", "default_embedding_function"]
 
-# The two metrics from the embeddings lecture, mapped to Chroma's index spaces.
-# NOTE: Chroma's "l2" space returns SQUARED euclidean distance — we take the
-# square root so `distance` means what the lecture said it means.
+# Les dues mètriques de la embeddings conferència, mapejades als espais d'índex de Chroma.
+# NOTA: L'espai "l2" de Chroma retorna la distància euclidiana al quadrat — prenem-ho com a valor.
+# la arrel quadrada de `distance` significa el que va explicar la conferència.
 _METRICS = {"cosine": "cosine", "euclidean": "l2"}
 
 
 def default_embedding_function(texts: list[str]) -> list[list[float]]:
-    """Embed via any OpenAI-compatible endpoint (default: local Ollama + nomic-embed-text)."""
+    """Integrar mitjançant qualsevol OpenAI compatible amb endpoint (per defecte: el Ollama local + nomic-embed-text)."""
     client = OpenAI(
         base_url=os.environ.get("OPENAI_ENDPOINT", "http://localhost:11434/v1"),
         api_key=os.environ.get("OPENAI_API_KEY", "ollama"),
@@ -53,10 +44,10 @@ def default_embedding_function(texts: list[str]) -> list[list[float]]:
 
 @dataclass
 class Collection:
-    """A handle to one collection: its Chroma table + how to embed + how to measure."""
+    """Un manual per a una col·lecció específica: la seva taula Chroma + com incorporar-la + com mesurar-la."""
     name: str
     description: str
-    metric: str  # "cosine" | "euclidean"
+    metric: str  # «cosinus» | «euclidià»
     embedding_function: Callable[[list[str]], list[list[float]]]
     _chroma: "chromadb.Collection" = field(repr=False)
 
@@ -71,14 +62,9 @@ def create_collection(
     metric: str = "cosine",
     persist_path: str | None = None,
 ) -> Collection:
-    """Create (or re-open) a collection.
+    """Crear (o tornar a crear) una col·lecció.
 
-    With `persist_path` the collection lives on disk at that folder and survives
-    restarts; without it, it lives in memory for this run. `metric` is "cosine"
-    (higher = closer) or "euclidean" (lower = closer). If you don't pass an
-    `embedding_function`, the default one (OpenAI-compatible endpoint from .env)
-    is used — everything inserted into one collection MUST be embedded by the
-    same model, or the geometry means nothing.
+    Amb `persist_path`, la col·lecció es guarda al disc en aquesta carpeta i persisteix després de reiniciar; sense això, es manté en memòria durant aquesta execució. `metric` és "cosinus" (més alt = més proper) o "euclidi" (més baix = més proper). Si no s'indica un `embedding_function`, es fa servir el valor per defecte (OpenAI compatible amb endpoint des de .env), que és tot allò que s'ha inserit en una col·lecció. PERÒ, tot allò que s'afegeix a una col·lecció ha d'estar representat pel mateix model, o la geometria no tindrà cap significat.
     """
     if metric not in _METRICS:
         raise ValueError(f"metric must be one of {list(_METRICS)}, got {metric!r}")
@@ -97,13 +83,9 @@ def create_collection(
 
 
 def insert(collection: Collection, chunk: str, metadata: dict) -> dict:
-    """Insert one chunk with its metadata. Returns an ok/ko message.
+    """Insereix un fragment amb les seves metadades. Retorna un missatge de "correcte" o "incorrect".
 
-    `metadata` must carry at least `source` (where the chunk comes from).
-    `chunk_number` (position within that source) is auto-assigned — the next
-    free number for that source — unless you provide it. The chunk's id is
-    "<source>::<chunk_number>", so re-inserting the same position fails
-    cleanly instead of silently duplicating.
+    `metadata` ha de contenir almenys `source` (indicant l'origen del fragment). `chunk_number` (posició dins d'aquesta font) es assigna automàticament – el següent número disponible per a aquesta font – tret que ho especifiqueu. L'ID del fragment és "<font>::<número_del_fragment>", de manera que si intenteu reintroduir la mateixa posició, no es duplica silenciosament, sinó que falla correctament.
     """
     if not chunk or not chunk.strip():
         return {"ok": False, "id": None, "error": "empty chunk"}
@@ -116,22 +98,20 @@ def insert(collection: Collection, chunk: str, metadata: dict) -> dict:
         meta["chunk_number"] = (max(taken) + 1) if taken else 0
     chunk_id = f"{meta['source']}::{meta['chunk_number']}"
     if collection._chroma.get(ids=[chunk_id])["ids"]:
-        # Chroma's add() silently skips existing ids — check explicitly so ko means ko.
+        # La funció `add()` de Chroma ignora silenciosament els IDs existents; és important verificar-los explícitament per assegurar-se que signifiquen el que es pretén.
         return {"ok": False, "id": chunk_id, "error": f"id {chunk_id!r} already exists"}
     try:
         [vector] = collection.embedding_function([chunk])
         collection._chroma.add(ids=[chunk_id], embeddings=[vector], documents=[chunk], metadatas=[meta])
         return {"ok": True, "id": chunk_id, "error": None}
-    except Exception as e:  # embeddings endpoint down, ...
+    except Exception as e:  # embeddings endpoint cap avall, ...
         return {"ok": False, "id": chunk_id, "error": str(e)}
 
 
 def query(collection: Collection, query_text: str, top_k: int = 3, threshold: float | None = None) -> list[dict]:
-    """Retrieve the nearest chunks to `query_text`, nearest first.
+    """Recupera els fragments més propers a `query_text`, prioritzant-los per proximitat.
 
-    Each result is {"chunk", "metadata", and "similarity" (cosine, higher =
-    closer) or "distance" (euclidean, lower = closer)}. `threshold` filters:
-    minimum similarity for cosine, maximum distance for euclidean.
+    Cada resultat inclou "chunk", "metadades" i "similitud" (cosinè, major valor = més proper), o "distància" (euclidiana, menor valor = més proper). `threshold`: filtres: mínima similitud per al cosinè, màxima distància per a l'euclidiana.
     """
     if collection.count() == 0:
         return []
@@ -144,11 +124,11 @@ def query(collection: Collection, query_text: str, top_k: int = 3, threshold: fl
     results = []
     for chunk, meta, dist in zip(hits["documents"][0], hits["metadatas"][0], hits["distances"][0]):
         if collection.metric == "cosine":
-            score_name, score = "similarity", 1.0 - dist          # chroma cosine returns 1 - cos_sim
+            score_name, score = "similarity", 1.0 - dist          # chroma cosine retorna 1 - cos_sim
             if threshold is not None and score < threshold:
                 continue
         else:
-            score_name, score = "distance", math.sqrt(dist)       # chroma l2 returns SQUARED distance
+            score_name, score = "distance", math.sqrt(dist)       # La funció chroma L2 retorna la distància al quadrat.
             if threshold is not None and score > threshold:
                 continue
         results.append({"chunk": chunk, "metadata": meta, score_name: round(score, 4)})

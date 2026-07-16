@@ -1,36 +1,36 @@
-# Streaming a chat completion
+# Streaming un cop completat el diàleg
 
-The same chat-completions call, but you receive the answer **token by token as it
-is produced** instead of waiting for the whole thing. That is the typewriter
-effect in ChatGPT. The total time is about the same; it just *feels* faster, and
-for long answers the user sees progress instead of a frozen spinner.
+La mateixa petició de "completar la conversa", però rebeu la resposta **token per part de token tal com és.
+és produït **en lloc de esperar que s'acabi tot**. Aquest és el mecanotex
+efecte a ChatGPT. El temps total és gairebé el mateix; simplement *sembla* més ràpid, i
+Per a respostes llargues, l'usuari veu un indicador de progrés en comptes d'un "spinner" congelat.
 
-In code the only change is `stream=True`: the response becomes an *iterator of
-chunks*, and each chunk carries a little more text in `choices[0].delta.content`.
-You print it the moment it arrives (`flush=True`). Pass `stream_options={"include_usage": True}`
-to get a final chunk with the token `usage`, which a streamed response otherwise omits.
+En el codi, l'única modificació és `stream=True`: la resposta es converteix en un *iterador de*.
+chunks*, i cada chunk conté una mica més de text al `choices[0].delta.content`.
+Ho imprimeu tan aviat com arribi (`flush=True`). Passeu `stream_options={"include_usage": True}`.
+per obtenir la resposta final chunk amb el token `usage`, que una resposta en directe normalment no inclou.
 
-## Run it
+## Executar-ho
 
 ```bash
 cp ../.env.example .env        # OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL
 uv run --with openai --with python-dotenv python stream.py
 ```
 
-Watch the text appear a few tokens at a time, then the `usage` line at the end.
+Observeu com el text apareix de forma gradual, unes quantes línies tokens alhora, i després la línia final `usage`.
 
-Or see it from a raw-HTTP point of view — same call with `"stream": true`, no
-SDK. `curl -N` prints each `data: {...}` chunk the instant it arrives:
+O, vegeu-ho des d'una perspectiva de HTTP sense processar – mateixa petició amb `"stream": true`, però sense resposta.
+SDK. `curl -N` imprimeix cada `data: {...}` chunk tan aviat com arriba:
 
 ```bash
 bash curl.sh
 ```
 
-You get the Server-Sent Events the SDK hides from you: a run of `data:` lines,
-each with a bit more text in `choices[0].delta.content`, ending in `data: [DONE]`.
+Obteniu els esdeveniments del servidor que SDK amaga de vosaltres: una seqüència de `data:` línies.
+Cadascun amb una mica més de text al `choices[0].delta.content`, i finalitzant al `data: [DONE]`.
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

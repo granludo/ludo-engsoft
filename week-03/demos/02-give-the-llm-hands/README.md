@@ -1,19 +1,19 @@
-# Give the LLM hands — a loop with tools
+# Dóna les LLM mans – una estructura amb eines.
 
-Week 3 teaching example. We hand the model two tools — `wget` to fetch a URL and `execute_sql` to write to a local SQLite database — and we keep calling it until it stops asking for tools. Then we give it a **task**, not a question, and watch what happens.
+Exemple d'ensenyament per la setmana 3. Li donem al model dues eines: `wget` per obtenir un URL i `execute_sql` per escriure en una base de dades SQLite local — i continuem cridant-lo fins que deixi de sol·licitar eines. Després, li donem una **tasca**, no una pregunta, i observem què passa.
 
-## Prerequisites
+## Requisits previs
 
-Local Ollama running with a small tool-capable model:
+Executant un model local d'Ollama amb una petita capacitat de processament:
 
 ```bash
 ollama serve
 ollama pull qwen3:1.7b
 ```
 
-## Run
+## Correr
 
-The usual setup, same as every demo in this course:
+La configuració habitual, igual que en totes les demostracions d'aquest curs:
 
 ```bash
 cd week-03/demos/02-give-the-llm-hands
@@ -23,35 +23,35 @@ uv sync
 python give_the_llm_hands.py
 ```
 
-Or with your own prompt:
+O amb els vostres propis prompt:
 
 ```bash
 python give_the_llm_hands.py "fetch https://api.github.com/users/torvalds and store the login, name and public_repos count"
 ```
 
-The default prompt fetches a JSON API, asks the model to create a table, insert the rows, and report how many it stored — a task that needs several steps, so you watch the `while` loop turn over (`── LLM call #N ──`): fetch, create table, insert, answer. Nobody tells the program the order of the steps. The model decides; the loop executes.
+La petició per defecte consulta una API JSON, demana al model que creï una taula, inserteixi les files i reporti quantes ha guardat – una tasca que requereix diversos passos, per tant, observeu el bucle `while` en acció (`── LLM call #N ──`): obtenir dades, crear la taula, inserir, respondre. El programa no rep instruccions sobre l'ordre dels passos. El model decideix; el bucle s'executa.
 
-When `wget` is requested you will be prompted: type `y` to allow. This is deliberate — the exact command is printed, and the dangerous action runs only with your approval. A denial is reported back to the model (it is *told* it was denied) and the loop keeps running, nothing crashes.
+Quan es demana `wget`, apareixerà un missatge que demanarà: escriu `y` per autoritzar-ho. Això és intencional: s'imprimeix l'ordre exacte, i l'acció perillosa només es realitza amb el teu consentiment. Si es denegada, la informació es retorna al model (es *notifica* que ha estat denegada), i el bucle continua executant-se, sense que hi hagi cap error.
 
-## Config
+## Configuració
 
-Defaults are Ollama-first; no `.env` is needed to run locally. Copy `.env.example` to `.env` to override `OPENAI_BASE_URL`, `OPENAI_API_KEY`, and `MODEL` (e.g. to point at a frontier endpoint).
+Els valors per defecte són Ollama; no es necessita `.env` per executar-los localment. Copia `.env.example` a `.env` per sobreescriure `OPENAI_BASE_URL`, `OPENAI_API_KEY` i `MODEL` (per exemple, per apuntar a una frontera endpoint).
 
-**Note on models:** small local models drive this loop unevenly — they forget to chain steps, malform tool arguments, or stop early. The loop is trivial; the intelligence steering it is the model. Point `.env` at a bigger model and the same six lines behave far better.
+**Comentari sobre els models:** Els petits models locals operen aquest bucle de manera desigual: poden oblidar-se d'encadenar passos, utilitzar arguments incorrectes per a les eines, o finalitzar prematurament. El bucle és senzill; la intel·ligència que el dirigeix és el model. Si apunteu `.env` a un model més gran, els mateixos sis línies funcionaran molt millor.
 
 ---
 
-## The reveal — read this after the lecture
+## La revelació – llegiu-ho després de la conferència
 
-**You have just built an agent.** That is the whole secret: an agent is a `while` loop that keeps calling the model until the model stops asking for tools. No framework, no magic.
+**Acabaveu de crear un agent.** Aquest és el secret principal: un agent és una `while` estructura que continua cridant al model fins que aquest deixa de sol·licitar eines. Sense cap marc ni trucs.
 
-1. **The loop is the whole engine.** Six lines of `give_the_llm_hands.py` do the work — they are marked in the source as lines `1`–`6` inside `run_loop()`. Everything else (tool schemas, SQLite, printing, config) is plumbing.
-   - `1` the `while True` loop
-   - `2` call the model, hand it the tool schemas
-   - `3` no tool calls returned → that's the final answer, stop
-   - `4` append the model's tool-call message to history
-   - `5` execute each requested tool
-   - `6` append the results, then loop back to `2`
-2. **Tools give the model hands.** Without tools an LLM can only talk. With `wget` and `execute_sql` it can reach the web and write to a database — it *acts*.
-3. **Security lives in the scaffolding, not in the prompt.** You do not ask the model nicely to behave; you gate the dangerous action in code. That is the `y` prompt.
-4. **The agentic behavior comes from the software, not from the LLM.** The model proposes; your program disposes. Hold on to that sentence — the rest of the course stands on it.
+1. **El bucle és el motor principal.** Sis línies de codi (`give_the_llm_hands.py`) realitzen la tasca – estan marcades a la font com les línies `1`–`6` dins del bloc `run_loop()`. Tot el que resta (esquemes d'eines, SQLite, impressió, configuració) és infraestructura.
+   - `1` el `while True` bucle
+   - `2` cridar al model i proporcionar-li els esquemes de les eines.
+   - `3` No s'han retornat crides a la funció → aquesta és la resposta definitiva, parem.
+   - `4` Afegir el missatge de crida a la eina del model a l'històric
+   - `5` executar cada eina demanada
+   - `6` afegeix els resultats i torna al `2`
+2. **Les eines donen al model la capacitat de "fer".** Sense eines, un LLM només pot parlar. Amb `wget` i `execute_sql`, pot accedir a internet i escriure en una base de dades – és a dir, *actua*.
+3. **La seguretat rau en la estructura, no en el prompt.** No demanes al model que es comporti bé; bloquejes l'acció perillosa amb codi. Aquest és el `y` prompt.
+4. **El comportament autònom prové del programa, no de LLM.** El model proposa; el vostre programa executa. Recordeu aquesta frase: tot el curs es basa en ella.

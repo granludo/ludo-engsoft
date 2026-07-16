@@ -1,64 +1,64 @@
-# Course cheatsheet — terminal · git · Python · the model
+# Guia ràpida del curs — terminal · Git · Python · el model
 
-One page to keep open during the first week. You don't need to memorise any of this — you need to **recognise** it when an agent does it, and be able to do it yourself when you have to. Render to PDF with `/md2pdf` for handout.
-
----
-
-## The terminal
-
-| Command | What it does |
-|---|---|
-| `ls` | list what's in the current folder (`ls -la` = all, with details) |
-| `cd foo` | go into folder `foo` · `cd ..` = up one · `cd ~` = home · `cd -` = back |
-| `pwd` | print where you are |
-| `cat file` | print a file to the screen |
-| `less file` | page through a long file (`q` to quit) |
-| `nano file` | edit a file (`Ctrl-O` save, `Ctrl-X` exit) |
-| `mkdir foo` | make a folder · `rm file` delete · `rm -r foo` delete a folder (careful) |
-| `cp a b` / `mv a b` | copy / move (or rename) |
-| `head -n 20 file` / `tail` | first / last 20 lines |
-| `grep "text" file` | find lines containing `text` |
-
-**The three streams** every program has — they look alike on screen, they are not the same thing:
-
-| Stream | What it carries |
-|---|---|
-| **stdin** | what the program reads as input |
-| **stdout** | the program's normal output |
-| **stderr** | error messages — a *separate* channel from stdout |
-
-**Redirection & pipes** — you'll see agents use these constantly:
-
-| Symbol | Meaning |
-|---|---|
-| `cmd > file` | send stdout **into** a file (overwrite) |
-| `cmd >> file` | append stdout to a file |
-| `cmd 2> errs.txt` | send **stderr** to a file (the `2` is stderr's number) |
-| `cmd1 \| cmd2` | pipe cmd1's stdout into cmd2's stdin |
+Una pàgina per mantenir oberta durant la primera setmana. No cal que recordeu cap d'aquests elements; és important que els **identifiqueu** quan un agent els faci, i que siguin capaces de fer-los ells mateixos quan sigui necessari. Imprimeu en PDF amb `/md2pdf` per a distribució.
 
 ---
 
-## git — the five verbs that cover 90%
+## El terminal
 
-| Command | What it does |
+| Comanda; ordre | El que fa |
 |---|---|
-| `git clone <url>` | copy a remote repo to your machine |
-| `git status` | what's changed / staged right now |
-| `git add <file>` (or `git add .`) | stage changes for the next commit |
-| `git commit -m "message"` | save a snapshot with a message |
-| `git push` | send your commits up to GitHub |
-| `git pull` | bring down what others (or you, elsewhere) pushed |
-| `git log --oneline` | history, one line per commit |
+| `ls` | llista què hi ha a la carpeta actual (`ls -la` = tot, amb detalls) |
+| `cd foo` | entrar a la carpeta `foo` · `cd ..` = arriba · `cd ~` = inici · `cd -` = retrocés |
+| `pwd` | imprimeu on esteu |
+| `cat file` | imprimir un fitxer a la pantalla |
+| `less file` | navega per un fitxer llarg (`q` per sortir) |
+| `nano file` | editar un fitxer (`Ctrl-O` guardar, `Ctrl-X` sortir) |
+| `mkdir foo` | crear una carpeta · `rm file` eliminar · `rm -r foo` eliminar una carpeta (amb precaució) |
+| `cp a b` / `mv a b` | copiar / moure (o canviar el nom) |
+| `head -n 20 file` / `tail` | primeres/últimes 20 línies |
+| `grep "text" file` | Trobar línies que contenen `text` |
 
-**Branches** — try things without breaking what works:
+**Els tres canals** que té cada programa – semblen igual a la pantalla, però no són el mateix:
 
-| Command | What it does |
+| Flux | El que transporta |
 |---|---|
-| `git branch` | list branches · `git branch foo` create one |
-| `git checkout foo` | switch to branch `foo` (`git checkout -b foo` = create + switch) |
-| `git checkout -- file` | throw away uncommitted changes to `file` |
+| **entrada estàndard** | els dades que el programa rep com a entrada |
+| Sortida estàndard | la sortida normal del programa |
+| **sortida d'error** | Missatges d'error – un canal *separat* de la sortida estàndard (stdout) |
 
-**First-time git setup** (once, ever):
+**Reenviar i canonades:** Veureu els agents utilitzar-les constantment:
+
+| Símbol | Significat |
+|---|---|
+| `cmd > file` | enviar la sortida estàndard **a un fitxer** (escriure sobre el contingut existent) |
+| `cmd >> file` | afegir la sortida estàndard a un fitxer |
+| `cmd 2> errs.txt` | envia **stderr** a un fitxer (el `2` és el número de stderr) |
+| `cmd1 \| cmd2` | redirigir la sortida estàndard (stdout) del comanda "cmd1" a l'entrada estàndard (stdin) del comanda "cmd2" |
+
+---
+
+## «git» – els cinc verbs que cobreixen el 90%
+
+| Comanda; ordre | El que fa |
+|---|---|
+| `git clone <url>` | clonar un repositori remot al teu ordinador |
+| `git status` | Què ha canviat/què està passant actualment |
+| `git add <file>` (or `git add .`) | Canvis de fase per al proper commit |
+| `git commit -m "message"` | guarda una captura amb un missatge |
+| `git push` | envia les teves modificacions fins a GitHub |
+| `git pull` | restablir allò que altres (o vostè, en un altre lloc) han destruït |
+| `git log --oneline` | història, una línia per cada commit |
+
+**Ramificació** – prova noves idees sense arriscar allò que ja funciona:
+
+| Comanda; ordre | El que fa |
+|---|---|
+| `git branch` | llistar ramals · `git branch foo` crear un nou |
+| `git checkout foo` | canvia a la branca `foo` (`git checkout -b foo` = crear + canviar) |
+| `git checkout -- file` | eliminar les modificacions no confirmades a `file` |
+
+**Configuració inicial de Git** (una sola vegada, per sempre):
 ```bash
 git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
@@ -67,45 +67,45 @@ git config --global init.defaultBranch main
 
 ---
 
-## Python with `uv`
+## Python amb `uv`
 
-`uv` runs Python and handles dependencies, so scripts "just run."
+`uv` executa Python i gestiona les dependències, per tant, els scripts "simplement es poden executar".
 
-| Command | What it does |
+| Comanda; ordre | El que fa |
 |---|---|
-| `python3 --version` | check your Python (we want ≥ 3.11) |
-| `uv run script.py` | run a script in a managed environment |
-| `uv run --with openai --with chromadb python script.py` | run with extra packages, no manual install |
-| `uv venv && source .venv/bin/activate` | make + enter a virtual environment (the manual way) |
-| `uv sync` | install everything a project's `pyproject.toml` declares |
+| `python3 --version` | comproveu la vostra versió de Python (volem una versió igual o superior a 3.11) |
+| `uv run script.py` | executar un script en un entorn gestionat |
+| `uv run --with openai --with chromadb python script.py` | Executa amb paquets addicionals, sense instal·lació manual. |
+| `uv venv && source .venv/bin/activate` | crear i entrar en un entorn virtual (de forma manual) |
+| `uv sync` | Instal·lar tot el que un projecte declara amb la etiqueta `pyproject.toml`. |
 
 ---
 
-## The model on your machine — Ollama
+## El model al vostre ordinador — Ollama
 
-| Command | What it does |
+| Comanda; ordre | El que fa |
 |---|---|
-| `ollama serve` | start the local model server (often already running as an app) |
-| `ollama pull qwen3:1.7b` | download a small model (~1.5 GB — runs on almost anything) |
-| `ollama run qwen3:1.7b "say hi"` | quick chat from the terminal |
-| `ollama list` | what you've got downloaded |
+| `ollama serve` | iniciar el servidor local del model (normalment ja en funcionament com a aplicació) |
+| `ollama pull qwen3:1.7b` | Descarrega un petit model (aproximadament 1,5 GB – funciona amb gairebé qualsevol dispositiu) |
+| `ollama run qwen3:1.7b "say hi"` | Una conversa ràpida a través del terminal |
+| `ollama list` | els fitxers que teniu descarregats |
 
-The course talks to Ollama through the **OpenAI-compatible** endpoint at `http://localhost:11434/v1` — no API key, no money, no internet. The same code reaches a cloud model by changing one config line. (That's a lesson, not a shortcut — see Week 2.)
+El curs explica com fer servir Ollama mitjançant l'endpoint compatible amb **OpenAI** a `http://localhost:11434/v1` – sense clau API, sense diners ni connexió a internet. El mateix codi pot accedir a un model en la nuvem simplement canviant una línia de configuració. (Això és una lliçó, no una solució ràpida – vegeu la setmana 2.)
 
-## The coding agent — OpenCode
+## L'agent de codificació — OpenCode
 
-Install it now (see the setup guide); we drive it properly from Week 2.
+Instal·leu-lo ara (vegeu la guia d'instal·lació); començarem a utilitzar-lo correctament a partir de la segona setmana.
 
-| Command | What it does |
+| Comanda; ordre | El que fa |
 |---|---|
-| `opencode` | start it in the current folder |
-| `opencode --version` | confirm it's installed |
+| `opencode` | Comenceu-ho en el directori actual. |
+| `opencode --version` | confirmeu que està instal·lat |
 
 ---
 
-## "Am I ready?" — the smoke test
+## "Estic preparat?", – la prova amb fum
 
-Run these. If all five answer cleanly, you're set for day one:
+Realitzeu aquestes activitats. Si totes les cinc es completen correctament, estareu preparats per al primer dia:
 
 ```bash
 python3 --version          # 3.11 or higher
@@ -115,14 +115,14 @@ ollama run qwen3:1.7b "reply with exactly one short sentence"
 opencode --version         # any version
 ```
 
-If any of them errors, read the message on **stderr**, check the setup guide, and if you're still stuck — **email us before the course starts.**
+Si hi ha algun error, consulteu el missatge a **stderr**, reviseu la guia d'instal·lació, i si encara teniu problemes – **envieu-nos un correu abans que comenci el curs.**
 
 ---
 
-## Where to learn more (optional, if a section was new)
+## On aprendre més (opcional, si la secció era nova)
 
-- **Terminal:** *The Missing Semester of Your CS Education* (MIT) — `missing.csail.mit.edu` — the shell + tooling lectures are exactly this floor.
-- **git:** the *Pro Git* book (free) — `git-scm.com/book` — read chapters 1–3. Or `learngitbranching.js.org` for a visual, hands-on tour of branches.
-- **Python (refresher):** the official tutorial — `docs.python.org/3/tutorial`.
+- **Terminal:** *El semestre perdut de la vostra formació en informàtica* (MIT) — `missing.csail.mit.edu` — les classes sobre l'entorn i les eines són exactament a aquest pis.
+- **git:** el llibre *Pro Git* (gratís) — `git-scm.com/book` — Llegiu els capítols 1-3. O `learngitbranching.js.org` per a una visió pràctica i visual dels braços.
+- **Python (revisió):** el tutorial oficial — `docs.python.org/3/tutorial`.
 - **`uv`:** `docs.astral.sh/uv`.
-- **Ollama:** `ollama.com` → the model library + README.
+- **Ollama:** `ollama.com` → la biblioteca del model + el fitxer README.

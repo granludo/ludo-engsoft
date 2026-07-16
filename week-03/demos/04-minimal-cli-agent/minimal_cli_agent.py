@@ -1,24 +1,17 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-A minimal CLI agent — agents in 2026, in one file.
+Un agent mínim per a la línia de comanda (CLI) – agents en 2026, tot en un fitxer.
 
-Three folders give the agent a self:
-    agent.md   — who it is and what it must do (top of the system prompt)
-    memory/    — markdown files, loaded whole at startup (fixed memory)
-    skills/    — one folder per skill; only the FIRST LINE of each skill.md
-                 is loaded at startup — the full text is read ON DEMAND
+Tres carpetes proporcionen a l'agent una identitat pròpia: agent.md — que és i què ha de fer (arxivat a system prompt) memòria/ — fitxers Markdown, carregats completament al començament (memòria fixa) habilitats/ — una carpeta per a cada habilitat; només la PRIMERA LÍNIA de cada fitxer habil.md es carrega al començament — el text complet es llegeix DEMANAD
 
-Two tools give it hands:
-    run_command — one shell command, printed and y-gated before it runs
-    read_skill  — fetch the full instructions of a skill by name
+Dos eines permeten executar-les: `run_command` – un comandament de la línia d'ordres, que s'imprimeix i es bloqueja abans d'executar-se; i `read_skill` – per obtenir les instruccions completes d'una habilitat pel seu nom.
 
-The engine is the same six-line loop from 'give the LLM hands'.
+El motor és el mateix bucle de sis línies del programa "dóna les LLM mans".
 
-Usage:
-    uv run minimal_cli_agent.py "make me a word report of the workspace"
+Ús: `uv` executa el fitxer `minimal_cli_agent.py` amb l'argument `"crea un informe de paraules sobre l'espai de treball"`
 """
 
 import json
@@ -37,7 +30,7 @@ MODEL = os.getenv("MODEL", "qwen3:1.7b")
 HOME = Path(__file__).resolve().parent
 
 
-# --- The self: agent.md + memory, loaded whole; skills, listed by first line --
+# --- El "jo": fitxer agent.md + memòria, carregat complet; habilitats, listades per la primera línia --
 def build_system():
     parts = [(HOME / "agent.md").read_text()]
 
@@ -56,7 +49,7 @@ def build_system():
     return "\n\n".join(parts)
 
 
-# --- The hands ---------------------------------------------------------------
+# --- Les mans ---------------------------------------------------------------
 TOOLS = [
     {"type": "function", "function": {
         "name": "run_command",
@@ -75,9 +68,9 @@ TOOLS = [
 
 
 def tool_run_command(command):
-    """The y-gate: security lives here, in the scaffolding — never in the prompt."""
+    """La porta "y": la seguretat es troba aquí, a les estructures de suport – mai en el prompt."""
     print(f"\n⚠️  The agent wants to run:\n    $ {command}")
-    if input("    Allow? (type 'y'): ").strip().lower() != "y":
+    if input("Permet? (escriu \"sí\"):").strip().lower() != "y":
         return "USER DENIED: the user refused this command. Do not retry it."
     r = subprocess.run(command, shell=True, capture_output=True, text=True,
                        timeout=120, cwd=HOME)
@@ -93,25 +86,25 @@ def tool_read_skill(name):
 DISPATCH = {"run_command": tool_run_command, "read_skill": tool_read_skill}
 
 
-# --- The engine: the same six lines ------------------------------------------
+# --- El motor: els mateixos sis cilindres ------------------------------------------
 def run(user_prompt):
     messages = [{"role": "system", "content": build_system()},
                 {"role": "user", "content": user_prompt}]
-    while True:                                                # 1  the loop
-        resp = client.chat.completions.create(                 # 2  ask, with tools
+    while True:                                                # 1. El bucle
+        resp = client.chat.completions.create(                 # 2. Preguntar, utilitzant eines.
             model=MODEL, messages=messages, tools=TOOLS)
         print(f"  prompt_tokens: {resp.usage.prompt_tokens}")
         msg = resp.choices[0].message
         messages.append(msg.model_dump(exclude_none=True))
-        if not msg.tool_calls:                                 # 3  answer → stop
+        if not msg.tool_calls:                                 # 3 resposta → atura
             print(f"\n✅ {msg.content}")
             return msg.content
-        for tc in msg.tool_calls:                              # 4-5 run what it asked
+        for tc in msg.tool_calls:                              # 4-5: executar les demandes que es van fer
             args = json.loads(tc.function.arguments or "{}")
             print(f"  → {tc.function.name}({args})")
             result = DISPATCH.get(tc.function.name,
                                   lambda **_: "ERROR: unknown tool")(**args)
-            messages.append({"role": "tool", "tool_call_id": tc.id,  # 6 feed back
+            messages.append({"role": "tool", "tool_call_id": tc.id,  # 6 comentaris/opinions
                              "content": result})
 
 

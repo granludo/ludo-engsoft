@@ -1,19 +1,15 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-Week 1 · Exercise 2 — Qwen3-1.7B (aligned model, 1.7B, 2025).
+Setmana 1 · Exercici 2 — Qwen3-1.7B (aligned model, 1.7B, 2025).
 
-Heavily post-trained with supervised fine-tuning and preference optimization.
-Same architecture family as GPT-2 (decoder-only transformer, next-token
-prediction) — the difference is the alignment stack from Lecture 2.
+Ha estat entrenat intensament amb supervisió i afinació detallada, així com optimització de preferències. Té la mateixa arquitectura que GPT-2 (únic decodificador transformer, predicció del següent token) — la diferència és l'estrat d'alineació de la Lliçó 2.
 
-Setup:
-    uv venv && source .venv/bin/activate && uv sync
-    python simple_qwen3.py
+Configuració: `uv venv` i després `source .venv/bin/activate` i finalment, executar `uv sync python simple_qwen3.py`
 
-CPU-only, ~3.4 GB download on first run, cached afterward.
+Només necessita CPU, aproximadament 3,4 GB de descàrrega al primer inici, i després es guarda en memòria RAM.
 """
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
@@ -24,7 +20,7 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
 model = AutoModelForCausalLM.from_pretrained(MODEL_ID, torch_dtype=torch.float32)
 model.eval()
 
-print("Qwen3 1.7B CLI (Ctrl+C to quit)")
+print("Qwen3 1.7B CLI (Prem \"Ctrl+C\" per sortir)")
 
 while True:
     try:
@@ -55,5 +51,5 @@ while True:
         print("\n" + tokenizer.decode(output[0], skip_special_tokens=True))
 
     except KeyboardInterrupt:
-        print("\nBye.")
+        print("Adéu.")
         break

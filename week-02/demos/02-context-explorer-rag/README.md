@@ -1,17 +1,17 @@
 <!-- =============================================================================================================== -->
-<!-- Universitat Politècnica de Catalunya (UPC)                                                                      -->
+<!-- Universitat Politècnica de Catalunya (UPC) -->
 <!-- =============================================================================================================== -->
 
-# 📚 Context Explorer — single-file RAG
+# 📚 Explorador de context – un fitxer RAG
 
-Single-file RAG is the crudest thing that earns the name: paste a whole file into the
-prompt as context and ask. This explorer shows the part everyone gets wrong — **the
-difference between the conversation the chat UI keeps and the call the LLM actually
-receives.** They are not the same, and the gap is the lesson.
+El sistema de recuperació d'informació (RAG) amb un sol fitxer és la forma més bàsica, però que permet obtenir el nom: simplement copiar tot el contingut d'un fitxer.
+prompt com a context i per preguntar-ne. Aquest explorador mostra la part que tothom falla – **la**
+la diferència entre la conversa que manté l'interfície de xat i la realització de la crida LLM.
+reben. No són iguals, i la diferència és l'aula d'aprenentatge.
 
-## The three layers
+## Les tres capes
 
-This is the same shape as serving an assistant over an OpenAI-compatible API (e.g. LAMB):
+Això és igual que servir un ajudant a través d'un OpenAI compatible amb API (per exemple, LAMB):
 
 ```
 🖥️  CHAT UI        sends:  history (bare) + your latest message
@@ -26,43 +26,43 @@ This is the same shape as serving an assistant over an OpenAI-compatible API (e.
 🖥️  CHAT UI        appends (your message, response) → history   ✗ augmentation NOT saved
 ```
 
-At startup (and whenever you `/mode` or `/file`) the explorer discloses the **assistant
-setup** — the system prompt, the prompt template, and the knowledge file — and tells you
-where the file goes in the current mode. So you see what is configured before you watch it
-get assembled.
+Al iniciar (i cada vegada que feu [`/mode`] o [`/file`]), l'explorador mostra l'**assistent**.
+configuració — el system prompt, la plantilla prompt i el fitxer de coneixement — i us informa de...
+on es guarda el fitxer en l'estat actual. Així pots veure què està configurat abans de visualitzar-lo.
+ser muntat.
 
-Because the endpoint is **stateless**, the augmentation is built fresh every turn and
-thrown away. The UI history stays bare. The system prompt and the file the LLM sees are
-**never** in the conversation the user sees. Watch the two panels each turn:
+Com que el endpoint és **sense estat**, l'augmentació es crea des de zero cada vegada.
+descartats. L'històric de la interfície es manté buit. Els elements system prompt i el fitxer que veu LLM són
+**mai** durant la conversa, l'usuari veu les dues panells a la vegada. Observeu cada panel per separat:
 
-- **`🛠️ → 🧠 Endpoint builds the LLM call`** — system + history + this turn's augmented message
-- **`🖥️ Chat UI history`** — just the bare turns
+- **`🛠️ → 🧠 Endpoint builds the LLM call`** – sistema + història + missatge augmentat d'aquesta tornada
+- **`🖥️ Chat UI history`** – només els canvis bàsics
 
-The gap between them — the system prompt and the augmentation — is exactly what the app
-does not remember.
+La diferència entre ells – el system prompt i l'augment – és exactament el que ofereix l'aplicació.
+no recorda.
 
-## Two placement modes (switch live with `/mode`)
+## Dos modes de posicionament (canviar a la posició activa amb `/mode`)
 
-| Mode | The file goes… | Per-turn user message | What it shows |
+| Mod | El fitxer... | Missatge per a l'usuari cada vegada | Què mostra |
 |---|---|---|---|
-| **`user-augment`** *(default)* | into the **user message**, every turn | augmented (file + question) | the app-vs-LLM gap; the file rides the volatile tail, re-sent and re-billed every call |
-| **`system-grounding`** | into the **system prompt**, **once** | bare question | retrieve once at the start → a "pure" conversation → the file sits in the stable, cacheable prefix (KV cache) |
+| **`user-augment`** (valor per defecte) | en el **missatge de l'usuari**, cada pas | amplificat (fitxer + pregunta) | l'abast entre l'aplicació i els models de llenguatge (LLM); el fitxer segueix una trajectòria inestable, que es repeteix i se li cobra cada vegada. |
+| **`system-grounding`** | a la **system prompt**, **una vegada** | pregunta directa | recuperar una vegada al principi → una conversa "pura" → el fitxer es guarda en la prefeix estable i accessible (memòria KV) |
 
-Flip between them on camera and re-ask the same questions: in `user-augment` the file is
-rebuilt into every call; in `system-grounding` it is retrieved once and the conversation
-stays clean.
+Canvia entre elles a la càmera i torna a preguntar les mateixes preguntes: al `user-augment`, el fitxer és
+reconstruït en cada trucada; a `system-grounding`, es recull una vegada i la conversa continua.
+s'esporta net.
 
-The counterfactual: to **keep** the augmentation you would have to store augmented history
-and make the chat **stateful** — `/stateful` toggles that so you can see what it costs.
+L'hipòtet: per mantenir l'augmentació, hauríeu de guardar la història augmentada.
+i fer que el programa sigui **estat-dependent**, amb botons `/stateful` perquè puguis veure el cost.
 
-## Setup
+## Configuració
 
 ```bash
 cd context-explorer-rag
 uv venv && source .venv/bin/activate && uv sync
 ```
 
-Copy `.env.example` to `.env`:
+Copiar `.env.example` a `.env`:
 
 ```bash
 OPENAI_API_KEY=your-key-here
@@ -72,57 +72,57 @@ KNOWLEDGE_FILE=knowledge.txt
 RAG_MODE=user-augment            # or system-grounding
 ```
 
-Ollama-first option (no key, no money, no internet):
+Ollama - Primera opció (sense clau, sense diners, sense accés a Internet):
 
 ```bash
 OPENAI_ENDPOINT=http://localhost:11434/v1
 MODEL=qwen3:1.7b
 ```
 
-## Run
+## Correr
 
 ```bash
 uv run context_explorer_rag.py
 ```
 
-In-chat commands:
+Comandes a la xat:
 
-| Command | What it does |
+| Comanda; ordre | El que fa |
 |---|---|
-| `/mode user-augment` · `/mode system-grounding` | switch where the file goes (resets the conversation). No argument **toggles**; spaces/underscores/dashes and short aliases (`system`/`grounding`/`sg`, `user`/`augment`/`ua`) all resolve |
-| `/stateful` | toggle storing augmented history (the stateful alternative) |
-| `/file <path>` | load a different knowledge file |
-| `/context` | print the loaded knowledge file |
-| *(empty line)* | quit |
+| `/mode user-augment` · `/mode system-grounding` | canvia el lloc on es guarda el fitxer (restaurar la conversa). Sense arguments. Les opcions "on/off" funcionen; els espais, els guions i els alias curts (`system`/`grounding`/`sg`, `user`/`augment`/`ua`) es resoldran. |
+| `/stateful` | activar/desactivar l'emmagatzematge d'una història augmentada (l'alternativa que manté el context) |
+| `/file <path>` | carregar un fitxer de coneixement diferent |
+| `/context` | imprimir el fitxer de coneixement carregat |
+| (línia buida) | parar; deixar |
 
-## The thing to notice
+## La cosa important a tenir en compte
 
-1. Ask a question the file answers, then a follow-up. In `user-augment`, look at the
-   endpoint build on turn 2: the *previous* turns are passed through **bare** — last turn's
-   augmentation is gone. The file is re-injected only into the current message.
-2. The UI history never contains the system prompt or the augmentation. The model reads a
-   lot more than the app remembers.
-3. Switch to `system-grounding`. Now the file is in the system prompt, the user turns are
-   bare, and retrieval happens once — the conversation is "pure."
+1. Formuleu una pregunta que el fitxer respongui, i després feu una segona pregunta relacionada. A la secció `user-augment`, consulteu el
+endpoint Construir a la segona tornada: les tornades anteriors es passen per **sense cap element** – l'última tornada.
+L'augmentació ha desaparegut. El fitxer només es afegeix al missatge actual.
+2. La història de l'interfície d'usuari mai no conté el system prompt ni la augmentació. El model llegeix un
+Més del que l'aplicació recorda.
+3. Canviar a `system-grounding`. Ara el fitxer està al system prompt. L'usuari pot començar.
+sense elements addicionals, i la recuperació es fa una sola vegada – la conversa és "pura".
 
-## How embeddings RAG slots in next
+## Com encaixar embeddings i RAG espais el següent
 
-The retrieval step is one class, `WholeFileRetriever`. Everything else — the UI, the
-stateless endpoint, the panels, the token accounting — is independent of how retrieval
-works. The next rung swaps in an `EmbeddingsRetriever` that embeds the question, finds the
-nearest chunks, and returns only those. **The loop does not change. Only the retriever
-does.** That is the architecture of RAG in one swap.
+L'etapa de recuperació és una categoria específica, `WholeFileRetriever`. Tot el resta – la interfície d'usuari, el...
+sense identitat endpoint, les plaques, l'token comptabilitat — són independents de la forma en què es recuperen
+treballs. El següent pas implica canviar un `EmbeddingsRetriever` que incorpora la pregunta i la troba.
+el més proper chunks, i retorna només aquests. **El bucle no es modifica. Només el component de recuperació.**
+funciona. Això és l'arquitectura de RAG en un sol intercanvi.
 
-## 📖 License
+## 📖 Llicència
 
 Licensed under [Creative Commons BY-NC-SA 4.0](../../../week-01/demos/context-explorer/LICENSE) (`CC BY-NC-SA 4.0`).
 
-## 👤 Author
+## 👤 Autor
 
-[@granludo](https://github.com/granludo) - Marc Alier, Universitat Politècnica de Catalunya (UPC)
+[@granludo](https://github.com/granludo) – Marc Alier, Universitat Politècnica de Catalunya (UPC)
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

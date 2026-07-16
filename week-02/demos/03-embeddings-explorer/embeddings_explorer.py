@@ -1,32 +1,23 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 # =============================================================================================================== #
 # Universitat Politècnica de Catalunya (UPC)                                                                      #
 # =============================================================================================================== #
 
 """
-📐 Embeddings Explorer — watch meaning become coordinates, and measure it two ways.
+📐 Embeddings Explorador — visualitza el significat en coordenades i mesura-ho de dues maneres.
 
-Type a sentence. The demo embeds it (turns it into a list of numbers), shows the vector,
-and then shows how close it is to every sentence you entered before — measured by BOTH
-cosine similarity AND Euclidean distance, in a table sorted nearest-first.
+Escriu una frase. La demostració la inclou (la transforma en una llista de números), mostra el vector, i després mostra quina distància té respecte a cada frase que has introduit abans – mesurada tant per la similaritat de cosí com per la distància euclidiana, en una taula ordenada per proximitat.
 
-The lesson: meaning is geometry. "Close" has more than one definition — but for the
-UNIT-LENGTH vectors these models return, the two definitions give the SAME ranking
-(distance² = 2·(1 − cosine)). Two views of the same thing.
+La lliçó: el significat és la geometria. La paraula "proper" té més d'una definició, però per als vectors d'UNITAT-LONGITUD que retornen aquests models, les dues definicions donen EL MATEIX classificació (distància² = 2·(1 − cosinus)). Dos punts de vista del mateix concepte.
 
-No persistence — everything lives in memory for the session only.
+Sense persistència – tot es guarda en la memòria només per a la sessió actual.
 
-Backend: any OpenAI-compatible /embeddings endpoint. Default = local Ollama + nomic-embed-text
-(no key, no cost). Edit .env to point at OpenAI or another provider.
+Backend: compatible amb OpenAI /embeddings endpoint. Valor per defecte: local Ollama + nomic-embed-text (sense clau, sense cost). Modifiqueu el fitxer .env per apuntar a OpenAI o a un altre proveïdor.
 
-In-chat commands:
-    /seed        load a few example sentences so the distances land immediately
-    /list        list the sentences entered so far
-    /clear       forget everything and start over
-    (empty line) quit
+Comandes en el chat: /seed - carregar algunes frases d'exemple perquè les distàncies es mostrin immediatament /list - llistar totes les frases que s'han introduit fins ara /clear - oblidar tot i començar de nou (línia buida) sortir
 """
 import os
 from dotenv import load_dotenv
@@ -41,7 +32,7 @@ from rich import box
 
 load_dotenv()
 
-# High-contrast theme — matches the context-explorer house style.
+# Tema de contrast elevat – es correspon amb l'estil de disseny de la "casa d'exploració del context".
 BG = "grey23"
 ON_BG = f"on {BG}"
 TEXT = f"bright_white {ON_BG}"
@@ -69,27 +60,27 @@ SEED = [
 
 
 # =============================================================================================================== #
-# The two things that matter: turning text into a vector, and measuring closeness two ways.                       #
+# Les dues coses que són importants: transformar el text en un vector i mesurar la proximitat de dues maneres. #
 # =============================================================================================================== #
 
 def embed(text: str) -> np.ndarray:
-    """Text in, vector out. The whole idea of an embedding, in one API call."""
+    """Entrada de text, sortida vectorial. La idea completa d'un embedding, en una única API."""
     resp = client.embeddings.create(model=MODEL, input=text)
     return np.array(resp.data[0].embedding, dtype=float)
 
 
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
-    """Angle between the vectors: 1.0 = same direction, 0.0 = unrelated. Higher = closer."""
+    """Angle entre els vectors: 1.0 = mateixa direcció, 0.0 = sense relació. Un angle més gran indica una major proximitat."""
     return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
 
 
 def euclidean_distance(a: np.ndarray, b: np.ndarray) -> float:
-    """Straight-line distance between the points. Lower = closer."""
+    """Distància en línia recta entre els punts. Menor valor = més proper."""
     return float(np.linalg.norm(a - b))
 
 
 # =============================================================================================================== #
-# Panels                                                                                                          #
+# Panells
 # =============================================================================================================== #
 
 def _truncate(text: str, width: int = 60) -> str:
@@ -132,14 +123,14 @@ def show_embedding(text: str, vec: np.ndarray) -> None:
                    + ("  (unit length)" if abs(norm - 1.0) < 0.02 else ""), style=NUM))
     g.add_row(Text(f"[ {head}, … ]   (first 12 of {n})", style=TEXT_DIM))
     console.print(Panel(g, title="📐 The embedding — meaning as coordinates",
-                        border_style="yellow", style=ON_BG, padding=(0, 1)))
+                        border_style="groc", style=ON_BG, padding=(0, 1)))
 
 
 def show_table(new_vec: np.ndarray, entries: list) -> None:
     rows = []
     for text, vec in entries:
         rows.append((cosine_similarity(new_vec, vec), euclidean_distance(new_vec, vec), text))
-    rows.sort(key=lambda r: r[0], reverse=True)  # nearest first (highest cosine)
+    rows.sort(key=lambda r: r[0], reverse=True)  # el més proper (amb el màxim cosinus)
 
     table = Table(box=box.SIMPLE, show_header=True, header_style=f"bold {TEXT}", style=ON_BG)
     table.add_column("#", style=f"bright_cyan {ON_BG}", width=3)
@@ -158,11 +149,11 @@ def show_table(new_vec: np.ndarray, entries: list) -> None:
 
 
 # =============================================================================================================== #
-# Loop                                                                                                            #
+# Cicle
 # =============================================================================================================== #
 
 def add_text(text: str, entries: list) -> None:
-    """Embed, show the vector, compare against earlier entries, then remember it."""
+    """Incorporeu-lo, mostreu el vector, compareu-lo amb les entrades anteriors, i després recordeu-lo."""
     with console.status("[bold yellow]embedding…", spinner="dots"):
         vec = embed(text)
     console.print()
@@ -177,7 +168,7 @@ def add_text(text: str, entries: list) -> None:
 
 
 def run() -> None:
-    entries: list = []  # (text, vector) — in memory only, no persistence
+    entries: list = []  # (text, vector) – només en memòria, sense persistència
     console.print()
     show_intro()
 
@@ -187,7 +178,7 @@ def run() -> None:
         cmd = raw.strip()
 
         if not cmd:
-            console.print(Panel(Text("Goodbye!", style=TEXT), border_style="dim"))
+            console.print(Panel(Text("Adéu!", style=TEXT), border_style="dim"))
             break
         if cmd == "/clear":
             entries.clear()
@@ -195,7 +186,7 @@ def run() -> None:
             continue
         if cmd == "/list":
             if not entries:
-                console.print(Panel(Text("nothing entered yet.", style=TEXT_DIM), border_style="dim", style=ON_BG))
+                console.print(Panel(Text("Cap cosa ha entrat fins ara.", style=TEXT_DIM), border_style="dim", style=ON_BG))
             else:
                 t = Table(box=box.SIMPLE, show_header=False, style=ON_BG)
                 t.add_column("#", style=f"bright_cyan {ON_BG}", width=3)
@@ -218,7 +209,7 @@ def main() -> None:
     if not OPENAI_API_KEY:
         console.print(Panel(Text("OPENAI_API_KEY not set. Copy .env.example to .env.\n"
                                  "(For local Ollama any non-empty string works.)",
-                                 style="bold bright_white on dark_red"), title="❌ Error", border_style="red"))
+                                 style="negre i brillant, blanc sobre vermell fosc"), title="❌ Error", border_style="red"))
         return
     try:
         run()
@@ -227,7 +218,7 @@ def main() -> None:
                                  f"Is the endpoint up and the model pulled?\n"
                                  f"  endpoint = {OPENAI_ENDPOINT}\n  model = {MODEL}\n"
                                  f"  (Ollama: `ollama pull {MODEL}`)",
-                                 style="bold bright_white on dark_red"), title="❌ Backend error", border_style="red"))
+                                 style="negre i brillant, blanc sobre vermell fosc"), title="❌ Backend error", border_style="red"))
 
 
 if __name__ == "__main__":

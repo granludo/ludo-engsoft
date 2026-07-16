@@ -1,62 +1,62 @@
 <!-- =============================================================================================================== -->
-<!-- Universitat Politècnica de Catalunya (UPC)                                                                      -->
+<!-- Universitat Politècnica de Catalunya (UPC) -->
 <!-- =============================================================================================================== -->
 
-# 🗂️ Collections Explorer
+# 🗂️ Explorador de col·leccions
 
-An embeddings database you can poke. A **collection** is a table indexed with
-embeddings; this demo opens one — **persistent on disk by default**, so your chunks
-are still there when you come back — and lets you fill it with chunks and basic
-metadata, then search it by meaning.
+Una base de dades embeddings que pots explorar. Una **col·lecció** és una taula indexada amb
+embeddings; aquesta demostració obre un fitxer — **que es guarda permanentment al disc per defecte**, de manera que el teu chunks.
+són còn quan tornes – i et permet omplir-lo amb chunks i elements bàsics
+metadades, i després cerca-les per significat.
 
-Everything goes through the course's
-[`collections-manager`](../../collections-manager/) utility (three functions:
-`create_collection` / `insert` / `query`, on ChromaDB). That is also the point of
-the demo: **your application talks to the abstraction layer, not to the engine
-underneath.** For small-to-medium projects Chroma is more than enough — and if you
-ever need a beefier store, you swap the layer's insides, not your application.
+Tot passa per la programació del curs.
+[`collections-manager`](../../collections-manager/) funcionalitat (tres funcions:
+`create_collection` / `insert` / `query`, a ChromaDB. Aquest és també el propòsit de...
+La demostració: **la vostra aplicació interactua amb la capa d'abstracció, no amb el motor.**
+sota. Per a projectes de petites a mitjanes dimensions, Chroma és més que suficient – i si...
+Si necessites una botiga més robusta, has de canviar les parts internes del programa, no l'aplicació en si.
 
-## Setup
+## Configuració
 
 ```bash
 cd collections-explorer
 uv venv && source .venv/bin/activate && uv sync
 ```
 
-Copy `.env.example` to `.env`. The default is local Ollama — no key, no cost:
+Còpia `.env.example` a `.env`. L'opció per defecte és la local Ollama – sense clau, sense cost:
 
 ```bash
 ollama serve
 ollama pull nomic-embed-text
 ```
 
-## Run
+## Correr
 
 ```bash
 uv run collections_explorer.py            # persistent collection at ./collections-store
 uv run collections_explorer.py --memory   # throwaway in-memory collection
 ```
 
-| Command | What it does |
+| Comanda; ordre | El que fa |
 |---|---|
-| `/add <text>` | store a chunk (it asks for the **source**; the **chunk_number** within that source is auto-assigned) |
-| `/seed` | load a few example chunks so queries land immediately |
-| `/list` | everything in the collection: source · chunk_number · text |
-| *(any other text)* | **query by meaning** — the nearest chunks, with their similarity and metadata |
-| *(empty line)* | quit |
+| `/add <text>` | emmagatzemar un chunk (requereix la **font**; el número de **fragment** dins d'aquesta font es assigna automàticament). |
+| `/seed` | carregar alguns exemples chunks perquè les consultes es facin immediatament |
+| `/list` | tot el contingut de la col·lecció: font · número de fragment · text |
+| *(qualsevol altre text)* | **Cerca per significat** – el més proper (chunks), juntament amb la seva similaritat i metadades. |
+| (línia buida) | parar; deixar |
 
-## The thing to notice
+## La cosa important a tenir en compte
 
-Add a few chunks, quit, and run it again: **they are still there** — that is the
-database half of the story. Then query with words the chunks never use ("how quick
-is the delivery robot?") and watch the right chunk surface anyway — that is the
-embeddings half. Insert the same chunk twice and read the ko message: ids are
-`source::chunk_number`, so a collection refuses silent duplicates.
+Afegiu unes quantes chunks, tanqueu-ho i executeu-lo de nou: **són encara allà** – això és el que...
+La base de dades és només la meitat de la història. Després, feu una consulta amb paraules que el chunks mai no utilitza ("com ràpid
+és un robot de lliurament?"). I observa la superfície correcta (chunk). Aquest és el...
+embeddings mig. Insereu el mateix chunk dues vegades i llegiu el missatge "ids són".
+`source::chunk_number`, per tant, una col·lecció evita duplicats silenciosos.
 
-## 📖 License
+## 📖 Llicència
 
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (`CC BY-NC-SA 4.0`).
 
-## 👤 Author
+## 👤 Autor
 
-[@granludo](https://github.com/granludo) — Marc Alier, Universitat Politècnica de Catalunya (UPC)
+[@granludo](https://github.com/granludo) – Marc Alier, Universitat Politècnica de Catalunya (UPC)

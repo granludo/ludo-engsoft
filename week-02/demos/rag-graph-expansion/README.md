@@ -1,43 +1,43 @@
-# Graph expansion + RRF — retrieve by connection, then fuse
+# Expansió de la grafa + RRF – recuperar per connexió, i després fusionar
 
-The fourth rung of Week 2. `rag-context-aware` fixed the *query*; this fixes a
-problem a perfect query can't touch: the **multi-hop** question, where the answer
-is a chain across documents and the bridge chunk shares no words with the question.
+El quart pas de la setmana 2. `rag-context-aware` ha solucionat la *consulta*; això soluciona un...
+un problema que una consulta perfecta no pot abordar: la pregunta de "múltiples salts", on la resposta
+és una cadena que connecta diversos documents, i el pont chunk no té cap relació amb la pregunta.
 
-Worked example: *"How fast is the robot built by the company that acquired Acme
-Robotics?"* The answer needs three links — Acme → Northwind → Pallet Pup → 2.1 m/s
-— and the bridge sentence (*"Northwind builds the Pallet Pup"*) mentions neither
-"Acme" nor "fast". Cosine ranks it low, so vector RAG never sees it.
+Exemple pràctic: "Quina velocitat té el robot que ha construït l'empresa que va adquirir Acme?"
+"Robòtica?" La resposta necessita tres enllaços: Acme → Northwind → Pallet Pup → 2,1 m/s
+— i la frase clau ("Northwind construeix el Pallet Pup") no es refereix a cap de les dues coses.
+Ni "Acme" ni "ràpid". La funció cosí el classifica com a baix, per tant, el vector RAG mai no el veu.
 
-The pipeline, in ~90 honest lines:
+La canonada, en aproximadament 90 línies sinceres:
 
-1. **Vector retriever** (Chroma) — the baseline, ranked by similarity. It misses
-   the bridge.
-2. **Graph retriever** — pull the entities out of the question, **walk the graph**
-   one or two hops over typed relations (`acquired_by`, `builds`, `has_spec`), and
-   collect the chunks you land on. This reaches the bridge by *connection*.
-3. **Reciprocal Rank Fusion** — `score(id) = Σ weight / (k + rank)` across both
-   lists, re-sorted. Five lines. `RRF_K=20` and `GRAPH_WEIGHT=0.85` are the values
-   Adrià picked from a 98-config sweep. The fused top-K recovers the bridge **without**
-   displacing what vector search already got right.
+1. **Recuperador de vectors** (Chroma) – és la base, classificada per similitud. Però no cobreix tot.
+l'aducte.
+2. **Recollidor de grafs** – extraure les entitats de la pregunta, **analitzar el grafe**
+una o dues "saltades" a les relacions tipografiades (`acquired_by`, `builds`, `has_spec`) i,
+Recolliu les chunks que trobeu. Això es transporta fins al pont mitjançant una *connexió*.
+3. **Fusión de rangs recíprocs** — `score(id) = Σ weight / (k + rank)` tant en un com en l'altre
+llistes, reordenades. Cinc línies. `RRF_K=20` i `GRAPH_WEIGHT=0.85` són els valors.
+Adrià va triar un dels resultats d'una anàlisi amb una configuració de 98. El mètode de recuperació del millor conjunt (top-K) permet obtenir el pont **sense** necessitat de...
+eliminant all aquelles funcionalitats que la cerca vectorial ja havia aconseguit.
 
-### Why the relations come from an LLM (not classic NER)
+### Per què les relacions proven d'un LLM (no d'un tipus de reconeixement de noms propers clàssic)?
 
-This demo ships the graph **pre-extracted** (`TRIPLES`) so it's deterministic. In
-production the relations are extracted at ingestion by an **LLM** with structured
-output, because classic NER (spaCy, TF-IDF) gives you *entities* and at best
-*co-occurrence* — "these two words appeared near each other" — which is semantically
-empty and impossible for a human to curate. **Named-entity recognition is not
-relation extraction.** The extraction cost lands once, at ingest, not per query.
+Aquesta demostració inclou el graf **ja extret** (`TRIPLES`), de manera que és determinista.
+La producció: les relacions es extreuen al moment de la ingesta per un **LLM** amb estructura.
+resultat, ja que els sistemes de NER clàssics (com spaCy o TF-IDF) et donen les *entitats*, i en el millor dels casos...
+*coïncidència* – "aquestes dues paraules apareixen juntes" – cosa que és semànticament
+vació i impossible per a un humà gestionar. El reconeixement d'entitats propies no és
+extracció de relacions. El cost d'extracció es paga una sola vegada, al moment de la incorporació, no per consulta.
 
-### Knobs
+### Manetes
 
-- `TOP_K` — chunks passed to the model.
-- `RRF_K` — rank dampening (RRF paper uses 60; lower = top ranks dominate more).
-- `GRAPH_WEIGHT` — how much the graph list counts. Turn it to `0.0` and the bridge
-  falls back out of top-K — that's the demo for "fusion is doing the work."
+- `TOP_K` — chunks s'han passat al model.
+- `RRF_K` – Reducció de la influència del rang (el paper RRF utilitza un valor de 60; valors més baixos signifiquen que els rangs superiors tenen una influència major).
+- `GRAPH_WEIGHT` – indica quant elements inclou la llista del graf. Canviar-lo a `0.0` i activar el pont.
+tornen a la posició inicial — això és una demostració de com funciona la "fusión".
 
-### Run it
+### Executar-ho
 
 ```bash
 cd week-02/demos/rag-graph-expansion
@@ -45,15 +45,15 @@ uv venv && source .venv/bin/activate && uv sync
 python rag_graph_expansion.py
 ```
 
-Needs a local Ollama serving a chat model and `nomic-embed-text`
-(`ollama pull nomic-embed-text`). No API key, no money. See `.env.example`.
+Necessita un servei local Ollama que ofereixi un model de xat i `nomic-embed-text`.
+(`ollama pull nomic-embed-text`). Sense clau API, sense diners. Veure `.env.example`.
 
-### The lesson
+### La lliçó
 
-The graph **never degrades** the baseline and adds recall **in proportion to how
-multi-hop your corpus is** — big on entity-chain corpora, near-zero on generalist
-ones. The cost is one extra LLM call per query (entity extraction), not the graph
-traversal itself. The measured numbers behind all of this come from **Adrià Guilera
-Bernabé's TFG** (FIB-UPC, 2026), which built and benchmarked a graph layer over the
-LAMB `kb-server` on three public multi-hop QA datasets. Diagnose your corpus before
-reaching for it.
+El gràfic **mai deteriora** la base i afegeix la precisió **en proporció a com**.
+el vostre corpus és de tipus "multi-hop" — destaca en la gestió de corpes amb relacions complexes, però és dèbil en la comprensió general.
+una vegada. El cost és una crida addicional de LLM per a cada consulta (extracció d'entitats), no el graf.
+el mateix procés de travessar. Els valors mesurats que donen suport a tot això proven d'**Adrià Guilera**.
+El TFG de Bernabé** (FIB-UPC, 2026), que va construir i avaluar una capa de graf sobre
+LAMB `kb-server` sobre tres conjunts de dades públiques per a preguntes i respostes (QA) amb múltiples salts. Diagnostiqueu el vostre corpus abans de...
+intentant-ho.

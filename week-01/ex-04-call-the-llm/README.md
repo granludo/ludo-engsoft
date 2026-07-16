@@ -1,11 +1,11 @@
-# Exercise 4 — Call the LLM from code
+# Exercici 4 – Crida al LLM des del codi
 
-You have a model running on your own machine (Exercise 3). Now you call it from
-code — the same way you would call a frontier model in the cloud. The point:
-**it is the same call.** A chat-completion request is JSON over HTTP, and one
-wire format reaches OpenAI, OpenRouter, Groq, and your laptop's Ollama alike.
+Teniu un model que s'executa al vostre ordinador (exercici 3). Ara, el crideu des de
+còd - de la mateixa manera que crides a un model en núvol. El punt:
+**És la mateixa petició.** Una sol·licitud de completament d'un missatge de text és JSON sobre HTTP, i una altra.
+El format de fitxer s'envia a plataformes com OpenAI, OpenRouter, Groq i també a Ollama, que està instal·lat al vostre ordinador portàtil.
 
-## What's here
+## Què hi ha aquí?
 
 ```
 call.py              Chat Completions via the openai SDK   (runs on Ollama)
@@ -13,26 +13,26 @@ call.sh              the same call, raw curl — no SDK       (runs on Ollama)
 .env.example         config; copy to .env
 ```
 
-## Setup
+## Configuració
 
-1. Have Ollama running with a model you can fit (from Exercise 3):
+1. Executa el programa Ollama amb un model que puguis ajustar (segons l'exercici 3):
 
    ```bash
    ollama serve            # if it isn't already running
    ollama pull ministral-3:8b
    ```
 
-2. Configure and install the client:
+2. Configurar i instal·lar el client:
 
    ```bash
    cp .env.example .env    # the defaults point at your local Ollama
    pip install openai python-dotenv
    ```
 
-   Edit `MODEL` in `.env` to whatever fits your machine — `ministral-3:8b`
-   (~6 GB), `qwen3:1.7b` (~1.5 GB), or anything you ran in Exercise 3.
+Modifiqueu `MODEL` a `.env` per tal que s'adapti a la vostra màquina – `ministral-3:8b`
+(al voltant de 6 GB), `qwen3:1.7b` (al voltant de 1,5 GB), o qualsevol cosa que hàies fet a l'exercici 3.
 
-## Run it
+## Executar-ho
 
 ```bash
 # .env loads automatically — call.py reads it via python-dotenv, call.sh sources it.
@@ -40,21 +40,21 @@ python call.py
 bash   call.sh
 ```
 
-You should get a one-sentence reply, plus the token `usage` and the
-`finish_reason`. That `usage` block is your bill on a paid API — read it.
+Haureu de rebre una resposta en una sola frase, juntament amb les referències token i `usage`, i...
+`finish_reason`. Aquest `usage` bloc és la vostra factura per un servei pagat API – llegeu-la.
 
-## Try this
+## Prova això
 
-- Change the `temperature` (0.0 vs 1.5) and run a few times. What changes?
-- Change the model in `.env`. Same code, different brain.
-- If you have a cloud key (OpenAI, OpenRouter, Groq): set the cloud values in
-  `.env` and run `call.py` again — **unchanged**. Same code, same wire format,
-  a frontier model instead of your laptop's. Only the `.env` changed.
+- Canvia el `temperature` (de 0,0 a 1,5) i executa-ho diverses vegades. Quines canvis observes?
+- Canviar el model a `.env`. El mateix codi, però amb una estructura diferent.
+- Si teniu una clau de núvol (OpenAI, OpenRouter, Groq): configureu els valors del núvols a
+`.env` i tornar a executar `call.py` — **sense canvis**. El mateix codi, el mateix wire format.
+un model de frontiera en lloc del que teniu al vostre ordinador portàtil. Només el `.env` ha canviat.
 
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

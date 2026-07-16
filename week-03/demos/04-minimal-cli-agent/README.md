@@ -1,6 +1,6 @@
-# A minimal CLI agent — memory in files, skills on demand, a terminal for hands
+# Un agent mínim per a la línia de comanda (CLI) – memòria en fitxers, habilitats a demanda, i un terminal per a les mans.
 
-Week 3 closing example: everything the week taught, in one folder. The engine is the same six-line loop from `02-give-the-llm-hands`. What is new is the **self**:
+Exemple de final de la setmana 3: tot el que s'ha après durant la setmana, en un sol fitxer. El motor és el mateix bucle de sis línies des del `02-give-the-llm-hands`. El que és nou és el **"jo"**:
 
 ```
 04-minimal-cli-agent/
@@ -14,12 +14,12 @@ Week 3 closing example: everything the week taught, in one folder. The engine is
 └── workspace/             # the documents the sample agent works on
 ```
 
-- **`agent.md`** goes at the top of the system prompt: purpose and rules.
-- **`memory/*.md`** is loaded whole — fixed memory, cheap and always present.
-- **`skills/`** is loaded as an *index only* (the first line of each `skill.md`). When a task matches, the model calls `read_skill` and gets the full instructions — discovery on demand, the same trick `--help` plays. Compare with the MCP registry from lecture 3.3, which rides whole in every request.
-- **Two tools:** `run_command` (one shell command, printed, y-gated — security in the scaffolding) and `read_skill`.
+- **`agent.md`** es posa al cap de la system prompt: finalitat i regles.
+- **`memory/*.md`** es carrega completament – memòria fixa, barata i sempre disponible.
+- **`skills/`** es carrega com un *índex únic* (la primera línia de cada `skill.md`). Quan una tasca coincideix, el model crida a `read_skill` i obté les instruccions completes: descobriment a demanda, la mateixa estratègia que fa `--help`. Compareu amb el registre **MCP** del tercer mòdul, que s'utilitza en cada sol·licitud.
+- **Dos eines:** `run_command` (un comandament de terminal, imprès, amb restriccions de seguretat) i `read_skill`.
 
-## Run
+## Correr
 
 ```bash
 cd week-03/demos/04-minimal-cli-agent
@@ -27,18 +27,18 @@ uv venv && source .venv/bin/activate && uv sync
 python minimal_cli_agent.py "make me a word report of the workspace"
 ```
 
-Watch the order: the agent reads the skill first, then asks permission for `ls`, then for `wc`, then reports — in the style `memory/preferences.md` asks for, signed the way the skill demands. Nobody scripted that sequence.
+Observa l'ordre: l'agent primer llegeix la habilitat, després demana permís per a `ls`, després per a `wc`, i finalment informa – en el estil `memory/preferences.md` que sol·licita, signant d'acord amb les exigències de la habilitat. Ningú va escriure aquesta seqüència.
 
-Every call prints `prompt_tokens`: the agent's whole self — persona, memory, skill index, two tool schemas — costs a few hundred tokens. Keep that number in mind next to your Exercise 2 measurements.
+Cada crida genera `prompt_tokens`: la totalitat de l'agent – la seva personalitat, memòria, índex de habilitats i dos esquemes d'eines – té un cost d'unes centenars tokens. Tingueu això en compte al costat dels vostres mesures del Exercici 2.
 
-## Make it yours
+## Fes-ho teu/a.
 
-Edit `agent.md`, drop your own markdown into `memory/`, add a `skills/<name>/skill.md` with a first line that says when to use it. No code changes needed for any of that. That is the point.
+Edita `agent.md`, afegeix el teu propi codi Markdown a `memory/`, i afegeix una `skills/<name>/skill.md` amb la primera línia que indiqui quan utilitzar-la. No cal fer cap canvi de codi per a això. Aquest és el punt clau.
 
-## Config
+## Configuració
 
-Defaults are Ollama-first (`qwen3:1.7b` — small models drive unevenly; a bigger engine drives better). Copy `.env.example` to `.env` to point at any OpenAI-compatible endpoint.
+Els valors per defecte prioritzen Ollama (`qwen3:1.7b` — els models petits condueixen l'agent de manera irregular; un motor més gran ho fa millor). Copia `.env.example` a `.env` per apuntar a qualsevol endpoint compatible amb OpenAI.
 
-## 📖 License & author
+## 📖 Llicència i autor
 
 Licensed under **CC BY-NC-SA 4.0**. © 2026 **Marc Alier i Forment** (UPC) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>. BSC Agents Course.

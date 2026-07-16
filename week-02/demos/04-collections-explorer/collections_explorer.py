@@ -1,26 +1,17 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-🗂️ Collections Explorer — an embeddings database you can poke.
+🗂️ Explorador de col·leccions – una base de dades embeddings amb la qual podeu interactuar.
 
-A COLLECTION is a table indexed with embeddings. This demo opens one — persistent
-on disk by default, so your chunks are still there when you come back — and lets
-you fill it and search it by meaning.
+Una "COL·LECCIÓ" és una taula indexada amb embeddings. Aquesta demostració obre una – que es guarda permanentment al disc per defecte, de manera que les vostres chunks continuen sent accessibles quan torni – i us permet omplir-la i buscar-hi elements per significat.
 
-Everything goes through the course's collections_manager utility (three functions:
-create_collection / insert / query, on ChromaDB). This demo is also the point:
-your application talks to the abstraction layer, not to the engine underneath.
+Tot passa a través de l'eina "collections\\_manager" del curs (que consta de tres funcions: `create_collection`, `insert` i `query`, segons ChromaDB). Aquesta demostració també és el punt clau: la vostra aplicació interactua amb la capa d'abstracció, no amb el motor que hi ha sota.
 
-Commands:
-    /add <text>        add a chunk (you'll be asked for its source)
-    /seed              load example chunks so queries land immediately
-    /list              what's in the collection (source · chunk_number · text)
-    <any other text>   query the collection by meaning, top-K nearest first
-    (empty line)       quit
+Comandes: /add <text> afegir un chunk (se us demanarà la font) /seed carregar un exemple chunks perquè les consultes es facin automàticament /list mostrar el contingut de la col·lecció (font · número de fragment · text) <qualsevol altre text> consultar la col·lecció per significat, mostrant els més propers (línia buida) sortir
 
-Run with --memory for a throwaway in-memory collection instead of the on-disk one.
+Utilitzeu l'opció `--memory` per crear una col·lecció en memòria temporal, en comptes de la que es guarda al disc.
 """
 import argparse
 import os
@@ -36,7 +27,7 @@ from collections_manager import create_collection, insert, query
 
 load_dotenv()
 
-# High-contrast theme — matches the context-explorer / embeddings-explorer house style.
+# Tema de contrast elevat – es correspon amb l'estil de disseny de les cases "context-explorer" / embeddings.
 BG = "grey23"
 ON_BG = f"on {BG}"
 TEXT = f"bright_white {ON_BG}"
@@ -128,7 +119,7 @@ def main() -> None:
         if line.startswith("/add"):
             chunk = line[4:].strip()
             if not chunk:
-                console.print(Text("  usage: /add <text of the chunk>", style=BAD))
+                console.print(Text("Ús: /add <text del chunk>", style=BAD))
                 continue
             source = console.input("[bold bright_cyan]   source? [/bold bright_cyan]").strip() or "manual"
             show_insert(insert(col, chunk, {"source": source}))

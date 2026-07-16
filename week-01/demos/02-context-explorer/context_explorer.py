@@ -1,21 +1,21 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 # =============================================================================================================== #
 # Universitat Politècnica de Catalunya (UPC)                                                                      #
 # =============================================================================================================== #
 
 """
-📚 Context Explorer: See How LLM Context Works
+📚 Explorador de context: Vegeu com funciona el context LLM
 
-A simple interactive demo to visualize:
-- The messages sent to the API (context)
-- The raw API request and response
+Una demostració interactiva senzilla per visualitzar:
+- Els missatges enviats a API (context)
+- La sol·licitud i la resposta brutes API
 
-Usage:
-    1. Create a .env file with your API key
-    2. python context_explorer.py
+Ús:
+    1. Crea un fitxer ".env" amb la teva clau API.
+    2. script python context_explorer.py
 """
 import os
 import json
@@ -36,15 +36,15 @@ load_dotenv()
 console = Console()
 client = None
 
-# Configuration from .env
+# Configuració des del fitxer .env
 MODEL = os.getenv("MODEL", "gpt-4.1-mini")
-OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")  # Optional: for alternative API endpoints
+OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")  # Opcional: per a alternatives API endpoints
 
 SYSTEM_PROMPT = "You are a helpful assistant."
 
 
 def show_context(messages: list) -> Panel:
-    """Show the current conversation context."""
+    """Mostrar el context de la conversa actual."""
     table = Table(
         box=box.SIMPLE,
         show_header=True,
@@ -64,27 +64,27 @@ def show_context(messages: list) -> Panel:
         table,
         title=f"📚 Context ({len(messages)} messages)",
         border_style="magenta",
-        style="on grey23",
+        style="en gris 23",
         padding=(0, 1)
     )
 
 
 def show_api_request(request_data: dict) -> Panel:
-    """Show the API request."""
+    """Mostra la sol·licitud API."""
     json_str = json.dumps(request_data, indent=2, ensure_ascii=False)
-    syntax = Syntax(json_str, "json", theme="monokai", background_color="grey23", word_wrap=True)
+    syntax = Syntax(json_str, "json", theme="monocai", background_color="gris23", word_wrap=True)
     return Panel(syntax, title="📤 API Request", border_style="yellow", style="on grey23", padding=(0, 1))
 
 
 def show_api_response(response_data: dict) -> Panel:
-    """Show the API response."""
+    """Mostra la resposta API."""
     json_str = json.dumps(response_data, indent=2, ensure_ascii=False)
-    syntax = Syntax(json_str, "json", theme="monokai", background_color="grey23", word_wrap=True)
+    syntax = Syntax(json_str, "json", theme="monocai", background_color="gris23", word_wrap=True)
     return Panel(syntax, title="📥 API Response", border_style="cyan", style="on grey23", padding=(0, 1))
 
 
 def show_message(role: str, content: str) -> Panel:
-    """Show a chat message."""
+    """Mostrar un missatge de xat."""
     styles = {
         "user": ("bright_white on blue", "blue", "👤 You"),
         "assistant": ("bright_white on dark_green", "green", "🤖 Assistant"),
@@ -95,31 +95,31 @@ def show_message(role: str, content: str) -> Panel:
 
 
 def wait_spinner():
-    """Show a waiting spinner."""
+    """Mostrar un indicador de "esperant"."""
     return Live(
         Panel(
-            Spinner("dots", text=Text(" Waiting for response...", style="bold black on yellow")),
-            border_style="yellow", style="on yellow", padding=(0, 1)
+            Spinner("dots", text=Text("Esperant una resposta...", style="negre gros sobre fons groc")),
+            border_style="groc", style="en groc", padding=(0, 1)
         ),
         console=console, refresh_per_second=10
     )
 
 
 def run_chat():
-    """Run the chat loop."""
+    """Executar el bucle de conversa."""
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     
     console.print()
     console.print(Panel(
-        Text("Type your messages. Empty message = quit.\nWatch the context grow with each exchange!", 
-             style="bright_white on grey23"),
+        Text("Escriu els teus missatges. Missatge buit = sortir. Observa com el context evoluciona amb cada intercanvi!", 
+             style="blanc clar sobre gris 23"),
         title="📚 Context Explorer",
-        border_style="bright_magenta",
-        style="on grey23",
+        border_style="magenta brillant",
+        style="en gris 23",
         padding=(1, 2)
     ))
     
-    # Show initial context
+    # Mostrar el context inicial
     console.print()
     console.print(show_context(messages))
     
@@ -128,13 +128,13 @@ def run_chat():
         user_input = console.input("[bold blue]👤 You: [/bold blue]")
         
         if not user_input.strip():
-            console.print(Panel(Text("Goodbye!", style="bright_white on grey23"), border_style="dim"))
+            console.print(Panel(Text("Adéu!", style="blanc clar sobre gris 23"), border_style="dim"))
             break
         
         messages.append({"role": "user", "content": user_input})
         console.print(show_message("user", user_input))
         
-        # Build and show request
+        # Sol·licitud de construcció i presentació
         request_data = {
             "model": MODEL,
             "messages": messages,
@@ -145,7 +145,7 @@ def run_chat():
         console.print()
         console.print(show_api_request(request_data))
         
-        # Call API
+        # Trucar al API
         with wait_spinner():
             response = client.chat.completions.create(
                 model=MODEL,
@@ -155,7 +155,7 @@ def run_chat():
         
         assistant_content = response.choices[0].message.content
         
-        # Show response
+        # Mostrar resposta
         usage_data = {
             "prompt_tokens": response.usage.prompt_tokens,
             "completion_tokens": response.usage.completion_tokens,
@@ -184,7 +184,7 @@ def run_chat():
         console.print()
         console.print(show_message("assistant", assistant_content))
         
-        # Show updated context
+        # Mostrar el context actualitzat
         console.print()
         console.print(show_context(messages))
 
@@ -197,25 +197,25 @@ def main():
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         console.print(Panel(
-            Text("OPENAI_API_KEY not found!\n\nCreate a .env file with:\nOPENAI_API_KEY=your-key-here",
-                 style="bold bright_white on dark_red"),
+            Text("La clau API d'OPENAI no s'ha trobat!\\n\\nCreeu un fitxer \".env\" amb el següent contingut:\\nOPENAI_API_KEY=la-seva-clau",
+                 style="negre i brillant, blanc sobre vermell fosc"),
             title="❌ Error", border_style="red", style="on dark_red"
         ))
         return
     
-    # Initialize client with optional custom endpoint
+    # Inicialitzar el client amb opcions personalitzades endpoint (opcional)
     if OPENAI_ENDPOINT:
         client = OpenAI(api_key=api_key, base_url=OPENAI_ENDPOINT)
     else:
         client = OpenAI(api_key=api_key)
     
-    # Show configuration
+    # Configuració
     console.print(Panel(
         Text(f"Model: {MODEL}\nEndpoint: {OPENAI_ENDPOINT or 'https://api.openai.com/v1'}", 
-             style="bright_white on grey23"),
+             style="blanc clar sobre gris 23"),
         title="⚙️ Configuration",
-        border_style="cyan",
-        style="on grey23"
+        border_style="cian",
+        style="en gris 23"
     ))
     
     run_chat()

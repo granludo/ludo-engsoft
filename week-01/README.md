@@ -1,25 +1,25 @@
-# Week 1 — Foundations: LLMs, the API call, and the universal interface
+# Setmana 1 – Bases: LLMs, la funció API i la interfície universal
 
-Companion code for **BSC Agents Course · Week 1**. The lectures lay the theory; the exercises here are where you touch it.
+Material complementari per al curs **Agents BSC · Setmana 1**. Les conferències presenten la teoria, i els exercicis aquí són on es posa en pràctica.
 
-## What Week 1 covers
+## Què cobreix la primera setmana
 
-- **Tokenization** — what the model actually sees, and why your bill is in tokens not words.
-- **Base vs. aligned** — GPT-2 (a base model, never RLHF'd) vs. Qwen3-1.7B (aligned). The same prompt produces a quiz on one side and an answer on the other. The alignment stack from Lecture 2 is the difference.
-- **The API call** — JSON in, JSON out, over HTTP. Universal wire format across providers (OpenAI, Anthropic via OpenRouter, Mistral, …) and local servers (Ollama, vLLM, LM Studio). See [`demos/context-explorer/`](./demos/context-explorer/) and [`demos/the-api-call/`](./demos/the-api-call/) — the bare chat-completions call in `curl` and via the SDK, plus streaming and images.
+- **Tokenització** – què realment veu el model, i per què la vostra factura està en "tokens" (unitats) i no en paraules.
+- **Base contra alineat** — GPT-2 (en un base model, mai RLHF) vs. Qwen3-1.7B (alineat). El mateix prompt genera una qüestió d'un costat i la resposta de l'altre. L'estacada d'alineació del seminari 2 és la diferència.
+- **La API comunicació** — JSON(entrada), JSON(sortida), sobre HTTP. Comunicació universal wire format a través dels proveïdors (OpenAI, Anthropic mitjançant OpenRouter, Mistral, …) i els servidors locals (Ollama, vLLM, LM Studio). Vegeu [`demos/context-explorer/`](./demos/context-explorer/) i [`demos/the-api-call/`](./demos/the-api-call/) — la comunicació bàsica, que inclou `curl` i la comunicació a través de SDK, juntament amb streaming] i imatges.
 
-## Exercises
+## Exercicis
 
-| # | What you do | Folder |
+| # | Què fas | Carpeta |
 |---|---|---|
-| **1 — Tokenize** | Load a tokenizer locally, count tokens, measure the multilingual penalty, compare two tokenizers on four kinds of input. | [`ex-01-tokenise/`](ex-01-tokenise/) |
-| **2 — Base vs. aligned** | Run GPT-2 (base, ~124M) and Qwen3-1.7B (aligned) side by side. Ask both the same four prompts; observe the gap. | [`ex-02-base-vs-aligned/`](ex-02-base-vs-aligned/) |
-| **3 — Call an LLM** | Use [`demos/context-explorer/`](./demos/context-explorer/) against a local Ollama-served Qwen3-1.7B. Same model as Exercise 2, this time wrapped in the OpenAI wire format. No API key, no money. | [`demos/context-explorer/`](./demos/context-explorer/) |
-| **4 — Call the LLM from code** | The bare call: `curl` and a short Python script against your own Ollama, on the model you can run. Same wire format that reaches a frontier model — only the `.env` changes. | [`ex-04-call-the-llm/`](ex-04-call-the-llm/) |
+| **1 — Tokenize** | Carregar tokenizer localment, comptar tokens, mesurar la penalització per la multilingüisme, comparar dues tokenizers en quatre tipus d'entrada. | [`ex-01-tokenise/`](ex-01-tokenise/) |
+| **2 – Base (fonètica bàsica) contra fonètica alineada** | Analitza les cromosomes GPT-2 (cromosoma principal, aproximadament 124M) i Qwen3-1.7B (alineats) un al costat de l'altre. Pregunta per a amb els mateixos quatre prompts; observa la diferència. | [`ex-02-base-vs-aligned/`](ex-02-base-vs-aligned/) |
+| **3 – Trucar a LLM** | Utilitza [`demos/context-explorer/`](./demos/context-explorer/) contra un servidor local que serveix Ollama amb una versió Qwen3-1.7B. El mateix model que en l'exercici 2, però aquesta vegada empaquetat amb OpenAI i wire format. Sense clau API, sense diners. | [`demos/context-explorer/`](./demos/context-explorer/) |
+| **4 – Crida al LLM des del codi** | La crida bàsica: `curl` i un curt script en Python contra el vostre Ollama, sobre el model que podeu executar. El mateix wire format que arriba a un model de frontera – només canvia el `.env`. | [`ex-04-call-the-llm/`](ex-04-call-the-llm/) |
 
-## How to run anything in this folder
+## Com executar qualsevol programa o fitxer dins d'aquesta carpeta.
 
-Each exercise sub-folder is independent — its own `pyproject.toml`, its own `.venv`. Standard pattern:
+Cada carpeta de exercicis és independent – té la seva pròpia identificació (`pyproject.toml`) i la seva pròpia identificació (`.venv`). Patró estàndard:
 
 ```bash
 cd week-01/ex-01-tokenise
@@ -28,19 +28,19 @@ uv sync
 python ex_01_tokenise.py
 ```
 
-`.venv/` and `.env` are gitignored everywhere — never commit them.
+`.venv/` i `.env` estan ignorats per Git en totes les ubicacions – mai no cal que es commitin.
 
-## Course VM
+## Curs VM
 
-If you don't have a working Python 3.10+ environment, the canonical course VM build is at [`../pre-course/vm-setup.md`](../pre-course/vm-setup.md) (VirtualBox + Ubuntu Server, OVA image distributed by the course); the [`../pre-course/cheatsheet.md`](../pre-course/cheatsheet.md) has the day-one commands.
+Si no teniu un entorn de Python 3.10 o superior funcional, la versió virtual de curs està disponible aquí: [`../pre-course/vm-setup.md`](../pre-course/vm-setup.md) (VirtualBox + Ubuntu Server, imatge OVA distribuïda pel curs); a [`../pre-course/cheatsheet.md`](../pre-course/cheatsheet.md) trobareu les ordres per començar.
 
-## License
+## Llicència
 
-[CC BY-NC-SA 4.0](../LICENSE) — share + adapt for non-commercial use, with attribution and same-license redistribution.
+[CC BY-NC-SA 4.0](../LICENSE) – Permetre el compartiment i l'adaptació per a usos no comercials, amb la indicació d'autor i la possibilitat de redistribuir sota la mateixa llicència.
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

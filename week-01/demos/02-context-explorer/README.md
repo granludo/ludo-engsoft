@@ -1,18 +1,18 @@
 <!-- =============================================================================================================== -->
-<!-- Universitat Politècnica de Catalunya (UPC)                                                                      -->
+<!-- Universitat Politècnica de Catalunya (UPC) -->
 <!-- =============================================================================================================== -->
 
-# 📚 Context Explorer
+# 📚 Explorador de context
 
-A simple interactive demo to visualize how LLM context works.
+Una demostració interactiva senzilla per visualitzar com funciona el context LLM.
 
-## What You'll See
+## El que veureu
 
-- **Context Stack** - All messages in the conversation
-- **API Request** - The exact JSON sent to OpenAI
-- **API Response** - What OpenAI returns (including token usage)
+- **Pila de context** – Tots els missatges de la conversa
+- **Sol·licitud a l'API** – El JSON exacte que s'envia a OpenAI
+- **API Resposta** – Què retorna OpenAI (incloent l'ús de token)
 
-## Setup
+## Configuració
 
 ```bash
 cd context-explorer
@@ -21,7 +21,7 @@ source .venv/bin/activate
 uv sync
 ```
 
-Create a `.env` file:
+Crea un fitxer amb el nom `.env`:
 
 ```bash
 # Required
@@ -35,31 +35,31 @@ MODEL=gpt-4.1-mini
 # OPENAI_ENDPOINT=https://your-azure-endpoint.openai.azure.com/v1
 ```
 
-## Run
+## Correr
 
 ```bash
 uv run context_explorer.py
 ```
 
-## Key Concepts
+## Conceptes clau
 
-1. **System Message** - Sets the assistant's behavior (index 0)
-2. **User Messages** - Your inputs get added to context
-3. **Assistant Messages** - Responses get added to context
-4. **Context Growth** - Each exchange adds 2 messages
-5. **Token Usage** - See how many tokens each request uses
+1. **Missatge del sistema** – Defineix el comportament de l'assistent (índex 0)
+2. **Missatges dels usuaris** – Les vostres aportacions es afegeixen al context.
+3. **Missatges d'assistència** – Les respostes s'afegeixen al context.
+4. **Creixement del context** – Cada interacció afegeix 2 missatges.
+5. **Token Ús** - Vegeu quant de tokens utilitza cada sol·licitud.
 
-## 📖 License
+## 📖 Llicència
 
 This repository is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](LICENSE) (`CC BY-NC-SA 4.0`).
 
-## 👤 Author
+## 👤 Autor
 
-[@granludo](https://github.com/granludo) - Marc Alier, Universitat Politècnica de Catalunya (UPC)
+[@granludo](https://github.com/granludo) – Marc Alier, Universitat Politècnica de Catalunya (UPC)
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.
