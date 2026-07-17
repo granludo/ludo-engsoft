@@ -2,26 +2,26 @@
 <!-- Universitat Politècnica de Catalunya (UPC) -->
 <!-- =============================================================================================================== -->
 
-# 📚 Embeddings-RAG Explorador
+# 📚 Explorador d'embeddings i RAG
 
-**La demostració del mètode dinàmic-RAG.** Un programa mostra tot el bucle. Al començament, **processa**
-`knowledge.txt` — chunks utilitzant una finestra corredora i inserint cada chunk en un...
-recolectar-ho a través del curs [`collections-manager`](../../collections-manager/)
-(el gestor afegeix i indexa cada un d'ells). Després, en cada tornada, observeu el comportament dinàmic.
-RAG succeix, pas a pas:
+**La demostració del RAG dinàmic.** Un sol programa ensenya tot el bucle. En arrencar, **ingereix**
+`knowledge.txt` —el parteix en chunks amb una finestra lliscant i insereix cada chunk en una
+col·lecció mitjançant el [`collections-manager`](../../collections-manager/) del curs
+(el gestor n'incrusta i n'indexa cadascun). Després, a cada torn, veus com passa el RAG
+dinàmic, panell rere panell:
 
-1. **El que envia la interfície de xat:** només les seqüències bàsiques, res més.
-2. **Recuperació** – el vostre missatge es converteix en la consulta; la col·lecció retorna el més proper.
-chunks gràcies a la seva similitud, i veieu quins superen el límit (**→ injectat**).
-i que es descarten (**✗ per sota del límit**).
-3. **El que realment enviem al sistema LLM + historial + plantilla (missatge, chunks)**.
-4. **La resposta – i el que perdura** – la resposta, la factura token, i el fet que...
-Les chunks ja han desaparegut.
+1. **Què envia la interfície de xat** —els torns pelats, res més.
+2. **Recuperació** —el teu missatge esdevé la consulta; la col·lecció retorna els chunks
+   més propers amb la seva similitud, i veus quins superen el llindar (**→ injectat**)
+   i quins es descarten (**✗ per sota del llindar**).
+3. **Què enviem realment a l'LLM** —system + historial + plantilla(missatge, chunks).
+4. **La resposta —i què perdura**— la resposta, la factura de tokens, i el fet que
+   els chunks ja han desaparegut.
 
-Tot indica les tres crides del responsable: `create_collection` / `insert` / `query`.
-la mateixa interfície que la de "collections-explorer", la que s'ha proporcionat.
-[`simple-dynamic-rag`](../../simple-dynamic-rag/) e l'eina, i el vostre projecte final. Això és
-El propòsit d'una capa d'abstracció: aquí ningú interactua directament amb el motor de la base de dades.
+Tot parla amb les tres crides del gestor —`create_collection` / `insert` / `query`—,
+la mateixa interfície que l'explorador de col·leccions, l'eina proporcionada
+[`simple-dynamic-rag`](../../simple-dynamic-rag/) i el teu projecte final. Aquest és
+el sentit d'una capa d'abstracció: aquí ningú parla directament amb el motor de la base de dades.
 
 ## Configuració
 
@@ -30,7 +30,7 @@ cd 05-embeddings-rag-explorer
 uv venv && source .venv/bin/activate && uv sync
 ```
 
-Còpia `.env.example` a `.env`. El valor predeterminat és local Ollama – sense clau, sense cost:
+Copia `.env.example` a `.env`. Per defecte és Ollama en local —sense clau, sense cost:
 
 ```bash
 ollama serve
@@ -38,38 +38,37 @@ ollama pull qwen3:1.7b
 ollama pull nomic-embed-text
 ```
 
-## Correr
+## Execució
 
 ```bash
 uv run embeddings_rag_explorer.py
 ```
 
-La col·lecció existeix **en la memòria**, i es reconstruïx des del principi (`knowledge.txt`) cada vegada que s'executa.
-Per tant, cada inici de prova comença de la mateixa manera. Per mantenir-ho així, configureu `PERSIST_PATH` a `.env`.
+La col·lecció viu **en memòria** i es reconstrueix des de `knowledge.txt` a cada execució,
+de manera que cada passada de la demostració comença igual. Configura `PERSIST_PATH` a `.env` si prefereixes conservar-la.
 
-La primera pantalla **sugereix preguntes per començar**, una guia gradual pensada per a la demostració.
-"recuperació per significat" (paraules que el text no utilitza) a través d'una font transdissa
-– fins a l'extrem de la temàtica – i després de cada resposta, suggereix la següent, així
-Sempre saps què intenta mostrar la pregunta següent.
+El panell d'introducció **suggereix preguntes per apuntar-hi** —una escala pensada per a la demostració que va
+de la «recuperació per significat» (paraules que el text no fa servir mai) a la lliçó del llindar
+per a preguntes fora de tema, passant per la procedència entre dominis— i, després de cada resposta, apunta la següent, de manera que
+sempre saps què vol mostrar la pregunta següent.
 
-| Comanda; ordre | El que fa |
+| Comanda | Què fa |
 |---|---|
-| `/topk N` | Quant chunks vols recuperar? |
-| `/threshold X` | el mecanisme de similaritat – observeu chunks canviar entre la injecció i la eliminació |
-| *(qualsevol text)* | una rotació completa, totes les quatre parts. |
-| (línia buida) | parar; deixar |
+| `/topk N` | quants chunks vols recuperar |
+| `/threshold X` | la comporta de similitud —observa com els chunks basculen entre injectat i descartat |
+| *(qualsevol text)* | un torn complet, els quatre panells |
+| *(línia buida)* | surt |
 
-## La cosa important a tenir en compte
+## El detall que cal observar
 
-Pregunte "Quina és la velocitat de l'robot de entrega?". – Aquestes paraules no apareixen al document – i així
-tot i així, chunk és el primer de la llista: la recuperació es fa per significat. Després, pregunta alguna cosa...
-Aquest document no cobreix i no analitza la columna de similaritat. Les preguntes que no estan relacionades continuen tenint una puntuació.
-al voltant de 0,40-0,50 en aquest embeddings model, mentre que les respostes reals oscil·len al voltant de 0,50-0,70 —
-La banda és estreta. Jugueu amb `/threshold`: trobeu els punts on les preguntes fora de tema interfereixen.
-res mentre els autèntics continuen alimentant-se; augmenta-ho i observa com les preguntes reals es veuen privades de recursos.
-També. La porta és una decisió de disseny que cal avaluar en funció del vostre model i les vostres necessitats.
-conjunt de dades — i la instrucció del sistema fonamental és la segona línia de defensa quan es produeix alguna cosa
-escapa sense.
+Pregunta **«què és de ràpid el robot de repartiment?»** —paraules que el document no fa servir mai— i el
+chunk correcte encapçala la taula igualment: la recuperació és per significat. Després pregunta alguna cosa que el
+document no cobreix i mira la columna de similitud. Les preguntes sense relació encara puntuen
+al voltant de 0,40–0,50 en aquest model d'embeddings, mentre que les respostes reals se situen al voltant de 0,50–0,70 —
+la banda és estreta. Juga amb `/threshold`: troba el punt on les preguntes fora de tema no injecten
+res mentre les autèntiques encara mengen; puja'l més amunt i observa com les preguntes legítimes també es queden a l'estacada.
+La comporta és una decisió de disseny que cal calibrar contra el teu model i el teu corpus
+—i el system prompt ancorat és la segona línia de defensa quan alguna cosa s'escola.
 
 ## 📖 Llicència
 

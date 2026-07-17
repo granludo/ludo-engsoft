@@ -1,15 +1,20 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Curs d'agents del BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
 # Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
 Setmana 1 · Exercici 2 — Qwen3-1.7B (aligned model, 1.7B, 2025).
 
-Ha estat entrenat intensament amb supervisió i afinació detallada, així com optimització de preferències. Té la mateixa arquitectura que GPT-2 (únic decodificador transformer, predicció del següent token) — la diferència és l'estrat d'alineació de la Lliçó 2.
+Ha rebut un postentrenament intens amb ajust fi supervisat i optimització de
+preferències. Comparteix família d'arquitectura amb GPT-2 (Transformer només
+decodificador, predicció del següent token); la diferència és la capa
+d'alineació de la Lliçó 2.
 
-Configuració: `uv venv` i després `source .venv/bin/activate` i finalment, executar `uv sync python simple_qwen3.py`
+Configuració:
+    uv venv && source .venv/bin/activate && uv sync
+    python simple_qwen3.py
 
-Només necessita CPU, aproximadament 3,4 GB de descàrrega al primer inici, i després es guarda en memòria RAM.
+Només CPU, ~3,4 GB de descàrrega a la primera execució; després queda a la memòria cau.
 """
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
@@ -20,7 +25,7 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
 model = AutoModelForCausalLM.from_pretrained(MODEL_ID, torch_dtype=torch.float32)
 model.eval()
 
-print("Qwen3 1.7B CLI (Prem \"Ctrl+C\" per sortir)")
+print("Qwen3 1.7B CLI (prem Ctrl+C per sortir)")
 
 while True:
     try:
@@ -51,5 +56,5 @@ while True:
         print("\n" + tokenizer.decode(output[0], skip_special_tokens=True))
 
     except KeyboardInterrupt:
-        print("Adéu.")
+        print("\nAdéu.")
         break

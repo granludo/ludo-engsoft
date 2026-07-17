@@ -2,12 +2,12 @@
 <!-- Universitat Politècnica de Catalunya (UPC) -->
 <!-- =============================================================================================================== -->
 
-# Gestor/a de col·leccions
+# 🗂️ Collections Manager
 
-**Una eina proporcionada, no una demostració.** Una base de dades (embeddings) implementa taules indexades.
-amb embeddings – anomenem aquestes taules **col·leccions**. Hi ha moltes implementacions.
-allà; aquest paquet és la idea completa reduïda a **tres funcions**, implementades.
-on [ChromaDB](https://www.trychroma.com/):
+**Una eina que ja et donem feta, no pas una demo.** Una base de dades d'embeddings implementa
+taules indexades amb embeddings: aquestes taules són el que anomenem **col·leccions**. N'hi ha
+moltes implementacions; aquest paquet redueix tota la idea a **tres funcions**, construïdes sobre
+[ChromaDB](https://www.trychroma.com/):
 
 ```python
 from collections_manager import create_collection, insert, query
@@ -23,31 +23,30 @@ query(col, "how quick is the delivery robot?", top_k=3)
 #      "similarity": 0.71}, ...]
 ```
 
-## API
+## L'API
 
-| Funcció | El que fa |
+| Funció | Què fa |
 |---|---|
-| `create_collection(name, embedding_function=None, description="", metric="cosine", persist_path=None)` | Crear – o tornar a obrir – una col·lecció. Amb `persist_path`, es guarda al disc i sobreviureix als reinici; sense, en la memòria. `metric` és igual que `"cosine"` (més alt = més proper) o `"euclidean"` (més baix = més proper). |
-| `insert(collection, chunk, metadata)` | Almacenar chunk. Retornar `{"ok", "id", "error"}`. La metadades han contenir almenys `source`; `chunk_number` (posició dins de la font) es assigna automàticament si no està present. Els identificadors són `source::chunk_number`, per tant, intentar reintroduir una posició falla correctament. |
-| `query(collection, query_text, top_k=3, threshold=None)` | L'opció més propera chunks, la primera opció, cada una amb les seves metadades i el seu `similarity` (cosinus) o `distance` (euclidi). `threshold` = mínim similaritat / màxim distància. |
+| `create_collection(name, embedding_function=None, description="", metric="cosine", persist_path=None)` | Crea —o torna a obrir— una col·lecció. Amb `persist_path` viu al disc i sobreviu als reinicis; sense, viu a la memòria. `metric` és `"cosine"` (com més alt, més a prop) o `"euclidean"` (com més baix, més a prop). |
+| `insert(collection, chunk, metadata)` | Desa un chunk. Retorna `{"ok", "id", "error"}`. Les metadades han de portar com a mínim `source`; el `chunk_number` (la posició dins de la font) s'assigna automàticament si no hi és. Els identificadors són `source::chunk_number`, de manera que tornar a inserir una posició falla de manera neta. |
+| `query(collection, query_text, top_k=3, threshold=None)` | Els chunks més propers, del més proper endavant, cadascun amb les seves metadades i el seu valor de `similarity` (cosinus) o `distance` (euclidiana). `threshold` = similitud mínima / distància màxima. |
 
-La funció per defecte embedding crida a qualsevol mòdul OpenAI compatible amb endpoint (des de `.env`:
-`OPENAI_ENDPOINT`, `EMBED_MODEL`, `OPENAI_API_KEY` — valor per defecte de la ubicació Ollama +
-`nomic-embed-text`, sense clau, sense cost. Podeu afegir la vostra pròpia.
-`embedding_function(list[str]) -> list[list[float]]`. Una regla: tot dins d'un...
-La col·lecció ha de ser creada amb el mateix model, o la geometria no tindrà cap significat.
+La funció d'embedding per defecte crida qualsevol endpoint compatible amb OpenAI (des de `.env`:
+`OPENAI_ENDPOINT`, `EMBED_MODEL`, `OPENAI_API_KEY` — per defecte, Ollama local +
+`nomic-embed-text`, sense clau i sense cost). Pots passar-hi la teva pròpia
+`embedding_function(list[str]) -> list[list[float]]`. Una única regla: tot el que hi ha dins d'una
+col·lecció s'ha d'embedir amb el **mateix model**, o la geometria no vol dir res.
 
-## Per què necessitem una capa d'abstracció
+## Per què una capa d'abstracció
 
-Per a la majoria de projectes de petites a mitjanes dimensions, Chroma és més que suficient – mantingueu-ho senzill.
-Però els requisits augmenten. Com que la vostra aplicació interactua amb aquesta interfície i no amb...
-Directament amb Chroma, podeu canviar el motor que hi ha sota – pgvector, un servei gestionat en la nuvem.
-magatzem, independentment del preu que algú estigui disposat a pagar – simplement, mitjançant la modificació d'un petit fitxer.
-la vostra sol·licitud.
+Per a la majoria de projectes petits i mitjans, Chroma ja fa de sobres el fet: no ho compliquis. Però
+els requisits creixen. Com que la teva aplicació parla amb *aquesta* interfície i no directament amb
+Chroma, pots canviar el motor de sota —pgvector, un magatzem al núvol gestionat, el que sigui que
+algú estigui disposat a pagar— reescrivint un sol fitxer petit, no pas la teva aplicació.
 
-## Utilitzeu-lo en el vostre propi projecte.
+## Fes-lo servir des del teu propi projecte
 
-Afegiu-ho com a dependència en la ruta del `pyproject.toml`:
+Afegeix-lo com a dependència de ruta al teu `pyproject.toml`:
 
 ```toml
 dependencies = ["collections-manager"]
@@ -56,7 +55,7 @@ dependencies = ["collections-manager"]
 collections-manager = { path = "../../collections-manager", editable = true }
 ```
 
-(Ajusteu la ruta relativa. Vegeu `week-02/demos/04-collections-explorer/` per veure un exemple de com fer-ho.)
+(Ajusta la ruta relativa. Consulta `week-02/demos/04-collections-explorer/` per veure un exemple funcional.)
 
 ## 📖 Llicència
 
@@ -64,4 +63,4 @@ Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licen
 
 ## 👤 Autor
 
-[@granludo](https://github.com/granludo) – Marc Alier, Universitat Politècnica de Catalunya (UPC)
+[@granludo](https://github.com/granludo) — Marc Alier, Universitat Politècnica de Catalunya (UPC)

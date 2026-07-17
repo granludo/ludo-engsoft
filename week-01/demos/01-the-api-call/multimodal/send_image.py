@@ -3,13 +3,23 @@
 # Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-Envieu una imatge a la Chat Completions i a la API.
+Envia una imatge a la Chat Completions API.
 
-Un model multimodal pot llegir imatges així com text. El format de cable és el mateix que les "llamades" de chat-completions que ja coneixeu: la única diferència és la forma del missatge `content`: en lloc d'una cadena senzilla, es converteix en una *llista* de parts, i una d'aquestes parts és una imatge (proporcionada a través d'un URL públic, o inclosa com una URI base64 `data:`). El que resta —l'endpoint, l'SDK, el registre d'ús— és idèntic.
+Un model multimodal pot llegir imatges igual que text. El wire format és la mateixa
+crida de chat-completions que ja coneixes: l'única diferència és la forma del
+`content` d'un missatge: en lloc d'una cadena simple, passa a ser una *llista* de
+parts, i una d'aquestes parts és una imatge (indicada com un URL públic, o
+incrustada com una URI `data:` en base64). Tota la resta —l'endpoint, l'SDK, el
+registre d'ús— és idèntica.
 
-Necessiteu un model amb capacitat de processament d'imatges (per exemple, gpt-4.1-mini, gpt-4o). Un petit model local normalment no pot processar imatges.
+Necessites un model amb capacitat de visió (per exemple, gpt-4.1-mini, gpt-4o). Un
+model local diminut normalment no pot veure imatges.
 
-Executa-ho: cp ../.env.example .env          # defineix el MODEL de visió + la teva clau uv executa --amb openai --amb python-dotenv python send_image.py                  # l'aplicació Great A'Tuin executa --amb openai --amb python-dotenv python send_image.py path/to/photo.jpg executa --amb openai --amb python-dotenv python send_image.py https://example.com/photo.jpg
+Executa-ho:
+    cp ../.env.example .env          # defineix un MODEL de visió + la teva clau
+    uv run --with openai --with python-dotenv python send_image.py                  # la Great A'Tuin inclosa
+    uv run --with openai --with python-dotenv python send_image.py path/to/photo.jpg
+    uv run --with openai --with python-dotenv python send_image.py https://example.com/photo.jpg
 """
 
 import base64
@@ -19,7 +29,7 @@ import sys
 from openai import OpenAI
 from dotenv import load_dotenv
 
-load_dotenv()  # extreure la variable `OPENAI_ENDPOINT`, `OPENAI_API_KEY` i `MODEL` d'un fitxer `.env` local.
+load_dotenv()  # llegeix `OPENAI_ENDPOINT`, `OPENAI_API_KEY` i `MODEL` d'un fitxer `.env` local
 
 client = OpenAI(
     base_url=os.environ.get("OPENAI_ENDPOINT", "https://api.openai.com/v1"),
@@ -27,13 +37,13 @@ client = OpenAI(
 )
 model = os.environ.get("MODEL", "gpt-4.1-mini")  # ha de poder veure imatges
 
-# Sense cap dubte, enviem la imatge de Great A'Tuin completa (tartanes per tot arreu).
-# (després). Passeu el vostre fitxer d'imatge o URL com a primer argument per utilitzar-lo.
+# Sense cap argument, enviem la imatge de la Great A'Tuin inclosa (tortugues fins al
+# fons de tot). Passa el teu propi fitxer d'imatge o URL com a primer argument per fer-lo servir.
 default_img = os.path.join(os.path.dirname(__file__), "great-atuin.png")
 image = sys.argv[1] if len(sys.argv) > 1 else default_img
 
-# Una imatge es pot incloure en el missatge, ja sigui com a URL, que és una imatge que el servidor pot obtenir, o bé com a...
-# URI de dades base64 que s'inclou directament (útil per a fitxers locals o imatges privades).
+# Una imatge entra al missatge com un URL que el servidor pot obtenir, o bé com una
+# URI de dades en base64 que incrustes directament (útil per a fitxers locals o imatges privades).
 if image.startswith(("http://", "https://")):
     image_url = image
 else:
@@ -47,7 +57,7 @@ resp = client.chat.completions.create(
     messages=[
         {
             "role": "user",
-            # El contingut ara és una llista de parts, no simplement una cadena de caràcters:
+            # el contingut ara és una LLISTA de parts, no una simple cadena:
             "content": [
                 {"type": "text", "text": "Describe this image. What is holding up the world — and what is holding up that?"},
                 {"type": "image_url", "image_url": {"url": image_url}},
@@ -57,4 +67,4 @@ resp = client.chat.completions.create(
 )
 
 print(resp.choices[0].message.content)
-print("Ús:", resp.usage)
+print("\nús:", resp.usage)

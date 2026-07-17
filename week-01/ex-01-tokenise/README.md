@@ -1,6 +1,6 @@
-# Setmana 1 · Exercici 1 — Tokenize, local
+# Setmana 1 · Exercici 1 — Tokenize, en local
 
-Carrega un tokenizer amb la biblioteca Hugging Face `transformers` i comptar manualment les tokens. Veure què realment veu el model. Mesurar la penalització per a múltiples idiomes. Comparar dues tokenizer famílies amb entrades relacionades amb codi.
+Carrega un tokenizer amb la biblioteca `transformers` de Hugging Face i compta els tokens a mà. Mira què veu realment el model. Mesura la penalització multilingüe. Compara dues famílies de tokenizers amb entrades de tipus codi.
 
 ## Executar-ho
 
@@ -10,12 +10,12 @@ uv sync
 python ex_01_tokenise.py
 ```
 
-La primera execució descarrega dues petites tokenizers de Hugging Face (unes centenars de KB cadascuna). No hi ha pesos del model, tampoc GPU ni la clau API.
+La primera execució descarrega dos tokenizers petits de Hugging Face (uns quants centenars de KB cadascun). Sense pesos de model, sense GPU, sense clau d'API.
 
-## Què podeu modificar
+## Què pots modificar
 
-- `PARAGRAPH_EN` / `PARAGRAPH_MINE` a la part superior de `ex_01_tokenise.py` — substitueix `PARAGRAPH_MINE` per la teva pròpia llengua per calcular la penalització multilingüe *per a tu*.
-- `TOKENIZER_A` / `TOKENIZER_B` — qualsevol ID de Hugging Face tokenizer funciona (`gpt2`, `bert-base-uncased`, `bert-base-multilingual-cased`, ...).
+- `PARAGRAPH_EN` / `PARAGRAPH_MINE` al principi de `ex_01_tokenise.py` — substitueix `PARAGRAPH_MINE` per la teva llengua per calcular la *teva* penalització multilingüe.
+- `TOKENIZER_A` / `TOKENIZER_B` — funciona qualsevol id de tokenizer de Hugging Face (`gpt2`, `bert-base-uncased`, `bert-base-multilingual-cased`, …).
 
 
 

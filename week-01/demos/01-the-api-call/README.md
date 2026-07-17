@@ -1,10 +1,10 @@
-# Conferència 3 – Crida a LLM
+# Conferència 3 — crida a l'LLM
 
-Tot està **JSON** a punt per **HTTP**. La mateixa **Chat Completions**, la mateixa crida — `messages`
-entrades, `choices[0].message.content`; sortides, OpenAI, OpenRouter, Groq, Mistral.
-i també el model local del teu ordinador portàtil. Cada proveïdor ofereix wire format. Aquí teniu:
-dos maneres (la primera `curl` i la segona SDK), més dues variants de la mateixa funció:
-streaming i imatges.
+Tot és **JSON sobre HTTP**. La mateixa crida a **Chat Completions** — `messages`
+d'entrada, `choices[0].message.content` de sortida — arriba igual a OpenAI, OpenRouter,
+Groq, Mistral i al model local del teu portàtil. Un sol wire format, tots els
+proveïdors. Aquí la tens de dues maneres (`curl` pelat i l'SDK de Python), més dues
+variants de la mateixa crida: streaming i imatges.
 
 ```
 chat-completions/   the call itself      (/v1/chat/completions)
@@ -19,35 +19,36 @@ multimodal/         send an image, not just text
 
 ## Executar-ho
 
-Cada carpeta és autònoma i llegeix el seu propi `.env`. Copia l'exemple.
-Ompliu-ho i executeu l'operació **des de dins del directori**, perquè es triï la opció correcta `.env`:
+Cada carpeta és autònoma i llegeix el seu propi `.env`. Copia l'exemple, omple'l i
+executa **des de dins de la carpeta** perquè s'agafi el `.env` correcte:
 
 ```bash
 cd chat-completions
 cp ../.env.example .env        # set OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL
 ```
 
-Font original HTTP – només `curl` (els fonts del guió `.env` per a vosaltres):
+HTTP pelat — només `curl` (l'script carrega el `.env` per tu):
 
 ```bash
 bash curl.sh
 ```
 
-Python – a través de `uv`, sense instal·lació manual:
+Python — mitjançant `uv`, sense instal·lació manual:
 
 ```bash
 uv run --with openai --with python-dotenv python call.py
 ```
 
-Els mateixos dos comandaments funcionen a `streaming/` i `multimodal/`. Una advertència:
-**Visió** (`multimodal/`) necessita un model amb capacitat de visió, per tant, dirigeix el `.env` cap a...
-proveïdor que en tingui. Proveïdor senzill chat completions (`chat-completions/`, `streaming/`)
-operar contra qualsevol cosa que parli de wire format, incloent-hi un model local.
+Les mateixes dues ordres funcionen a `streaming/` i `multimodal/`. Un advertiment:
+la **visió** (`multimodal/`) necessita un model amb capacitat de visió, així que
+apunta el seu `.env` a un proveïdor que en tingui. Les chat completions normals
+(`chat-completions/`, `streaming/`) funcionen contra qualsevol cosa que parli el wire
+format, inclòs un model local.
 
-## Més o menys el mateix cable, però amb un substrat diferent.
+## El mateix cable, un substrat diferent
 
-La forma Chat Completions no és exclusiva per a OpenAI. Apliqueu el mateix codi de Python a un
-diferents `base_url` i crida a una màquina diferent:
+La forma de les Chat Completions no és exclusiva d'OpenAI. Apunta el mateix codi de
+Python a un `base_url` diferent i cridarà una màquina diferent:
 
 ```python
 from openai import OpenAI
@@ -56,13 +57,14 @@ from openai import OpenAI
 client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
 ```
 
-El mateix client, la mateixa trucada, el mateix JSON. El substrat és substituible; l'interfície
-és portàtil. Aquesta portabilitat és el punt clau, per tant, ens centrem en aquest aspecte.
-Tots parlen, però no en referència a la propietat exclusiva d'un proveïdor específic endpoint.
+El mateix client, la mateixa crida, el mateix JSON. El substrat és substituïble; la
+interfície és portable. Aquesta portabilitat és tot el sentit de la cosa: per això
+construïm sobre el format que tothom parla, i no sobre l'endpoint propietari de cap
+proveïdor concret.
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
+BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

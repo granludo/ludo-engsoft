@@ -2,26 +2,27 @@
 <!-- Universitat Politècnica de Catalunya (UPC) -->
 <!-- =============================================================================================================== -->
 
-# 📐 Embeddings Explorador
+# 📐 Embeddings Explorer
 
-Acompanyament per a l'explorador de context, per a la [embeddings] lliçó. Escriu una frase; el programa demostra.
-**el integra** (el transforma en una llista de números), **mostra el vector**, i després mostra **com**.
-És igual al nombre de frases que he introduit abans **— mesurat de dues maneres simultàniament, en una taula**
-ordenament per proximitat.
+El company del context explorer, per a la lliçó d'embeddings. Escriu una frase; la demo **l'embedeix**
+(la converteix en una llista de números), **et mostra el vector** i, tot seguit, et mostra **com de
+prop està de cada frase que has introduït abans** —mesurat de dues maneres alhora, en una taula
+ordenada de la més propera a la més llunyana.
 
-La lliçó és la idea central que es troba al darrere de tot el concepte de RAG: **el significat es converteix en geometria**. Un cop...
-Una frase és un punt en l'espai, "semblant" simplement significa "proper", i es pot assignar un número a això.
+La lliçó és la idea única que hi ha darrere de tot el RAG dinàmic: **el significat es torna
+geometria.** Un cop una frase és un punt a l'espai, «semblant» no és res més que «a prop», i li pots
+posar un número.
 
 ## Les dues mètriques
 
-| Mètric | Què mesura | Lectura |
+| Mètrica | Què mesura | Com es llegeix |
 |---|---|---|
-| **similitud cosinada** | l'angle entre els dos vectors | `1.0` = mateixa direcció · `0.0` = no relacionada · **més alt = més proper** |
-| **Distància euclidiana** | la distància recta entre els dos punts | `0.0` = idèntic · **menys = més proper** |
+| **similitud del cosinus** | l'angle entre els dos vectors | `1.0` = mateixa direcció · `0.0` = sense relació · **més alt = més a prop** |
+| **distància euclidiana** | la separació en línia recta entre els dos punts | `0.0` = idèntics · **més baix = més a prop** |
 
-Aquests models retornen vectors de longitud unitària (norma ≈ 1.0 – la demo ho mostra). Per a vectors
-unitaris, les dues mètriques donen el mateix rànquing, perquè `distance² = 2·(1 − cosine)`. Així,
-Troba dos noms per a una mateixa geometria, i pots veure com es posen d'acord.
+Aquests models retornen vectors de **longitud unitària** (norma ≈ 1.0 —la demo ho mostra). Per a
+vectors unitaris les dues mètriques donen el mateix ordre, perquè `distance² = 2·(1 − cosine)`. Així
+tens dos noms per a una mateixa geometria, i pots veure com es posen d'acord.
 
 ## Configuració
 
@@ -30,8 +31,8 @@ cd embeddings-explorer
 uv venv && source .venv/bin/activate && uv sync
 ```
 
-Còpia `.env.example` a `.env`. L'opció per defecte és **Ollama local + `nomic-embed-text`** – sense tecla.
-sense costos. Primer, treu el model:
+Copia `.env.example` a `.env`. El valor per defecte és **Ollama local + `nomic-embed-text`** —sense
+clau, sense cost—. Primer descarrega el model:
 
 ```bash
 ollama serve
@@ -44,32 +45,32 @@ MODEL=nomic-embed-text
 OPENAI_ENDPOINT=http://localhost:11434/v1
 ```
 
-Per utilitzar les "embeddings" pagades d'OpenAI, assigneu el valor `.env` al valor `https://api.openai.com/v1` amb un
-Clau real i `MODEL=text-embedding-3-small`. El codi no canvia; només la configuració.
+Per fer servir els embeddings de pagament d'OpenAI, apunta `.env` a `https://api.openai.com/v1` amb
+una clau real i `MODEL=text-embedding-3-small`. El codi no canvia: només la configuració.
 
-## Correr
+## Execució
 
 ```bash
 uv run embeddings_explorer.py
 ```
 
-Comandes a la xat:
+Comandes dins del xat:
 
-| Comanda; ordre | El que fa |
+| Comanda | Què fa |
 |---|---|
-| (escriu qualsevol frase) | incorporar-lo, mostrar el vector, comparar-lo amb els anteriors |
-| `/seed` | Carregar algunes frases d'exemple perquè les distàncies es visualitzin immediatament. |
-| `/list` | enumerar les frases que s'han introduit fins ara |
-| `/clear` | Oblida tot i comença de nou. |
-| (línia buida) | parar; deixar |
+| *(escriu qualsevol frase)* | l'embedeix, en mostra el vector i el compara amb les anteriors |
+| `/seed` | carrega unes quantes frases d'exemple perquè les distàncies surtin de seguida |
+| `/list` | llista les frases introduïdes fins ara |
+| `/clear` | ho oblida tot i comença de nou |
+| *(línia buida)* | surt |
 
-## La cosa important a tenir en compte
+## El que has de notar
 
-Premi a `/seed`, després introdueix "**quant de temps tarda el robot d'almacenament?**". Té gairebé cap paraula.
-semblant al que diu "*La velocitat màxima del robot d'almacenament és de 2,4 metres per segon*", però aconsegueix aterrar.
-**el més proper**, tant en termes de distància com en altres mètriques. Els números reflecteixen el **significat**, no les paraules compartides. Després, introdueix
-receta i observa com cau al fons. No hi ha cap continuïtat: tanca el programa i...
-L'espai s'ha acabat.
+Executa `/seed` i, tot seguit, escriu **«how quick is the warehouse robot?»**. No té gairebé cap
+paraula en comú amb *«The warehouse robot's top speed is 2.4 metres per second»* i, tot i així, cau
+**la més propera** per totes dues mètriques. Els números segueixen el **significat**, no pas les
+paraules compartides. Després escriu una recepta i mira com cau al final de tot. No hi ha
+persistència: tanca el programa i l'espai desapareix.
 
 ## 📖 Llicència
 
@@ -77,9 +78,9 @@ Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licen
 
 ## 👤 Autor
 
-[@granludo](https://github.com/granludo) – Marc Alier, Universitat Politècnica de Catalunya (UPC)
+[@granludo](https://github.com/granludo) — Marc Alier, Universitat Politècnica de Catalunya (UPC)
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
+BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.

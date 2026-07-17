@@ -4,13 +4,13 @@
 
 # 📚 Explorador de context
 
-Una demostració interactiva senzilla per visualitzar com funciona el context LLM.
+Una demostració interactiva senzilla per visualitzar com funciona el context dels LLM.
 
-## El que veureu
+## Què veuràs
 
-- **Pila de context** – Tots els missatges de la conversa
-- **Sol·licitud a l'API** – El JSON exacte que s'envia a OpenAI
-- **API Resposta** – Què retorna OpenAI (incloent l'ús de token)
+- **Pila de context** — Tots els missatges de la conversa
+- **Sol·licitud a l'API** — El JSON exacte que s'envia a OpenAI
+- **Resposta de l'API** — Què retorna OpenAI (inclòs l'ús de tokens)
 
 ## Configuració
 
@@ -21,7 +21,7 @@ source .venv/bin/activate
 uv sync
 ```
 
-Crea un fitxer amb el nom `.env`:
+Crea un fitxer `.env`:
 
 ```bash
 # Required
@@ -35,7 +35,7 @@ MODEL=gpt-4.1-mini
 # OPENAI_ENDPOINT=https://your-azure-endpoint.openai.azure.com/v1
 ```
 
-## Correr
+## Executar
 
 ```bash
 uv run context_explorer.py
@@ -43,11 +43,11 @@ uv run context_explorer.py
 
 ## Conceptes clau
 
-1. **Missatge del sistema** – Defineix el comportament de l'assistent (índex 0)
-2. **Missatges dels usuaris** – Les vostres aportacions es afegeixen al context.
-3. **Missatges d'assistència** – Les respostes s'afegeixen al context.
-4. **Creixement del context** – Cada interacció afegeix 2 missatges.
-5. **Token Ús** - Vegeu quant de tokens utilitza cada sol·licitud.
+1. **Missatge del sistema** — Defineix el comportament de l'assistent (índex 0)
+2. **Missatges de l'usuari** — Les teves entrades s'afegeixen al context
+3. **Missatges de l'assistent** — Les respostes s'afegeixen al context
+4. **Creixement del context** — Cada intercanvi afegeix 2 missatges
+5. **Ús de tokens** — Mira quants tokens fa servir cada sol·licitud
 
 ## 📖 Llicència
 

@@ -1,5 +1,5 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Curs d'agents de BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
 # Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 # =============================================================================================================== #
@@ -7,13 +7,13 @@
 # =============================================================================================================== #
 
 """
-🔌🤖 El bucle d'agent creat manualment, que ara crida a un servidor MCP.
+🔌🤖 El bucle d'agent fet a mà, ara cridant un servidor MCP.
 
-Aquest és el circuit que funciona perquè has creat les dues parts: el bucle (des de "donar les LLM manes") i el servidor (server.py). Quan es connecta, el client sol·licita al servidor la seva llista d'eines — nom + descripció + JSON esquema per a cada una — i les passa directament al model com a la seva llista d'eines. Quan el model demana una eina, el bucle dirigeix la petició a través del JSON-RPC al MCP servidor i retorna el resultat.
+Aquest és el cicle d'anada i tornada que funciona perquè has construït les dues meitats: el bucle (de «donar mans a l'LLM») i el servidor (server.py). En connectar-se, el client demana al servidor el seu REGISTRE d'eines —nom + descripció + esquema JSON de cadascuna— i les passa directament al model com a llista d'eines. Quan el model demana una eina, el bucle encamina la crida per JSON-RPC cap al servidor MCP i en retorna el resultat.
 
-El bucle no va canviar. Només el punt d'origen dels instruments ha canviat: en lloc de ser escrits a mà per al client, es TROBEN al servidor.
+El bucle no ha canviat. Només ha canviat d'on venen les eines: en lloc d'escriure-les a mà al client, es DESCOBREIXEN des del servidor.
 
-    Executar l'agent uv amb el fitxer agent\\_with\\_mcp.py amb l'ordre "Quina és la velocitat màxima del Pallet Pup?".
+    uv run agent_with_mcp.py "quina és la velocitat màxima del Pallet Pup?"
 """
 import asyncio
 import json
@@ -33,7 +33,7 @@ SERVER = StdioServerParameters(command=sys.executable, args=["server.py"])
 
 
 def to_openai_tool(t):
-    """Una entrada de registre per a una eina MCP és essencialment un esquema d'eina d'OpenAI, gairebé idèntic."""
+    """L'entrada de registre d'una eina MCP JA ÉS un esquema d'eina d'OpenAI, gairebé al peu de la lletra."""
     return {"type": "function", "function": {
         "name": t.name, "description": t.description or "", "parameters": t.inputSchema}}
 
@@ -46,15 +46,15 @@ async def main(user_prompt):
             # 1. Descobrir el registre que anuncia el servidor
             listing = await session.list_tools()
             tools = [to_openai_tool(t) for t in listing.tools]
-            print("── the MCP registry the model receives ──")
+            print("── el registre MCP que rep el model ──")
             for t in tools:
-                print(f"  tool: {t['function']['name']}  —  {t['function']['description']}")
+                print(f"  eina: {t['function']['name']}  —  {t['function']['description']}")
             print()
 
             messages = [{"role": "user", "content": user_prompt}]
-            while True:  # el mateix bucle que "donar les LLM mans" – però la font de l'eina ha canviat.
+            while True:  # el MATEIX bucle que «donar mans a l'LLM»: només ha canviat la font de les eines
                 resp = client.chat.completions.create(model=MODEL, messages=messages, tools=tools)
-                print(f"  prompt_tokens: {resp.usage.prompt_tokens}")   # El registre es inclou en cada sol·licitud.
+                print(f"  prompt_tokens: {resp.usage.prompt_tokens}")   # el registre s'inclou en cada petició
                 msg = resp.choices[0].message
                 messages.append(msg.model_dump(exclude_none=True))
                 if not msg.tool_calls:
@@ -62,10 +62,10 @@ async def main(user_prompt):
                     return
                 for tc in msg.tool_calls:
                     args = json.loads(tc.function.arguments or "{}")
-                    print(f"  → MCP call: {tc.function.name}({args})")
-                    result = await session.call_tool(tc.function.name, args)   # JSON - Temps de viatge de tornada (RPC)
+                    print(f"  → crida MCP: {tc.function.name}({args})")
+                    result = await session.call_tool(tc.function.name, args)   # anada i tornada per JSON-RPC
                     text = "".join(getattr(c, "text", "") for c in result.content)
-                    print(f"  ← MCP result: {text}")
+                    print(f"  ← resultat MCP: {text}")
                     messages.append({"role": "tool", "tool_call_id": tc.id, "content": text})
 
 

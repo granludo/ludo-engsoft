@@ -1,17 +1,17 @@
-# Joc individual RAG — fer trampa al joc de les cartes
+# RAG d'un sol fitxer — fer trampes al solitari
 
-La cosa més senzilla que es pugui considerar RAG: llegir tot el coneixement.
-fitxer, copia'l al camp de text i xata amb ell. Sense dividir en fragments, sense vectors d'embedding, sense...
-base de dades vectorial. El model respon perquè la resposta està continguda en el seu context.
-la finestra. És un petit bucle de conversa – aproximadament trenta línies que es poden llegir d'un sol cop.
+El més senzill que encara es pot anomenar RAG: llegeix tot el fitxer de coneixement, enganxa'l
+al prompt i xerra-hi. Sense chunking, sense embeddings, sense magatzem vectorial. El model respon
+perquè la resposta és allà mateix, dins del seu context window. És un bucle de xat minúscul —una
+trentena de línies que pots llegir de dalt a baix.
 
-Això funciona, i per a un conjunt de dades suficientment petit, simplement hauríeu de fer-ho. La lliçó és:
-on es trenca: l'**arxiu complet s'envia de nou en cada ocasió**, per tant `prompt_tokens`
-Escala en funció de la mida de la vostra base de coneixement, no de la pregunta. Feu una...
-unes preguntes i observa com la línia `prompt_tokens` puja mentre les teves preguntes queden en el mateix punt.
-Primer, feu una pregunta sobre un tema conegut ("Qui és el director executiu de Tesla?"). Després, feu una pregunta sobre un tema desconegut i observeu com respon.
-resposta concreta que no és honesta — prova que el model està llegint el context, i no les seves pròpies limitacions.
-dades per a l'entrenament.
+Això funciona, i per a un corpus prou petit és exactament el que has de fer. La lliçó és on es
+trenca: **el fitxer sencer es torna a enviar a cada torn**, de manera que els `prompt_tokens`
+creixen amb la mida de la teva base de coneixement, no amb la de la pregunta. Fes unes quantes
+preguntes i mira com la línia de `prompt_tokens` va pujant mentre les teves preguntes segueixen sent
+curtes. Després fes-ne una que quedi fora del corpus (per exemple, «Qui és el CEO de Tesla?») i mira
+com la resposta fonamentada falla amb honestedat: la prova que el model llegeix el context, i no pas
+les seves dades d'entrenament.
 
 ## Configuració
 
@@ -20,8 +20,8 @@ cd single-file-rag
 uv venv && source .venv/bin/activate && uv sync
 ```
 
-Còpia `.env.example` a `.env`. Els valors per defecte prenen una configuració local Ollama (sense clau API, sense
-diners, sense connexió a Internet):
+Copia `.env.example` a `.env`. Els valors per defecte pressuposen un Ollama local (sense clau API,
+sense diners, sense internet):
 
 ```bash
 OPENAI_API_KEY=ollama
@@ -29,16 +29,16 @@ MODEL=qwen3:1.7b
 OPENAI_ENDPOINT=http://localhost:11434/v1
 ```
 
-Seleccionar el punt `OPENAI_ENDPOINT` en qualsevol OpenAI compatible amb API per utilitzar un proveïdor diferent.
-(i escriu el número `MODEL` tal com ho escriuen els proveïdors).
+Apunta `OPENAI_ENDPOINT` a qualsevol API compatible amb OpenAI per fer servir un altre proveïdor (i
+escriu `MODEL` tal com l'escriu aquell proveïdor).
 
-## Correr
+## Execució
 
 ```bash
 uv run single_file_rag.py
 ```
 
-Interactua amb el document; cada resposta s'imprimeix juntament amb el comptador `prompt_tokens`.
-Tot el fitxer es guarda a `prompt_tokens` — en cada pas — per tant, el nombre augmenta amb
-fins i tot quan les vostres preguntes són petites. Aquest enfocament té el seu preu, i
-La raó per la qual existeix l'esgrafa següent (embeddings + recuperació). Línia en blanc per sortir.
+Xerra amb el document; cada torn imprimeix la resposta i el recompte de `prompt_tokens`. El fitxer
+sencer va a parar als `prompt_tokens` —a cada torn—, així que el número puja a mesura que avances,
+fins i tot quan les teves preguntes són minúscules. Aquest és el preu que paga aquest enfocament, i
+la raó per la qual existeix el graó següent (embeddings + recuperació). Línia en blanc per sortir.

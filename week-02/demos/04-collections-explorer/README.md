@@ -4,17 +4,17 @@
 
 # 🗂️ Explorador de col·leccions
 
-Una base de dades embeddings que pots explorar. Una **col·lecció** és una taula indexada amb
-embeddings; aquesta demostració obre un fitxer — **que es guarda permanentment al disc per defecte**, de manera que el teu chunks.
-són còn quan tornes – i et permet omplir-lo amb chunks i elements bàsics
-metadades, i després cerca-les per significat.
+Una base de dades d'embeddings que pots remenar. Una **col·lecció** és una taula indexada amb
+embeddings; aquesta demostració n'obre una —**persistent al disc per defecte**, de manera que els teus chunks
+segueixen allà quan hi tornes— i et deixa omplir-la de chunks i metadades bàsiques,
+per després cercar-hi per significat.
 
-Tot passa per la programació del curs.
-[`collections-manager`](../../collections-manager/) funcionalitat (tres funcions:
-`create_collection` / `insert` / `query`, a ChromaDB. Aquest és també el propòsit de...
-La demostració: **la vostra aplicació interactua amb la capa d'abstracció, no amb el motor.**
-sota. Per a projectes de petites a mitjanes dimensions, Chroma és més que suficient – i si...
-Si necessites una botiga més robusta, has de canviar les parts internes del programa, no l'aplicació en si.
+Tot passa per la utilitat
+[`collections-manager`](../../collections-manager/) del curs (tres funcions:
+`create_collection` / `insert` / `query`, sobre ChromaDB). I aquest és justament el sentit de
+la demostració: **la teva aplicació parla amb la capa d'abstracció, no amb el motor
+que hi ha a sota.** Per a projectes petits o mitjans, Chroma en té de sobres —i si
+algun dia necessites un magatzem més robust, canvies les entranyes de la capa, no la teva aplicació.
 
 ## Configuració
 
@@ -23,35 +23,35 @@ cd collections-explorer
 uv venv && source .venv/bin/activate && uv sync
 ```
 
-Còpia `.env.example` a `.env`. L'opció per defecte és la local Ollama – sense clau, sense cost:
+Copia `.env.example` a `.env`. Per defecte és Ollama en local —sense clau, sense cost:
 
 ```bash
 ollama serve
 ollama pull nomic-embed-text
 ```
 
-## Correr
+## Execució
 
 ```bash
 uv run collections_explorer.py            # persistent collection at ./collections-store
 uv run collections_explorer.py --memory   # throwaway in-memory collection
 ```
 
-| Comanda; ordre | El que fa |
+| Comanda | Què fa |
 |---|---|
-| `/add <text>` | emmagatzemar un chunk (requereix la **font**; el número de **fragment** dins d'aquesta font es assigna automàticament). |
-| `/seed` | carregar alguns exemples chunks perquè les consultes es facin immediatament |
-| `/list` | tot el contingut de la col·lecció: font · número de fragment · text |
-| *(qualsevol altre text)* | **Cerca per significat** – el més proper (chunks), juntament amb la seva similaritat i metadades. |
-| (línia buida) | parar; deixar |
+| `/add <text>` | desa un chunk (et demana la **source**; el **chunk_number** dins d'aquesta source s'assigna automàticament) |
+| `/seed` | carrega uns quants chunks d'exemple perquè les consultes retornin resultats de seguida |
+| `/list` | tot el contingut de la col·lecció: source · chunk_number · text |
+| *(qualsevol altre text)* | **consulta per significat** —els chunks més propers, amb la seva similitud i metadades |
+| *(línia buida)* | surt |
 
-## La cosa important a tenir en compte
+## El detall que cal observar
 
-Afegiu unes quantes chunks, tanqueu-ho i executeu-lo de nou: **són encara allà** – això és el que...
-La base de dades és només la meitat de la història. Després, feu una consulta amb paraules que el chunks mai no utilitza ("com ràpid
-és un robot de lliurament?"). I observa la superfície correcta (chunk). Aquest és el...
-embeddings mig. Insereu el mateix chunk dues vegades i llegiu el missatge "ids són".
-`source::chunk_number`, per tant, una col·lecció evita duplicats silenciosos.
+Afegeix uns quants chunks, surt i torna-la a executar: **encara hi són** —aquesta és la
+meitat de la història que aporta la base de dades. Després consulta amb paraules que els chunks no fan servir mai («què és de ràpid
+el robot de repartiment?») i observa com el chunk correcte surt igualment a la superfície —aquesta és la
+meitat que aporten els embeddings. Insereix el mateix chunk dues vegades i llegeix el missatge d'error: els ids són
+`source::chunk_number`, de manera que una col·lecció refusa els duplicats silenciosos.
 
 ## 📖 Llicència
 

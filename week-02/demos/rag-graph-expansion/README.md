@@ -1,41 +1,41 @@
-# Expansió de la grafa + RRF – recuperar per connexió, i després fusionar
+# Expansió de graf + RRF — recuperar per connexió i, després, fusionar
 
-El quart pas de la setmana 2. `rag-context-aware` ha solucionat la *consulta*; això soluciona un...
-un problema que una consulta perfecta no pot abordar: la pregunta de "múltiples salts", on la resposta
-és una cadena que connecta diversos documents, i el pont chunk no té cap relació amb la pregunta.
+El quart esglaó de la setmana 2. `rag-context-aware` va arreglar la *consulta*; això arregla un
+problema que una consulta perfecta no pot tocar: la pregunta **multi-salt**, on la resposta
+és una cadena que travessa diversos documents i el chunk pont no comparteix cap paraula amb la pregunta.
 
-Exemple pràctic: "Quina velocitat té el robot que ha construït l'empresa que va adquirir Acme?"
-"Robòtica?" La resposta necessita tres enllaços: Acme → Northwind → Pallet Pup → 2,1 m/s
-— i la frase clau ("Northwind construeix el Pallet Pup") no es refereix a cap de les dues coses.
-Ni "Acme" ni "ràpid". La funció cosí el classifica com a baix, per tant, el vector RAG mai no el veu.
+Exemple treballat: *«Què és de ràpid el robot fabricat per l'empresa que va adquirir Acme
+Robotics?»* La resposta necessita tres enllaços —Acme → Northwind → Pallet Pup → 2,1 m/s—
+i la frase pont (*«Northwind fabrica el Pallet Pup»*) no esmenta ni
+«Acme» ni «ràpid». El cosinus la classifica avall, així que el RAG vectorial no la veu mai.
 
-La canonada, en aproximadament 90 línies sinceres:
+La canonada, en unes 90 línies honestes:
 
-1. **Recuperador de vectors** (Chroma) – és la base, classificada per similitud. Però no cobreix tot.
-l'aducte.
-2. **Recollidor de grafs** – extraure les entitats de la pregunta, **analitzar el grafe**
-una o dues "saltades" a les relacions tipografiades (`acquired_by`, `builds`, `has_spec`) i,
-Recolliu les chunks que trobeu. Això es transporta fins al pont mitjançant una *connexió*.
-3. **Fusión de rangs recíprocs** — `score(id) = Σ weight / (k + rank)` tant en un com en l'altre
-llistes, reordenades. Cinc línies. `RRF_K=20` i `GRAPH_WEIGHT=0.85` són els valors.
-Adrià va triar un dels resultats d'una anàlisi amb una configuració de 98. El mètode de recuperació del millor conjunt (top-K) permet obtenir el pont **sense** necessitat de...
-eliminant all aquelles funcionalitats que la cerca vectorial ja havia aconseguit.
+1. **Recuperador vectorial** (Chroma) —la línia de base, ordenada per similitud. No arriba
+   al pont.
+2. **Recuperador de graf** —extreu les entitats de la pregunta, **recorre el graf**
+   un o dos salts sobre relacions tipades (`acquired_by`, `builds`, `has_spec`) i
+   recull els chunks on aterres. Això arriba al pont per *connexió*.
+3. **Reciprocal Rank Fusion** —`score(id) = Σ weight / (k + rank)` sobre totes dues
+   llistes, tornades a ordenar. Cinc línies. `RRF_K=20` i `GRAPH_WEIGHT=0.85` són els valors
+   que l'Adrià va triar d'un escombratge de 98 configuracions. El top-K fusionat recupera el pont **sense**
+   desplaçar allò que la cerca vectorial ja havia encertat.
 
-### Per què les relacions proven d'un LLM (no d'un tipus de reconeixement de noms propers clàssic)?
+### Per què les relacions surten d'un LLM (i no del NER clàssic)
 
-Aquesta demostració inclou el graf **ja extret** (`TRIPLES`), de manera que és determinista.
-La producció: les relacions es extreuen al moment de la ingesta per un **LLM** amb estructura.
-resultat, ja que els sistemes de NER clàssics (com spaCy o TF-IDF) et donen les *entitats*, i en el millor dels casos...
-*coïncidència* – "aquestes dues paraules apareixen juntes" – cosa que és semànticament
-vació i impossible per a un humà gestionar. El reconeixement d'entitats propies no és
-extracció de relacions. El cost d'extracció es paga una sola vegada, al moment de la incorporació, no per consulta.
+Aquesta demostració ve amb el graf **ja extret** (`TRIPLES`) perquè sigui determinista. En
+producció, les relacions s'extreuen en el moment de la ingesta amb un **LLM** de sortida
+estructurada, perquè el NER clàssic (spaCy, TF-IDF) et dona *entitats* i, com a molt,
+*coocurrència* —«aquestes dues paraules apareixen a prop l'una de l'altra»—, cosa que és semànticament
+buida i impossible de curar per a un humà. **El reconeixement d'entitats no és
+extracció de relacions.** El cost de l'extracció es paga un sol cop, en la ingesta, no per consulta.
 
 ### Manetes
 
-- `TOP_K` — chunks s'han passat al model.
-- `RRF_K` – Reducció de la influència del rang (el paper RRF utilitza un valor de 60; valors més baixos signifiquen que els rangs superiors tenen una influència major).
-- `GRAPH_WEIGHT` – indica quant elements inclou la llista del graf. Canviar-lo a `0.0` i activar el pont.
-tornen a la posició inicial — això és una demostració de com funciona la "fusión".
+- `TOP_K` — chunks passats al model.
+- `RRF_K` — esmorteïment del rang (l'article de RRF fa servir 60; com més baix, més dominen els rangs superiors).
+- `GRAPH_WEIGHT` — quant compta la llista del graf. Posa'l a `0.0` i el pont
+  torna a caure fora del top-K —aquesta és la demostració que «la fusió és qui fa la feina».
 
 ### Executar-ho
 
@@ -45,15 +45,15 @@ uv venv && source .venv/bin/activate && uv sync
 python rag_graph_expansion.py
 ```
 
-Necessita un servei local Ollama que ofereixi un model de xat i `nomic-embed-text`.
-(`ollama pull nomic-embed-text`). Sense clau API, sense diners. Veure `.env.example`.
+Necessita un Ollama local que serveixi un model de xat i `nomic-embed-text`
+(`ollama pull nomic-embed-text`). Sense clau API, sense diners. Vegeu `.env.example`.
 
 ### La lliçó
 
-El gràfic **mai deteriora** la base i afegeix la precisió **en proporció a com**.
-el vostre corpus és de tipus "multi-hop" — destaca en la gestió de corpes amb relacions complexes, però és dèbil en la comprensió general.
-una vegada. El cost és una crida addicional de LLM per a cada consulta (extracció d'entitats), no el graf.
-el mateix procés de travessar. Els valors mesurats que donen suport a tot això proven d'**Adrià Guilera**.
-El TFG de Bernabé** (FIB-UPC, 2026), que va construir i avaluar una capa de graf sobre
-LAMB `kb-server` sobre tres conjunts de dades públiques per a preguntes i respostes (QA) amb múltiples salts. Diagnostiqueu el vostre corpus abans de...
-intentant-ho.
+El graf **mai no degrada** la línia de base i afegeix cobertura **en proporció al grau
+multi-salt del teu corpus** —molt en corpus de cadenes d'entitats, gairebé zero en els
+generalistes. El cost és una crida addicional a l'LLM per consulta (extracció d'entitats), no el recorregut
+del graf en si. Els nombres mesurats darrere de tot això surten del **TFG de l'Adrià Guilera
+Bernabé** (FIB-UPC, 2026), que va construir i avaluar una capa de graf sobre el
+`kb-server` de LAMB en tres conjunts de dades públics de QA multi-salt. Diagnostica el teu corpus abans de
+recórrer-hi.

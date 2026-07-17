@@ -1,21 +1,21 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Curs d'agents de BSC — Transformers, LLMs, RAG i Agents: De la teoria a la producció
 # Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
-"""Dos estratègies de fragmentació senzilles. Sense estructura – la fragmentació és un bucle, no una biblioteca.
+"""Dues estratègies de chunking senzilles. Sense cap framework: el chunking és un bucle for, no una biblioteca.
 
-Un CHUNK és la unitat de recerca: una part d'un document suficientment petita per ser integrada com un punt i introduïda en un prompt, però alhora suficientment significativa per tenir sentit per si mateixa. La manera com secció el document determina què pot trobar el teu sistema de cerca.
+Un CHUNK és la unitat de recuperació: un fragment d'un document prou petit per representar-lo com un sol punt d'embedding i injectar-lo en un prompt, però prou gran per tenir sentit per si mateix. La manera com talles el document determina què podrà trobar el teu recuperador.
 
-  chunk_by_chars(text, size, overlap) — una finestra que es desplassa: `size` caràcters per chunk, avançant d'una quantitat igual a "size - overlap". L'"overlap" és un marge compartit, de manera que un fragment que es divideix en un límit encara persisteix complet en un dels chunks. Funciona amb **qualsevol** text i ignora la estructura pròpia del document.
+  chunk_by_chars(text, size, overlap)   — una finestra lliscant: `size` caràcters per chunk, avançant en passos de size-overlap. L'overlap és un marge compartit, de manera que un fet partit en un límit sobreviu sencer en un dels chunks. Funciona amb QUALSEVOL text; ignora l'estructura pròpia del document.
 
-  chunk_by_sections(markdown, level) — divide un document Markdown en seccions basades en els seus títols (level=2 talla a "##", level=4 a "####"). Cada chunk representa una secció, incloent el títol, per tant, porta el seu propi títol com a context. Respecta la estructura de l'autor; les dimensions de chunk varien segons el document.
+  chunk_by_sections(markdown, level)    — divideix un document markdown pels seus propis encapçalaments (level=2 talla als ##, level=4 als ####). Cada chunk és una secció, amb l'encapçalament inclòs, de manera que porta el seu propi títol com a context. Respecta l'estructura de l'autor; la mida dels chunks varia segons el document.
 """
 
 import re
 
 
 def chunk_by_chars(text: str, size: int = 800, overlap: int = 100) -> list[str]:
-    """Finestra de desplaçament de `size` caràcters, avançant per intervals de superposició."""
+    """Finestra lliscant de `size` caràcters, avançant en passos de size-overlap."""
     step = max(1, size - overlap)
     chunks = []
     i = 0
@@ -28,9 +28,9 @@ def chunk_by_chars(text: str, size: int = 800, overlap: int = 100) -> list[str]:
 
 
 def chunk_by_sections(markdown: str, level: int = 2) -> list[str]:
-    """Dividir un document en Markdown per als títols `level` (2 = ##, 4 = ####).
+    """Divideix un document markdown pels encapçalaments de `level` (2 = ##, 4 = ####).
 
-    Tot el que precedeix al primer títol (títol, introducció) es considera chunk 0 si no està buit. Cada chunk posterior correspon a una secció, incloent-hi el seu títol.
+    Tot el que hi ha abans del primer encapçalament (títol, introducció) esdevé el chunk 0 si no és buit. Cada chunk següent és una secció, amb el seu encapçalament inclòs.
     """
     heading = re.compile(rf"^#{{{level}}}\s", flags=re.MULTILINE)
     starts = [m.start() for m in heading.finditer(markdown)]

@@ -1,11 +1,11 @@
-# Exercici 4 – Crida al LLM des del codi
+# Exercici 4 — Crida el LLM des del codi
 
-Teniu un model que s'executa al vostre ordinador (exercici 3). Ara, el crideu des de
-còd - de la mateixa manera que crides a un model en núvol. El punt:
-**És la mateixa petició.** Una sol·licitud de completament d'un missatge de text és JSON sobre HTTP, i una altra.
-El format de fitxer s'envia a plataformes com OpenAI, OpenRouter, Groq i també a Ollama, que està instal·lat al vostre ordinador portàtil.
+Tens un model executant-se a la teva màquina (exercici 3). Ara el crides des del
+codi, igual que cridaries un model de frontera al núvol. La idea clau:
+**és la mateixa crida.** Una petició de chat completions és JSON sobre HTTP, i un
+únic wire format arriba per igual a OpenAI, OpenRouter, Groq i a l'Ollama del teu portàtil.
 
-## Què hi ha aquí?
+## Què hi ha aquí
 
 ```
 call.py              Chat Completions via the openai SDK   (runs on Ollama)
@@ -15,22 +15,22 @@ call.sh              the same call, raw curl — no SDK       (runs on Ollama)
 
 ## Configuració
 
-1. Executa el programa Ollama amb un model que puguis ajustar (segons l'exercici 3):
+1. Tingues Ollama en marxa amb un model que et càpiga (de l'exercici 3):
 
    ```bash
    ollama serve            # if it isn't already running
    ollama pull ministral-3:8b
    ```
 
-2. Configurar i instal·lar el client:
+2. Configura i instal·la el client:
 
    ```bash
    cp .env.example .env    # the defaults point at your local Ollama
    pip install openai python-dotenv
    ```
 
-Modifiqueu `MODEL` a `.env` per tal que s'adapti a la vostra màquina – `ministral-3:8b`
-(al voltant de 6 GB), `qwen3:1.7b` (al voltant de 1,5 GB), o qualsevol cosa que hàies fet a l'exercici 3.
+   Edita `MODEL` a `.env` amb el que et vagi bé per a la teva màquina — `ministral-3:8b`
+   (~6 GB), `qwen3:1.7b` (~1,5 GB), o qualsevol que hagis executat a l'exercici 3.
 
 ## Executar-ho
 
@@ -40,16 +40,16 @@ python call.py
 bash   call.sh
 ```
 
-Haureu de rebre una resposta en una sola frase, juntament amb les referències token i `usage`, i...
-`finish_reason`. Aquest `usage` bloc és la vostra factura per un servei pagat API – llegeu-la.
+Hauràs d'obtenir una resposta d'una sola frase, més el `usage` de tokens i el
+`finish_reason`. Aquest bloc `usage` és la teva factura en una API de pagament — llegeix-lo.
 
 ## Prova això
 
-- Canvia el `temperature` (de 0,0 a 1,5) i executa-ho diverses vegades. Quines canvis observes?
-- Canviar el model a `.env`. El mateix codi, però amb una estructura diferent.
-- Si teniu una clau de núvol (OpenAI, OpenRouter, Groq): configureu els valors del núvols a
-`.env` i tornar a executar `call.py` — **sense canvis**. El mateix codi, el mateix wire format.
-un model de frontiera en lloc del que teniu al vostre ordinador portàtil. Només el `.env` ha canviat.
+- Canvia la `temperature` (0,0 vs 1,5) i executa-ho unes quantes vegades. Què canvia?
+- Canvia el model a `.env`. El mateix codi, un cervell diferent.
+- Si tens una clau al núvol (OpenAI, OpenRouter, Groq): posa els valors del núvol al
+`.env` i torna a executar `call.py` — **sense canvis**. El mateix codi, el mateix wire format,
+un model de frontera en lloc del del teu portàtil. Només ha canviat el `.env`.
 
 
 
