@@ -1,30 +1,23 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents de BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 # =============================================================================================================== #
 # Universitat Politècnica de Catalunya (UPC)                                                                      #
 # =============================================================================================================== #
 
 """
-Give the LLM hands — a loop with tools.
+Dóna mans a l'LLM — un bucle amb eines.
 
-We hand the model two tools (wget + execute_sql) and keep calling it
-until it stops asking for tools. No framework. No magic. Give it a task
-— not a question — and watch it chain the steps by itself.
+Donem dues eines al model (wget + execute_sql) i el continuem cridant fins que deixa de demanar-ne. Sense frameworks. Sense màgia. Li donem una tasca —no una pregunta— i mirem com encadena els passos ell sol.
 
-Ollama-first: runs against a local OpenAI-compatible endpoint, no key,
-no money.
+Ollama-first: s'executa contra un endpoint local compatible amb OpenAI, sense clau ni cost.
 
-NOTE ON MODELS: small local models (qwen3:1.7b) drive this loop UNEVENLY
-— they forget to chain steps, malform tool arguments, or stop early.
-That is itself a lesson: the loop is trivial; the intelligence steering
-it is the model. Point .env at a bigger local model or a frontier /
-MareNostrum endpoint and the same six lines behave far better.
+NOTA SOBRE MODELS: els models locals petits (qwen3:1.7b) recorren aquest bucle de manera IRREGULAR: obliden encadenar els passos, generen arguments d'eina mal formats o s'aturen massa aviat. Això ja és una lliçó: el bucle és trivial; la intel·ligència que el guia és el model. Apunta .env cap a un model local més gran o cap a un endpoint frontier / MareNostrum i les mateixes sis línies funcionaran molt millor.
 
-Usage:
+Ús:
     uv run --with openai python give_the_llm_hands.py
-    uv run --with openai python give_the_llm_hands.py "your own prompt"
+    uv run --with openai python give_the_llm_hands.py "el teu prompt"
 """
 
 import json
@@ -39,15 +32,15 @@ from openai import OpenAI
 
 load_dotenv()
 
-# --- Config: Ollama-first, env-overridable (.env or shell env) -----------
+# --- Config: Ollama per defecte, sobreescrivible per entorn (.env o entorn del terminal) -----------
 BASE_URL = os.getenv("OPENAI_BASE_URL", "http://localhost:11434/v1")
-API_KEY = os.getenv("OPENAI_API_KEY", "ollama")  # any non-empty string for Ollama
+API_KEY = os.getenv("OPENAI_API_KEY", "ollama")  # qualsevol cadena no buida per a Ollama
 MODEL = os.getenv("MODEL", "qwen3:1.7b")
 
 client = OpenAI(base_url=BASE_URL, api_key=API_KEY)
 DB_PATH = "database.db"
 
-# --- Tool schemas exposed to the model (OpenAI function-calling) ---------
+# --- Esquemes d'eines exposats al model (function calling d'OpenAI) ---------
 TOOLS = [
     {"type": "function", "function": {
         "name": "wget", "description": "Fetch the content of a URL.",
@@ -66,10 +59,10 @@ TOOLS = [
 
 
 def tool_wget(url, flags=""):
-    """Human-in-the-loop GATE: security lives in the scaffolding, not the prompt."""
+    """GATE amb humà al circuit: la seguretat viu en l'entramat, no en el prompt."""
     cmd = f"wget -qO- {url}"
-    print(f"\n⚠️  The LLM wants to run:\n    $ {cmd}")
-    if input("    Allow? (type 'y'): ").strip().lower() != "y":
+    print(f"\n⚠️  L'LLM vol executar:\n    $ {cmd}")
+    if input("    Permet-ho? (escriu \"y\"): ").strip().lower() != "y":
         return "USER DENIED: the user refused to execute this wget command. Do not retry."
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "give-the-llm-hands/1.0"})
@@ -81,7 +74,7 @@ def tool_wget(url, flags=""):
 
 
 def tool_execute_sql(query):
-    """CREATE/INSERT/SELECT/UPDATE/DELETE against database.db."""
+    """CREATE/INSERT/SELECT/UPDATE/DELETE contra database.db."""
     print(f"\n🗄️  SQL: {query}")
     try:
         conn = sqlite3.connect(DB_PATH)
@@ -111,23 +104,23 @@ def run_loop(user_prompt):
     messages = [{"role": "system", "content": SYSTEM},
                 {"role": "user", "content": user_prompt}]
     iteration = 0
-    while True:                                                       # 1  THE LOOP — ask until the model stops asking
+    while True:                                                       # 1. EL BUCLE — pregunta fins que el model deixa de demanar
         iteration += 1
-        print(f"\n── LLM call #{iteration} ──")
-        resp = client.chat.completions.create(                        # 2  ask the model, hand it the tools
+        print(f"\n── crida a l'LLM #{iteration} ──")
+        resp = client.chat.completions.create(                        # 2. pregunta al model i posa-li les eines a la mà
             model=MODEL, messages=messages, tools=TOOLS, temperature=0.2)
         msg = resp.choices[0].message
-        if not msg.tool_calls:                                        # 3  no tool calls → final answer, STOP
-            print(f"\n✅ Final answer:\n{msg.content}")
+        if not msg.tool_calls:                                        # 3. cap crida a eines → resposta final, ATURA
+            print(f"\n✅ Resposta final:\n{msg.content}")
             return msg.content
-        messages.append(msg.model_dump(exclude_none=True))            # 4  remember what the model asked for
-        for tc in msg.tool_calls:                                     # 5  run each requested tool
+        messages.append(msg.model_dump(exclude_none=True))            # 4. recorda què ha demanat el model
+        for tc in msg.tool_calls:                                     # 5. executa cada eina demanada
             args = json.loads(tc.function.arguments or "{}")
             result = DISPATCH.get(tc.function.name, lambda **_: "ERROR: unknown tool")(**args)
             print(f"📎 {tc.function.name} → {result[:200]}")
-            messages.append({"role": "tool", "tool_call_id": tc.id,   # 6  feed results back, then LOOP
+            messages.append({"role": "tool", "tool_call_id": tc.id,   # 6. retorna els resultats i torna a començar el BUCLE
                              "name": tc.function.name, "content": result})
-    # ^^^ Lines 1-6 above are the whole engine. Everything else is plumbing.
+    # ^^^ Les línies 1-6 de dalt són tot el motor. La resta són canonades.
 
 
 def main():
@@ -138,7 +131,7 @@ def main():
         prompt = ("Fetch https://jsonplaceholder.typicode.com/users , create a "
                   "table for the user id, name, email and city, insert every "
                   "row, then tell me how many users you stored.")
-        print("(no prompt given — using the built-in demo prompt)")
+        print("(no s'ha indicat cap prompt — es fa servir el prompt de demostració integrat)")
     run_loop(prompt)
 
 

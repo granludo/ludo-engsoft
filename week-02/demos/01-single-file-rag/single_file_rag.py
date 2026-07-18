@@ -1,15 +1,15 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
-"""Single-file RAG — cheating at solitaire, as a chat.
+"""RAG d'un sol fitxer — fer trampes al solitari, en forma de xat.
 
-No chunking, no index, no retrieval. Read the whole knowledge file, paste it into
-the prompt every turn, and chat with it. The model "knows" because the answer is in
-its context. The catch — and the whole lesson — is that you re-send the ENTIRE file
-on every single turn: watch prompt_tokens climb while your questions stay short.
+Sense chunking, sense índex, sense recuperació. Llegeix tot el fitxer de coneixement,
+enganxa'l a la prompt a cada torn i conversa-hi. El model "sap" la resposta perquè la
+té al context. El truc —i tota la lliçó— és que reenvies TOT el fitxer a cada torn:
+mira com puja prompt_tokens mentre les teves preguntes es mantenen curtes.
 
-Empty line to quit. No persistence — the conversation lives in memory for this run.
+Línia en blanc per sortir. Sense persistència — la conversa viu en memòria durant aquesta execució.
 """
 import os
 from dotenv import load_dotenv
@@ -23,29 +23,29 @@ client = OpenAI(
 )
 MODEL = os.environ.get("MODEL", "qwen3:1.7b")
 
-# The whole file becomes the context. No selection — everything goes in, every turn.
+# Tot el fitxer esdevé el context. Sense selecció — tot hi entra, a cada torn.
 context = open(os.path.join(os.path.dirname(__file__), "knowledge.txt")).read()
 SYSTEM = "Answer using only the context. If it is not there, say so."
 
-history = []  # the conversation so far — BARE turns only (what a real chat UI keeps)
-print(f"Single-file RAG chat · model={MODEL} · knowledge.txt ({len(context)} chars)")
-print("Ask about the document. Empty line to quit.\n")
+history = []  # la conversa fins ara — només els torns nus (el que guarda una interfície de xat real)
+print(f"Xat RAG d'un sol fitxer · model={MODEL} · knowledge.txt ({len(context)} caràcters)")
+print("Pregunta sobre el document. Línia en blanc per sortir.\n")
 
 while True:
-    question = input("you> ").strip()
+    question = input("tu> ").strip()
     if not question:
         break
 
-    # Naive RAG: paste the WHOLE file beside the question — rebuilt every turn.
+    # RAG naïf: enganxa TOT el fitxer al costat de la pregunta — reconstruït a cada torn.
     augmented = f"Context:\n----\n{context}\n----\n\nQuestion: {question}"
     messages = [{"role": "system", "content": SYSTEM}] + history + [{"role": "user", "content": augmented}]
 
     resp = client.chat.completions.create(model=MODEL, messages=messages)
     answer = resp.choices[0].message.content
     print(f"bot> {answer}")
-    print(f"     [{resp.usage.prompt_tokens} prompt tokens — the whole file rode along again]\n")
+    print(f"     [{resp.usage.prompt_tokens} prompt tokens — el fitxer sencer hi ha tornat a viatjar]\n")
 
-    # Remember only the BARE turns, not the augmented message — so the file is NOT
-    # accumulated in history; it is re-injected fresh on the next turn instead.
+    # Recorda només els torns nus, no el missatge augmentat — així el fitxer NO
+    # s'acumula a la història; es torna a injectar de nou al torn següent.
     history += [{"role": "user", "content": question},
                 {"role": "assistant", "content": answer}]

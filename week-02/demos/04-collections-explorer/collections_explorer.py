@@ -1,26 +1,22 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents del BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-🗂️ Collections Explorer — an embeddings database you can poke.
+🗂️ Collections Explorer — una base de dades d'embeddings amb què pots experimentar.
 
-A COLLECTION is a table indexed with embeddings. This demo opens one — persistent
-on disk by default, so your chunks are still there when you come back — and lets
-you fill it and search it by meaning.
+Una COL·LECCIÓ és una taula indexada amb embeddings. Aquesta demostració n'obre una — persistent al disc per defecte, de manera que els teus chunks segueixen sent-hi quan hi tornes — i et permet omplir-la i cercar-hi per significat.
 
-Everything goes through the course's collections_manager utility (three functions:
-create_collection / insert / query, on ChromaDB). This demo is also the point:
-your application talks to the abstraction layer, not to the engine underneath.
+Tot passa per la utilitat collections_manager del curs (tres funcions: create_collection / insert / query, sobre ChromaDB). I aquest és justament el propòsit de la demostració: la teva aplicació parla amb la capa d'abstracció, no amb el motor que hi ha a sota.
 
-Commands:
-    /add <text>        add a chunk (you'll be asked for its source)
-    /seed              load example chunks so queries land immediately
-    /list              what's in the collection (source · chunk_number · text)
-    <any other text>   query the collection by meaning, top-K nearest first
-    (empty line)       quit
+Comandes:
+    /add <text>        afegeix un chunk (se't demanarà la font)
+    /seed              carrega chunks d'exemple perquè les consultes encertin de seguida
+    /list              què hi ha a la col·lecció (source · chunk_number · text)
+    <qualsevol altre text>   consulta la col·lecció per significat, els top-K més propers primer
+    (línia buida)      surt
 
-Run with --memory for a throwaway in-memory collection instead of the on-disk one.
+Executa-la amb --memory per tenir una col·lecció efímera en memòria en comptes de la del disc.
 """
 import argparse
 import os
@@ -36,7 +32,7 @@ from collections_manager import create_collection, insert, query
 
 load_dotenv()
 
-# High-contrast theme — matches the context-explorer / embeddings-explorer house style.
+# Tema d'alt contrast — coincideix amb l'estil visual de l'explorador de context / d'embeddings.
 BG = "grey23"
 ON_BG = f"on {BG}"
 TEXT = f"bright_white {ON_BG}"
@@ -62,38 +58,38 @@ SEED = [
 
 def show_intro(col, store: str) -> None:
     body = Text()
-    body.append("A ", style=TEXT)
-    body.append("collection", style=ACCENT)
-    body.append(" is a table indexed with embeddings. This one is ", style=TEXT)
+    body.append("Una ", style=TEXT)
+    body.append("col·lecció", style=ACCENT)
+    body.append(" és una taula indexada amb embeddings. Aquesta està ", style=TEXT)
     body.append(store, style=NUM)
-    body.append(f" and holds {col.count()} chunks right now.\n\n", style=TEXT)
-    body.append("Type text to ", style=TEXT)
-    body.append("query by meaning", style=ACCENT)
-    body.append(f" (top-{TOP_K}, nearest first). Add knowledge with ", style=TEXT)
+    body.append(f" i ara mateix conté {col.count()} chunks.\n\n", style=TEXT)
+    body.append("Escriu text per ", style=TEXT)
+    body.append("consultar per significat", style=ACCENT)
+    body.append(f" (top-{TOP_K}, els més propers primer). Afegeix coneixement amb ", style=TEXT)
     body.append("/add <text>", style=NUM)
-    body.append(" — every chunk carries at least its ", style=TEXT)
+    body.append(" — cada chunk porta, com a mínim, el seu ", style=TEXT)
     body.append("source", style=ACCENT)
-    body.append(" and its ", style=TEXT)
+    body.append(" i el seu ", style=TEXT)
     body.append("chunk_number", style=ACCENT)
-    body.append(" within that source.\n\n", style=TEXT)
-    body.append("/add <text>   /seed   /list   (empty line = quit)", style=TEXT_DIM)
+    body.append(" dins d'aquesta font.\n\n", style=TEXT)
+    body.append("/add <text>   /seed   /list   (línia buida = surt)", style=TEXT_DIM)
     console.print(Panel(body, title="🗂️ Collections Explorer", border_style="bright_magenta",
                         style=ON_BG, padding=(1, 2)))
 
 
 def show_insert(result: dict) -> None:
     if result["ok"]:
-        console.print(Text(f"  ✔ stored as {result['id']}", style=GOOD))
+        console.print(Text(f"  ✔ desat com a {result['id']}", style=GOOD))
     else:
-        console.print(Text(f"  ✘ not stored — {result['error']}", style=BAD))
+        console.print(Text(f"  ✘ no s'ha desat — {result['error']}", style=BAD))
 
 
 def show_hits(question: str, hits: list[dict]) -> None:
     if not hits:
-        console.print(Text("  (collection is empty — /add or /seed first)", style=BAD))
+        console.print(Text("  (la col·lecció és buida — fes /add o /seed primer)", style=BAD))
         return
     table = Table(box=box.SIMPLE_HEAVY, style=ON_BG, header_style=ACCENT,
-                  title=f"nearest to: “{question}”", title_style=TEXT_DIM)
+                  title=f"més propers a: «{question}»", title_style=TEXT_DIM)
     score_name = "similarity" if "similarity" in hits[0] else "distance"
     table.add_column(score_name, justify="right", style=NUM)
     table.add_column("source", style=TEXT_DIM)
@@ -107,15 +103,15 @@ def show_hits(question: str, hits: list[dict]) -> None:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Poke an embeddings collection.")
-    ap.add_argument("--memory", action="store_true", help="in-memory collection (gone on quit)")
-    ap.add_argument("--name", default="playground", help="collection name (default: playground)")
+    ap = argparse.ArgumentParser(description="Experimenta amb una col·lecció d'embeddings.")
+    ap.add_argument("--memory", action="store_true", help="col·lecció en memòria (desapareix en sortir)")
+    ap.add_argument("--name", default="playground", help="nom de la col·lecció (per defecte: playground)")
     args = ap.parse_args()
 
     persist = None if args.memory else os.environ.get("PERSIST_PATH", "./collections-store")
     col = create_collection(args.name, description="collections-explorer playground",
                             metric="cosine", persist_path=persist)
-    store = "in memory (gone when you quit)" if args.memory else f"persisted on disk at {persist}"
+    store = "en memòria (desapareix quan surts)" if args.memory else f"persistida al disc a {persist}"
     show_intro(col, store)
 
     while True:
@@ -128,7 +124,7 @@ def main() -> None:
         if line.startswith("/add"):
             chunk = line[4:].strip()
             if not chunk:
-                console.print(Text("  usage: /add <text of the chunk>", style=BAD))
+                console.print(Text("  ús: /add <text del chunk>", style=BAD))
                 continue
             source = console.input("[bold bright_cyan]   source? [/bold bright_cyan]").strip() or "manual"
             show_insert(insert(col, chunk, {"source": source}))
@@ -145,7 +141,7 @@ def main() -> None:
         else:
             show_hits(line, query(col, line, top_k=TOP_K))
 
-    console.print(Text("bye — the on-disk collection keeps everything for next time.", style=TEXT_DIM))
+    console.print(Text("adéu — la col·lecció del disc ho conserva tot per a la propera vegada.", style=TEXT_DIM))
 
 
 if __name__ == "__main__":

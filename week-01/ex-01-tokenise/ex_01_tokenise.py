@@ -1,59 +1,61 @@
 #!/usr/bin/env python3
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents del BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-Week 1 · Exercise 1 — Hugging Face tokenizers, locally.
+Setmana 1 · Exercici 1 — Hugging Face tokenizers, en local.
 
-Reference script for the exercise. You RUN this; you do not edit code (you
-may swap the two paragraphs in PARAGRAPH_EN / PARAGRAPH_MINE for your own
-text — that is the only change you need). You may also change the two
-tokenizer ids (TOKENIZER_A / TOKENIZER_B) to compare different families.
+Script de referència de l'exercici. Tu l'EXECUTES; no en toquis el codi (pots
+substituir els dos paràgrafs de PARAGRAPH_EN / PARAGRAPH_MINE pel teu propi
+text: és l'única modificació que et cal). També pots canviar els dos
+identificadors de tokenizer (TOKENIZER_A / TOKENIZER_B) per comparar famílies
+diferents.
 
-It does three things and prints them clearly:
-  1. loads a tokenizer with AutoTokenizer.from_pretrained(...) and shows a
-     token count (the "how many tokens is this?" basic);
-  2. tokenises the same paragraph in English and in another language, and
-     computes the multilingual penalty;
-  3. compares TWO tokenizers (different model families) on four kinds of
-     code-ish input, and prints a small table.
+Fa tres coses i les imprimeix amb claredat:
+  1. carrega un tokenizer amb AutoTokenizer.from_pretrained(...) i en mostra el
+     recompte de tokens (la pregunta bàsica: «quants tokens són?»);
+  2. divideix en tokens el mateix paràgraf en anglès i en una altra llengua, i
+     calcula la penalització multilingüe;
+  3. compara DOS tokenizers (famílies de models diferents) amb quatre tipus
+     d'entrada semblant a codi, i imprimeix una petita taula.
 
-Setup:
+Configuració:
     uv venv
     source .venv/bin/activate
     uv sync
     python ex_01_tokenise.py
 
-Only tokenizers are downloaded (a few hundred KB each) — no model weights,
-no GPU, no API key, no network beyond the first Hugging Face download.
+Només es descarreguen els tokenizers (uns quants centenars de KB cadascun): res
+de pesos del model, ni GPU, ni clau d'API, ni cap connexió a la xarxa més enllà
+de la primera descàrrega de Hugging Face.
 
-Good "old vs newer" contrast pairs, all ungated:
-  - "gpt2"               (2019, byte-level BPE)
+Bones parelles de contrast «antic vs. més recent», totes sense accés restringit:
+  - "gpt2"               (2019, BPE a nivell de bytes)
   - "bert-base-uncased"  (2018, WordPiece)
-  - "bert-base-multilingual-cased" (multilingual WordPiece)
+  - "bert-base-multilingual-cased" (WordPiece multilingüe)
 """
 from __future__ import annotations
 
-# ---- the two tokenizers to compare -----------------------------------------
-TOKENIZER_A = "gpt2"                 # the "older" one
-TOKENIZER_B = "bert-base-uncased"    # the "newer-ish" one (different family)
+# ---- els dos tokenizers a comparar -----------------------------------------
+TOKENIZER_A = "gpt2"                 # el «més antic»
+TOKENIZER_B = "bert-base-uncased"    # el «més recent» (d'una altra família)
 
-# ---- the two paragraphs (you may replace with your own) --------------------
+# ---- els dos paràgrafs (pots substituir-los pels teus) --------------------
 PARAGRAPH_EN = (
     "A large language model reads text as tokens, not words. The number of "
     "tokens — not the number of words — is what you are billed for and what "
     "must fit in the context window."
 )
-# Same paragraph, in your language. The default is Spanish; replace it with
-# YOUR language for the exercise.
+# El mateix paràgraf, en el teu idioma. Per defecte és en espanyol; substitueix-lo
+# pel TEU idioma per a l'exercici.
 PARAGRAPH_MINE = (
     "Un gran modelo de lenguaje lee el texto como tokens, no como palabras. "
     "El número de tokens — no el de palabras — es lo que se te factura y lo "
     "que tiene que caber en la ventana de contexto."
 )
 
-# ---- four code-ish inputs for the tokenizer comparison ---------------------
+# ---- quatre entrades semblants a codi per a la comparació de tokenizers ---------------------
 CODE_SAMPLES = {
     "python function": (
         "def add(a, b):\n"
@@ -71,54 +73,54 @@ CODE_SAMPLES = {
 
 def _load(name):
     from transformers import AutoTokenizer
-    print(f"  loading tokenizer: {name} …")
+    print(f"  carregant tokenizer: {name} …")
     return AutoTokenizer.from_pretrained(name)
 
 
 def n_tokens(tok, text: str) -> int:
-    """Token count, not counting special tokens — what you pay for."""
+    """Recompte de tokens, sense comptar els tokens especials: el que pagues."""
     return len(tok.encode(text, add_special_tokens=False))
 
 
 def main() -> None:
-    # Windows consoles default to cp1252 and choke on — · → ± in our output.
+    # Les consoles de Windows fan servir CP1252 per defecte i s'ennueguen amb els símbols — · → ± de la nostra sortida.
     try:
         import sys
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
     print("=" * 70)
-    print("Week 1 · Exercise 1 — tokenizers, locally")
+    print("Setmana 1 · Exercici 1 — tokenizers, en local")
     print("=" * 70)
 
-    print("\n[1] Load a tokenizer and count tokens")
+    print("[1] Carregar un tokenizer i comptar tokens")
     tok_a = _load(TOKENIZER_A)
     demo = "The model never sees the letters in strawberry."
     print(f'  text : "{demo}"')
-    print(f"  tokens with {TOKENIZER_A}: {n_tokens(tok_a, demo)}")
+    print(f"  tokens amb {TOKENIZER_A}: {n_tokens(tok_a, demo)}")
 
-    print("\n[2] The multilingual penalty (same paragraph, two languages)")
+    print("[2] La penalització multilingüe (mateix paràgraf, dues llengües)")
     en = n_tokens(tok_a, PARAGRAPH_EN)
     mine = n_tokens(tok_a, PARAGRAPH_MINE)
     penalty = (mine - en) / en if en else 0.0
-    print(f"  English          : {en} tokens")
-    print(f"  your language    : {mine} tokens")
-    print(f"  multilingual penalty = (mine - en) / en = {penalty:+.1%}")
-    print("  → record this number in your report.")
+    print(f"  Anglès           : {en} tokens")
+    print(f"  el teu idioma    : {mine} tokens")
+    print(f"  penalització multilingüe = (mine - en) / en = {penalty:+.1%}")
+    print("  → apunta aquest número al teu informe.")
 
-    print("\n[3] Two tokenizers vs four kinds of code")
+    print("[3] Dos tokenizers contra quatre tipus de codi")
     tok_b = _load(TOKENIZER_B)
     width = max(len(k) for k in CODE_SAMPLES) + 2
-    print(f"\n  {'input':<{width}}{TOKENIZER_A:>14}{TOKENIZER_B:>20}")
+    print(f"\n  {'entrada':<{width}}{TOKENIZER_A:>14}{TOKENIZER_B:>20}")
     print("  " + "-" * (width + 34))
     for label, sample in CODE_SAMPLES.items():
         a, b = n_tokens(tok_a, sample), n_tokens(tok_b, sample)
         print(f"  {label:<{width}}{a:>14}{b:>20}")
-    print("\n  → for each row, write ONE sentence: where do the two disagree")
-    print("    most, and why might that be? (put it in your report)")
+    print("\n  → per a cada fila, escriu UNA frase: on divergeixen més")
+    print("    tots dos, i per què deu ser així? (inclou-ho al teu informe)")
 
     print("\n" + "=" * 70)
-    print("Done. Now write the report and push it to your course repo.")
+    print("Fet. Ara escriu l'informe i puja'l al repositori del curs.")
     print("=" * 70)
 
 
@@ -127,6 +129,6 @@ if __name__ == "__main__":
         main()
     except ModuleNotFoundError:
         raise SystemExit(
-            "transformers is not installed. Run:\n"
+            "transformers no està instal·lat. Executa:\n"
             "    uv venv && source .venv/bin/activate && uv sync"
         )

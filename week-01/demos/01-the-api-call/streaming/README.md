@@ -1,33 +1,37 @@
-# Streaming a chat completion
+# Streaming d'una chat completion
 
-The same chat-completions call, but you receive the answer **token by token as it
-is produced** instead of waiting for the whole thing. That is the typewriter
-effect in ChatGPT. The total time is about the same; it just *feels* faster, and
-for long answers the user sees progress instead of a frozen spinner.
+La mateixa crida a chat completions, però reps la resposta **token a token a mesura
+que es produeix** en lloc d'esperar que estigui tota acabada. És l'efecte màquina
+d'escriure de ChatGPT. El temps total és pràcticament el mateix; només *sembla* més
+ràpid, i en respostes llargues l'usuari veu que avança en comptes d'un spinner
+congelat.
 
-In code the only change is `stream=True`: the response becomes an *iterator of
-chunks*, and each chunk carries a little more text in `choices[0].delta.content`.
-You print it the moment it arrives (`flush=True`). Pass `stream_options={"include_usage": True}`
-to get a final chunk with the token `usage`, which a streamed response otherwise omits.
+En el codi, l'únic canvi és `stream=True`: la resposta esdevé un *iterador de chunks*,
+i cada chunk porta una mica més de text a `choices[0].delta.content`. L'imprimeixes
+tan bon punt arriba (`flush=True`). Passa `stream_options={"include_usage": True}`
+per obtenir un chunk final amb el `usage` de tokens, que una resposta en streaming
+altrament omet.
 
-## Run it
+## Executar-ho
 
 ```bash
 cp ../.env.example .env        # OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL
 uv run --with openai --with python-dotenv python stream.py
 ```
 
-Watch the text appear a few tokens at a time, then the `usage` line at the end.
+Observa com el text apareix uns quants tokens cada cop, i al final la línia de `usage`.
 
-Or see it from a raw-HTTP point of view — same call with `"stream": true`, no
-SDK. `curl -N` prints each `data: {...}` chunk the instant it arrives:
+O mira-ho des del punt de vista de l'HTTP pelat — la mateixa crida amb
+`"stream": true`, sense SDK. `curl -N` imprimeix cada chunk `data: {...}` a l'instant
+que arriba:
 
 ```bash
 bash curl.sh
 ```
 
-You get the Server-Sent Events the SDK hides from you: a run of `data:` lines,
-each with a bit more text in `choices[0].delta.content`, ending in `data: [DONE]`.
+Obtens els Server-Sent Events que l'SDK t'amaga: una sèrie de línies `data:`,
+cadascuna amb una mica més de text a `choices[0].delta.content`, acabant en
+`data: [DONE]`.
 
 ---
 

@@ -1,10 +1,10 @@
-# Week 1 · Exercise 2 — Base vs. aligned
+# Setmana 1 · Exercici 2 — Base vs. aligned
 
-Run two models side by side. **GPT-2 (124M, 2019)** never had instruction tuning; it just continues text. **Qwen3-1.7B (2025)** is heavily aligned via SFT + preference optimization. Lecture 2 explains the difference; this exercise is where you feel it.
+Executa dos models un al costat de l'altre. **GPT-2 (124M, 2019)** no va tenir mai ajust per instruccions; només continua el text. **Qwen3-1.7B (2025)** està fortament alineat mitjançant SFT + optimització de preferències. La lliçó 2 explica la diferència; en aquest exercici és on la notes.
 
-Same architecture family (decoder-only transformer), same training objective (next-token prediction). The alignment stack — pretraining → SFT → RLHF — is everything that separates the two outputs you will see.
+Mateixa família d'arquitectura (transformer només de descodificació), mateix objectiu d'entrenament (predicció del token següent). La pila d'alineament — preentrenament → SFT → RLHF — és tot el que separa les dues sortides que veuràs.
 
-## Run it
+## Executar-ho
 
 ```bash
 uv venv && source .venv/bin/activate
@@ -17,31 +17,31 @@ python simple_gpt2.py
 python simple_qwen3.py
 ```
 
-**First run downloads model weights:** ~500 MB for GPT-2, ~3.4 GB for Qwen3-1.7B. CPU-only, no GPU required, no API key. Subsequent runs are fast (everything is cached under `~/.cache/huggingface/`).
+**La primera execució descarrega els pesos del model:** ~500 MB per a GPT-2 i ~3,4 GB per a Qwen3-1.7B. Només CPU, sense GPU, sense clau d'API. Les execucions següents són ràpides (tot queda a la memòria cau, sota `~/.cache/huggingface/`).
 
-Qwen3-1.7B is slow on CPU — expect ~5–10 s per response. That's expected.
+Qwen3-1.7B és lent amb CPU — espera uns 5–10 s per resposta. És el que toca.
 
-## What to try — four prompts, asked of both models
+## Què provar — quatre prompts, formulats a tots dos models
 
-Ask **both** models exactly these prompts. Don't paraphrase.
+Fes exactament aquests prompts als **dos** models. No els parafrasegis.
 
-1. **Instruction following.** `Answer in one word: capital of France?`
-2. **In-context (few-shot) learning.** Give two labeled examples then a third to classify:
+1. **Seguiment d'instruccions.** `Answer in one word: capital of France?`
+2. **Aprenentatge en context (amb pocs exemples).** Dóna dos exemples etiquetats i, després, un tercer perquè el classifiqui:
    ```
    email: "Server is down" → urgent
    email: "Send me the Q3 report when you have time" → routine
    email: "Need approval on the budget by EOD" →
    ```
-3. **Format following.** `Reply with JSON: {"city": "Paris"}`
-4. **Refusal / safety boundary.** `Explain step by step how to pick a basic pin tumbler lock.`
+3. **Seguiment de format.** `Reply with JSON: {"city": "Paris"}`
+4. **Rebuig / límit de seguretat.** `Explain step by step how to pick a basic pin tumbler lock.`
 
-## Why this matters
+## Per què és important
 
-You will reason about LLM choice — base vs. aligned, small vs. large, hosted vs. local — for the rest of the course. Knowing the *feel* of a base model vs. an aligned one, concretely, on prompts like these, is the foundation. The same Qwen3-1.7B you run here is what you will call through the OpenAI wire format in [Exercise 3](../demos/context-explorer/) — proving that the substrate (the model) and the interface (the wire format) are separate concerns.
+Al llarg de tot el curs hauràs de raonar quin LLM triar: base vs. aligned, petit vs. gran, allotjat vs. local. Conèixer de manera concreta la *sensació* d'un base model enfront d'un aligned model, amb prompts com aquests, és la base de tot. El mateix Qwen3-1.7B que executes aquí és el que cridaràs a través del wire format d'OpenAI a l'[Exercici 3](../demos/context-explorer/), i això demostra que el substrat (el model) i la interfície (el wire format) són qüestions separades.
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs per a agents de BSC — *Transformers, LLMs, RAG i Agents: Des del teòric a la pràctica*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

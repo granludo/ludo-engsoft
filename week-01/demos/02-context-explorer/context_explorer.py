@@ -1,20 +1,20 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 # =============================================================================================================== #
 # Universitat Politècnica de Catalunya (UPC)                                                                      #
 # =============================================================================================================== #
 
 """
-📚 Context Explorer: See How LLM Context Works
+📚 Explorador de context: mira com funciona el context d'un LLM
 
-A simple interactive demo to visualize:
-- The messages sent to the API (context)
-- The raw API request and response
+Una demostració interactiva senzilla per visualitzar:
+- Els missatges enviats a l'API (el context)
+- La sol·licitud i la resposta en brut de l'API
 
-Usage:
-    1. Create a .env file with your API key
+Ús:
+    1. Crea un fitxer .env amb la teva clau d'API.
     2. python context_explorer.py
 """
 import os
@@ -36,15 +36,15 @@ load_dotenv()
 console = Console()
 client = None
 
-# Configuration from .env
+# Configuració des del fitxer .env
 MODEL = os.getenv("MODEL", "gpt-4.1-mini")
-OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")  # Optional: for alternative API endpoints
+OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")  # Opcional: per a endpoints d'API alternatius
 
 SYSTEM_PROMPT = "You are a helpful assistant."
 
 
 def show_context(messages: list) -> Panel:
-    """Show the current conversation context."""
+    """Mostra el context actual de la conversa."""
     table = Table(
         box=box.SIMPLE,
         show_header=True,
@@ -52,8 +52,8 @@ def show_context(messages: list) -> Panel:
         style="on grey23"
     )
     table.add_column("#", style="bright_cyan on grey23", width=3)
-    table.add_column("Role", style="bright_magenta on grey23", width=12)
-    table.add_column("Content", style="bright_white on grey23")
+    table.add_column("Rol", style="bright_magenta on grey23", width=12)
+    table.add_column("Contingut", style="bright_white on grey23")
     
     for i, msg in enumerate(messages):
         role = msg.get("role", "unknown")
@@ -62,7 +62,7 @@ def show_context(messages: list) -> Panel:
     
     return Panel(
         table,
-        title=f"📚 Context ({len(messages)} messages)",
+        title=f"📚 Context ({len(messages)} missatges)",
         border_style="magenta",
         style="on grey23",
         padding=(0, 1)
@@ -70,35 +70,35 @@ def show_context(messages: list) -> Panel:
 
 
 def show_api_request(request_data: dict) -> Panel:
-    """Show the API request."""
+    """Mostra la sol·licitud de l'API."""
     json_str = json.dumps(request_data, indent=2, ensure_ascii=False)
     syntax = Syntax(json_str, "json", theme="monokai", background_color="grey23", word_wrap=True)
-    return Panel(syntax, title="📤 API Request", border_style="yellow", style="on grey23", padding=(0, 1))
+    return Panel(syntax, title="📤 Sol·licitud de l'API", border_style="yellow", style="on grey23", padding=(0, 1))
 
 
 def show_api_response(response_data: dict) -> Panel:
-    """Show the API response."""
+    """Mostra la resposta de l'API."""
     json_str = json.dumps(response_data, indent=2, ensure_ascii=False)
     syntax = Syntax(json_str, "json", theme="monokai", background_color="grey23", word_wrap=True)
-    return Panel(syntax, title="📥 API Response", border_style="cyan", style="on grey23", padding=(0, 1))
+    return Panel(syntax, title="📥 Resposta de l'API", border_style="cyan", style="on grey23", padding=(0, 1))
 
 
 def show_message(role: str, content: str) -> Panel:
-    """Show a chat message."""
+    """Mostra un missatge de xat."""
     styles = {
-        "user": ("bright_white on blue", "blue", "👤 You"),
-        "assistant": ("bright_white on dark_green", "green", "🤖 Assistant"),
-        "system": ("bright_white on purple4", "magenta", "⚙️ System")
+        "user": ("bright_white on blue", "blue", "👤 Tu"),
+        "assistant": ("bright_white on dark_green", "green", "🤖 Assistent"),
+        "system": ("bright_white on purple4", "magenta", "⚙️ Sistema")
     }
     text_style, border, title = styles.get(role, ("bright_white on grey23", "white", role))
     return Panel(Text(content, style=text_style), title=title, border_style=border, padding=(0, 1))
 
 
 def wait_spinner():
-    """Show a waiting spinner."""
+    """Mostra un indicador d'espera."""
     return Live(
         Panel(
-            Spinner("dots", text=Text(" Waiting for response...", style="bold black on yellow")),
+            Spinner("dots", text=Text("Esperant una resposta...", style="bold black on yellow")),
             border_style="yellow", style="on yellow", padding=(0, 1)
         ),
         console=console, refresh_per_second=10
@@ -106,35 +106,35 @@ def wait_spinner():
 
 
 def run_chat():
-    """Run the chat loop."""
+    """Executa el bucle de xat."""
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     
     console.print()
     console.print(Panel(
-        Text("Type your messages. Empty message = quit.\nWatch the context grow with each exchange!", 
+        Text("Escriu els teus missatges. Missatge buit = sortir.\nObserva com creix el context a cada intercanvi!",
              style="bright_white on grey23"),
-        title="📚 Context Explorer",
+        title="📚 Explorador de context",
         border_style="bright_magenta",
         style="on grey23",
         padding=(1, 2)
     ))
     
-    # Show initial context
+    # Mostra el context inicial
     console.print()
     console.print(show_context(messages))
     
     while True:
         console.print()
-        user_input = console.input("[bold blue]👤 You: [/bold blue]")
+        user_input = console.input("[bold blue]👤 Tu: [/bold blue]")
         
         if not user_input.strip():
-            console.print(Panel(Text("Goodbye!", style="bright_white on grey23"), border_style="dim"))
+            console.print(Panel(Text("Adéu!", style="bright_white on grey23"), border_style="dim"))
             break
         
         messages.append({"role": "user", "content": user_input})
         console.print(show_message("user", user_input))
         
-        # Build and show request
+        # Construeix i mostra la sol·licitud
         request_data = {
             "model": MODEL,
             "messages": messages,
@@ -145,7 +145,7 @@ def run_chat():
         console.print()
         console.print(show_api_request(request_data))
         
-        # Call API
+        # Crida a l'API
         with wait_spinner():
             response = client.chat.completions.create(
                 model=MODEL,
@@ -155,7 +155,7 @@ def run_chat():
         
         assistant_content = response.choices[0].message.content
         
-        # Show response
+        # Mostra la resposta
         usage_data = {
             "prompt_tokens": response.usage.prompt_tokens,
             "completion_tokens": response.usage.completion_tokens,
@@ -184,7 +184,7 @@ def run_chat():
         console.print()
         console.print(show_message("assistant", assistant_content))
         
-        # Show updated context
+        # Mostra el context actualitzat
         console.print()
         console.print(show_context(messages))
 
@@ -197,23 +197,23 @@ def main():
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         console.print(Panel(
-            Text("OPENAI_API_KEY not found!\n\nCreate a .env file with:\nOPENAI_API_KEY=your-key-here",
+            Text("No s'ha trobat OPENAI_API_KEY!\n\nCrea un fitxer .env amb:\nOPENAI_API_KEY=la-teva-clau",
                  style="bold bright_white on dark_red"),
             title="❌ Error", border_style="red", style="on dark_red"
         ))
         return
     
-    # Initialize client with optional custom endpoint
+    # Inicialitza el client amb un endpoint personalitzat opcional
     if OPENAI_ENDPOINT:
         client = OpenAI(api_key=api_key, base_url=OPENAI_ENDPOINT)
     else:
         client = OpenAI(api_key=api_key)
     
-    # Show configuration
+    # Mostra la configuració
     console.print(Panel(
-        Text(f"Model: {MODEL}\nEndpoint: {OPENAI_ENDPOINT or 'https://api.openai.com/v1'}", 
+        Text(f"Model: {MODEL}\nEndpoint: {OPENAI_ENDPOINT or 'https://api.openai.com/v1'}",
              style="bright_white on grey23"),
-        title="⚙️ Configuration",
+        title="⚙️ Configuració",
         border_style="cyan",
         style="on grey23"
     ))

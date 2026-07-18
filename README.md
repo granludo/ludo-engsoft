@@ -1,30 +1,30 @@
-# 🎓 Software Engineering Educational Demos
+# 🎓 Demostracions educatives d'enginyeria del software
 
-A collection of interactive demos and course materials for teaching software engineering concepts, focusing on LLM APIs and AI integration.
+Una col·lecció de demostracions interactives i materials de curs per ensenyar conceptes d'enginyeria del software, centrats en les API d'LLM i la integració amb la IA.
 
-This is the **public student-facing companion repo** for the [BSC Agents Course](https://www.bsc.es/) (UPC × BSC AI Factory) and the [AI-Augmented Software Engineering](https://github.com/granludo/) course. Standalone tools at the repo root are reused across multiple weeks and courses; course-specific exercises live under `week-NN/` folders.
+Aquest és el **repositori públic de referència per als estudiants** del [Curs d'Agents del BSC](https://www.bsc.es/) (UPC × BSC AI Factory) i del curs [Enginyeria del Software Augmentada amb IA](https://github.com/granludo/). Les eines independents que hi ha a l'arrel del repositori es reutilitzen entre diverses setmanes i cursos; els exercicis específics de cada curs viuen dins de les carpetes `week-NN/`.
 
-## 🗂️ Course materials
+## 🗂️ Materials del curs
 
-| Folder | What's there |
+| Carpeta | Què hi trobaràs |
 |---|---|
-| [`week-01/`](./week-01/) | **Week 1 — Transformers & LLMs.** Tokenization, base-vs-aligned model comparison (GPT-2 vs Qwen3-1.7B), and the first API call via the [`context-explorer`](./week-01/demos/02-context-explorer/) demo. |
-| [`week-02/`](./week-02/) | **Week 2 — RAG.** The demo ladder from single-file RAG to the embeddings-RAG explorer, plus the provided tools: [`collections-manager`](./week-02/collections-manager/) and [`simple-dynamic-rag`](./week-02/simple-dynamic-rag/). |
-| [`week-03/`](./week-03/) | **Week 3 — Agents.** Function calling (the Three Little Pigs demo), the ~30-line agent loop, and a minimal MCP server. |
-| [`pre-course/`](./pre-course/) | **Before you start.** The [VM setup guide](./pre-course/vm-setup.md) (Ubuntu Server 24.04 + the BSC tool baseline: uv, `llm`, transformers, torch-CPU, opencode, gh) and a [command cheatsheet](./pre-course/cheatsheet.md). |
+| [`week-01/`](./week-01/) | **Setmana 1 — Transformers i LLM.** Tokenització, comparació entre un base model i un aligned model (GPT-2 vs Qwen3-1.7B) i la primera crida a l'API amb la demostració [`context-explorer`](./week-01/demos/02-context-explorer/). |
+| [`week-02/`](./week-02/) | **Setmana 2 — RAG.** L'escala de demostracions, des del RAG d'un sol fitxer fins a l'explorador d'embeddings-RAG, més les eines que et proporcionem: [`collections-manager`](./week-02/collections-manager/) i [`simple-dynamic-rag`](./week-02/simple-dynamic-rag/). |
+| [`week-03/`](./week-03/) | **Setmana 3 — Agents.** Function calling (la demostració dels tres porquets), el bucle d'agent d'unes 30 línies i un servidor MCP mínim. |
+| [`pre-course/`](./pre-course/) | **Abans de començar.** La [guia d'instal·lació de la VM](./pre-course/vm-setup.md) (Ubuntu Server 24.04 + la base d'eines del BSC: uv, `llm`, transformers, torch-CPU, opencode, gh) i una [guia ràpida de comandes](./pre-course/cheatsheet.md). |
 
-More weeks land here as the course progresses.
+A mesura que avanci el curs, hi anirem afegint més setmanes.
 
-## 🧰 Demos
+## 🧰 Demostracions
 
-### Context Explorer — [`week-01/demos/02-context-explorer/`](./week-01/demos/02-context-explorer/)
+### Explorador de context — [`week-01/demos/02-context-explorer/`](./week-01/demos/02-context-explorer/)
 
-A simple interactive demo to visualize how LLM conversation context works.
+Una demostració interactiva i senzilla per visualitzar com funciona el context d'una conversa amb un LLM.
 
-**Learn:**
-- How messages accumulate in the context
-- What gets sent to the API on each request
-- Token usage and costs
+**Aprèn:**
+- Com s'acumulen els missatges dins del context.
+- Què s'envia a l'API en cada sol·licitud.
+- L'ús de tokens i els costos.
 
 ```bash
 cd week-01/demos/02-context-explorer
@@ -32,14 +32,14 @@ uv venv && source .venv/bin/activate && uv sync
 python context_explorer.py
 ```
 
-### Function Calling Demo — [`week-03/demos/01-function-calling/`](./week-03/demos/01-function-calling/)
+### Demostració de function calling — [`week-03/demos/01-function-calling/`](./week-03/demos/01-function-calling/)
 
-The Three Little Pigs 🐷🐺 - An interactive demo showing the difference between LLMs with and without function calling.
+Els tres porquets 🐷🐺: una demostració interactiva que mostra la diferència entre un LLM amb function calling i un sense.
 
-**Learn:**
-- How to define tools/functions for LLMs
-- When and how LLMs decide to use tools
-- The difference between "talking about actions" vs "taking actions"
+**Aprèn:**
+- Com definir eines i funcions per a un LLM.
+- Quan i com un LLM decideix fer servir les eines.
+- La diferència entre «parlar d'accions» i «executar accions».
 
 ```bash
 cd week-03/demos/01-function-calling
@@ -47,9 +47,9 @@ uv venv && source .venv/bin/activate && uv sync
 python three_pigs_function_calling.py
 ```
 
-## ⚙️ Configuration
+## ⚙️ Configuració
 
-All demos use a `.env` file for configuration:
+Totes les demostracions es configuren amb un fitxer `.env`:
 
 ```bash
 # Required
@@ -63,32 +63,32 @@ OPENAI_ENDPOINT=http://localhost:11434/v1  # Ollama
 # OPENAI_ENDPOINT=https://your-azure-endpoint.openai.azure.com/v1
 ```
 
-### Compatible Endpoints
+### Endpoints compatibles
 
-These demos work with any OpenAI-compatible API:
-- **OpenAI** - Default
-- **Ollama** - Local models (`http://localhost:11434/v1`)
-- **Azure OpenAI** - Enterprise
-- **LM Studio** - Local models
+Aquestes demostracions funcionen amb qualsevol API compatible amb OpenAI:
+- **OpenAI** — l'opció per defecte.
+- **Ollama** — models locals (`http://localhost:11434/v1`).
+- **Azure OpenAI** — per a entorns empresarials.
+- **LM Studio** — models locals.
 - **Together AI**, **Groq**, etc.
 
-## 🛠️ Requirements
+## 🛠️ Requisits
 
-- Python 3.10+
-- [uv](https://docs.astral.sh/uv/) package manager
-- OpenAI API key (or compatible endpoint)
+- Python 3.10 o superior.
+- El gestor de paquets [uv](https://docs.astral.sh/uv/).
+- Una clau d'API d'OpenAI (o un endpoint compatible).
 
-## 📖 License
+## 📖 Llicència
 
 This repository is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](LICENSE) (`CC BY-NC-SA 4.0`).
 
-## 👤 Author
+## 👤 Autor
 
-[@granludo](https://github.com/granludo) - Marc Alier
+[@granludo](https://github.com/granludo) — Marc Alier
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs d'Agents del BSC — *Transformers, LLMs, RAG i Agents: de la teoria a la producció*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

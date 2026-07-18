@@ -1,19 +1,20 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents del BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-Week 1 · Exercise 2 — Qwen3-1.7B (aligned model, 1.7B, 2025).
+Setmana 1 · Exercici 2 — Qwen3-1.7B (aligned model, 1.7B, 2025).
 
-Heavily post-trained with supervised fine-tuning and preference optimization.
-Same architecture family as GPT-2 (decoder-only transformer, next-token
-prediction) — the difference is the alignment stack from Lecture 2.
+Ha rebut un postentrenament intens amb ajust fi supervisat i optimització de
+preferències. Comparteix família d'arquitectura amb GPT-2 (Transformer només
+decodificador, predicció del següent token); la diferència és la capa
+d'alineació de la Lliçó 2.
 
-Setup:
+Configuració:
     uv venv && source .venv/bin/activate && uv sync
     python simple_qwen3.py
 
-CPU-only, ~3.4 GB download on first run, cached afterward.
+Només CPU, ~3,4 GB de descàrrega a la primera execució; després queda a la memòria cau.
 """
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
@@ -24,7 +25,7 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
 model = AutoModelForCausalLM.from_pretrained(MODEL_ID, torch_dtype=torch.float32)
 model.eval()
 
-print("Qwen3 1.7B CLI (Ctrl+C to quit)")
+print("Qwen3 1.7B CLI (prem Ctrl+C per sortir)")
 
 while True:
     try:
@@ -55,5 +56,5 @@ while True:
         print("\n" + tokenizer.decode(output[0], skip_special_tokens=True))
 
     except KeyboardInterrupt:
-        print("\nBye.")
+        print("\nAdéu.")
         break

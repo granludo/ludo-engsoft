@@ -1,36 +1,36 @@
 <!-- =============================================================================================================== -->
-<!-- Universitat Politècnica de Catalunya (UPC)                                                                      -->
+<!-- Universitat Politècnica de Catalunya (UPC) -->
 <!-- =============================================================================================================== -->
 
-# 📚 Embeddings-RAG Explorer
+# 📚 Explorador d'embeddings i RAG
 
-**The dynamic-RAG demo.** One program shows the whole loop. At startup it **ingests**
-`knowledge.txt` — chunks it with a sliding window and inserts every chunk into a
-collection through the course's [`collections-manager`](../../collections-manager/)
-(the manager embeds and indexes each one). Then, on every turn, you watch dynamic
-RAG happen, panel by panel:
+**La demostració del RAG dinàmic.** Un sol programa ensenya tot el bucle. En arrencar, **ingereix**
+`knowledge.txt` —el parteix en chunks amb una finestra lliscant i insereix cada chunk en una
+col·lecció mitjançant el [`collections-manager`](../../collections-manager/) del curs
+(el gestor n'incrusta i n'indexa cadascun). Després, a cada torn, veus com passa el RAG
+dinàmic, panell rere panell:
 
-1. **What the chat UI sends** — the bare turns, nothing else.
-2. **Retrieval** — your message becomes the query; the collection returns the nearest
-   chunks with their similarity, and you see which pass the threshold (**→ injected**)
-   and which get dropped (**✗ below threshold**).
-3. **What we actually send to the LLM** — system + history + template(message, chunks).
-4. **The response — and what persists** — the answer, the token bill, and the fact that
-   the chunks are already gone.
+1. **Què envia la interfície de xat** —els torns pelats, res més.
+2. **Recuperació** —el teu missatge esdevé la consulta; la col·lecció retorna els chunks
+   més propers amb la seva similitud, i veus quins superen el llindar (**→ injectat**)
+   i quins es descarten (**✗ per sota del llindar**).
+3. **Què enviem realment a l'LLM** —system + historial + plantilla(missatge, chunks).
+4. **La resposta —i què perdura**— la resposta, la factura de tokens, i el fet que
+   els chunks ja han desaparegut.
 
-Everything speaks the manager's three calls — `create_collection` / `insert` / `query` —
-the same interface as the collections-explorer, the provided
-[`simple-dynamic-rag`](../../simple-dynamic-rag/) tool, and your final project. That is
-the point of an abstraction layer: nobody here talks to the database engine directly.
+Tot parla amb les tres crides del gestor —`create_collection` / `insert` / `query`—,
+la mateixa interfície que l'explorador de col·leccions, l'eina proporcionada
+[`simple-dynamic-rag`](../../simple-dynamic-rag/) i el teu projecte final. Aquest és
+el sentit d'una capa d'abstracció: aquí ningú parla directament amb el motor de la base de dades.
 
-## Setup
+## Configuració
 
 ```bash
 cd 05-embeddings-rag-explorer
 uv venv && source .venv/bin/activate && uv sync
 ```
 
-Copy `.env.example` to `.env`. Default is local Ollama — no key, no cost:
+Copia `.env.example` a `.env`. Per defecte és Ollama en local —sense clau, sense cost:
 
 ```bash
 ollama serve
@@ -38,43 +38,42 @@ ollama pull qwen3:1.7b
 ollama pull nomic-embed-text
 ```
 
-## Run
+## Execució
 
 ```bash
 uv run embeddings_rag_explorer.py
 ```
 
-The collection lives **in memory** and is rebuilt from `knowledge.txt` on every run,
-so every demo take starts identical. Set `PERSIST_PATH` in `.env` to keep it instead.
+La col·lecció viu **en memòria** i es reconstrueix des de `knowledge.txt` a cada execució,
+de manera que cada passada de la demostració comença igual. Configura `PERSIST_PATH` a `.env` si prefereixes conservar-la.
 
-The intro panel **suggests questions to aim with** — a demo-friendly ladder from
-"retrieval by meaning" (words the text never uses) through cross-domain provenance
-to the off-topic threshold lesson — and after each answer it hints the next one, so
-you always know what the next question is trying to show.
+El panell d'introducció **suggereix preguntes per apuntar-hi** —una escala pensada per a la demostració que va
+de la «recuperació per significat» (paraules que el text no fa servir mai) a la lliçó del llindar
+per a preguntes fora de tema, passant per la procedència entre dominis— i, després de cada resposta, apunta la següent, de manera que
+sempre saps què vol mostrar la pregunta següent.
 
-| Command | What it does |
+| Comanda | Què fa |
 |---|---|
-| `/topk N` | how many chunks to retrieve |
-| `/threshold X` | the similarity gate — watch chunks flip between injected and dropped |
-| *(any text)* | one full turn, all four panels |
-| *(empty line)* | quit |
+| `/topk N` | quants chunks vols recuperar |
+| `/threshold X` | la comporta de similitud —observa com els chunks basculen entre injectat i descartat |
+| *(qualsevol text)* | un torn complet, els quatre panells |
+| *(línia buida)* | surt |
 
-## The thing to notice
+## El detall que cal observar
 
-Ask **"how quick is the delivery robot?"** — words the document never uses — and the
-right chunk tops the table anyway: retrieval is by meaning. Then ask something the
-document does not cover and read the similarity column. Unrelated questions still score
-around 0.40–0.50 on this embeddings model, while real answers sit around 0.50–0.70 —
-the band is narrow. Play with `/threshold`: find where off-topic questions inject
-nothing while real ones still eat; push it higher and watch legitimate questions starve
-too. The gate is a design decision that needs calibrating against your model and your
-corpus — and the grounded system prompt is the second line of defense when something
-slips through.
+Pregunta **«què és de ràpid el robot de repartiment?»** —paraules que el document no fa servir mai— i el
+chunk correcte encapçala la taula igualment: la recuperació és per significat. Després pregunta alguna cosa que el
+document no cobreix i mira la columna de similitud. Les preguntes sense relació encara puntuen
+al voltant de 0,40–0,50 en aquest model d'embeddings, mentre que les respostes reals se situen al voltant de 0,50–0,70 —
+la banda és estreta. Juga amb `/threshold`: troba el punt on les preguntes fora de tema no injecten
+res mentre les autèntiques encara mengen; puja'l més amunt i observa com les preguntes legítimes també es queden a l'estacada.
+La comporta és una decisió de disseny que cal calibrar contra el teu model i el teu corpus
+—i el system prompt ancorat és la segona línia de defensa quan alguna cosa s'escola.
 
-## 📖 License
+## 📖 Llicència
 
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (`CC BY-NC-SA 4.0`).
 
-## 👤 Author
+## 👤 Autor
 
-[@granludo](https://github.com/granludo) — Marc Alier, Universitat Politècnica de Catalunya (UPC)
+[@granludo](https://github.com/granludo) – Marc Alier, Universitat Politècnica de Catalunya (UPC)

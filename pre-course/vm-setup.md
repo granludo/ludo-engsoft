@@ -1,42 +1,42 @@
-# Getting your machine ready — environment setup
+# Prepara la teva màquina — configuració de l'entorn
 
-This guide gets your computer ready for the course. Do it in the week before we start, so that if something goes wrong you have time to ask for help. Budget **30–40 minutes** — most of that is just waiting for downloads. At the end there is a **smoke test**: five commands that, if they all work, mean you are ready. If anything fails, read the error message and **email us before day one** — a week of runway only helps if you use it.
+Aquesta guia deixa el teu ordinador a punt per al curs. Fes-la la setmana abans de començar: així, si alguna cosa surt malament, tindràs temps de demanar ajuda. Compta amb **30–40 minuts**, la major part dels quals només és esperar que acabin les baixades. Al final hi ha una **prova de foc**: cinc ordres que, si funcionen totes, volen dir que ja estàs a punt. Si alguna cosa falla, llegeix el missatge d'error i **escriu-nos abans del primer dia** — una setmana de marge només serveix si l'aprofites.
 
-You do not need to understand every detail today. You need the tools installed and the smoke test passing. As you go, if a word or an idea is new, ask ChatGPT, Claude, or your coding agent to explain it — that habit *is* part of the course.
+No cal que ho entenguis tot avui. El que necessites és tenir les eines instal·lades i que la prova de foc passi. Sobre la marxa, si et trobes una paraula o una idea nova, demana a ChatGPT, Claude o al teu agent de programació que te l'expliqui — aquest hàbit *forma part* del curs.
 
-## First: what is "the terminal", and why does this course live in it?
+## Primer: què és «la terminal» i per què aquest curs hi transcorre?
 
-The **terminal** (also called the *shell* or the *command line*) is a text window where you type commands to your computer instead of clicking buttons. If you have lived in graphical apps and notebooks, it can feel like a step backwards. It is not. It is where real software work happens — and, more importantly for us, **it is where AI coding agents work.** An agent builds your software by running terminal commands; your job is to read what it did, catch its mistakes, and steer it. If you cannot read the terminal, you cannot supervise an agent — and supervising the agent is the whole skill this course teaches.
+La **terminal** (també anomenada *shell* o *línia d'ordres*) és una finestra de text on escrius ordres a l'ordinador en comptes de clicar botons. Si has viscut sempre entre aplicacions gràfiques i notebooks, pot semblar un pas enrere. No ho és. És on passa la feina de programari de debò — i, encara més important per a nosaltres, **és on treballen els agents d'IA de programació.** Un agent construeix el teu programari executant ordres a la terminal; la teva feina és llegir què ha fet, detectar-ne els errors i guiar-lo. Si no saps llegir la terminal, no pots supervisar un agent — i supervisar l'agent és tota l'habilitat que ensenya aquest curs.
 
-You do not need to be a terminal expert. You need a handful of commands and the confidence to read output. The companion **cheatsheet** (`cheatsheet.md`) lists every command you'll need; keep it open during the first week. If you want a proper, friendly grounding, the MIT lecture series *The Missing Semester of Your CS Education* is the best free resource: <https://missing.csail.mit.edu>.
+No cal que siguis un expert en terminals. Només necessites un grapat d'ordres i la confiança per llegir-ne la sortida. La **xuleta** de referència que l'acompanya (`cheatsheet.md`) recull totes les ordres que et faran falta; tingues-la oberta durant la primera setmana. Si vols una base sòlida i amable, la sèrie de classes del MIT *The Missing Semester of Your CS Education* és el millor recurs gratuït: <https://missing.csail.mit.edu>.
 
-## The tools you'll install, and what each one is for
+## Les eines que instal·laràs i per a què serveix cadascuna
 
-You will install five things. Here is what each one is and why it matters — install instructions for your operating system come after.
+Instal·laràs cinc coses. Aquí t'expliquem què és cadascuna i per què importa; les instruccions d'instal·lació per al teu sistema operatiu venen després.
 
-- **Python 3.11+** — the programming language the course examples are written in. You will *read* a lot of Python and *edit* some; you will rarely write it from scratch. Version 3.11 or newer matters because some libraries we use need it. Learn more / refresher: <https://docs.python.org/3/tutorial/>.
+- **Python 3.11+** — el llenguatge de programació en què estan escrits els exemples del curs. En *llegiràs* molt i n'*editaràs* una mica; rarament n'escriuràs des de zero. La versió 3.11 o superior importa perquè algunes de les biblioteques que fem servir la necessiten. Més informació o repàs: <https://docs.python.org/3/tutorial/>.
 
-- **`uv`** — a tool that runs Python programs and manages their dependencies (the extra libraries a program needs). Without it, "it works on my machine but not yours" is a constant problem, because everyone has different libraries installed. `uv` makes a program bring its own dependencies, so it just runs. One command (`uv run …`) and you don't think about it again. Learn more: <https://docs.astral.sh/uv/>.
+- **`uv`** — una eina que executa programes de Python i en gestiona les dependències (les biblioteques addicionals que un programa necessita). Sense ella, el «funciona al meu ordinador però no al teu» és un problema constant, perquè cadascú té instal·lades biblioteques diferents. `uv` fa que un programa porti les seves pròpies dependències, així que simplement s'executa. Una sola ordre (`uv run …`) i ja no t'hi has de tornar a amoïnar. Més informació: <https://docs.astral.sh/uv/>.
 
-- **git** — the version-control system that records the history of your code and lets you share it. In this course your deliverables *live in a git repository*: you build something, you `commit` it (save a snapshot), and you `push` it to GitHub so we can see it. The AI agent will often commit for you — which is exactly why you need to understand git well enough to look at what it did and undo it when it does something wrong. New to git? Read chapters 1–3 of the free *Pro Git* book (<https://git-scm.com/book>), or play through the visual tutorial at <https://learngitbranching.js.org>.
+- **git** — el sistema de control de versions que registra l'historial del teu codi i et permet compartir-lo. En aquest curs, els teus lliuraments *viuen en un repositori git*: construeixes alguna cosa, en fas un `commit` (en guardes una instantània) i el `push` cap a GitHub perquè el puguem veure. Sovint l'agent d'IA farà els commits per tu — i és justament per això que has d'entendre git prou bé per mirar què ha fet i desfer-ho quan s'equivoqui. No has fet servir mai git? Llegeix els capítols 1–3 del llibre *Pro Git*, gratuït (<https://git-scm.com/book>), o fes el tutorial visual de <https://learngitbranching.js.org>.
 
-- **Ollama** + a small model — Ollama runs a language model **on your own computer**, with no API key, no cost, and no internet needed after the first download. We use it for the course *experiments* — so you can run things freely without a bill. The small model we default to (`qwen3:1.7b`) is about 1.5 GB and runs on almost any laptop. Learn more and browse other models: <https://ollama.com>.
+- **Ollama** + un model petit — Ollama executa un model de llenguatge **al teu propi ordinador**, sense clau API, sense cost i sense necessitat d'internet un cop feta la primera baixada. El fem servir per als *experiments* del curs, de manera que pots provar coses lliurement sense rebre cap factura. El model petit que fem servir per defecte (`qwen3:1.7b`) ocupa uns 1,5 GB i funciona en gairebé qualsevol portàtil. Més informació i altres models: <https://ollama.com>.
 
-- **OpenCode** — the AI coding agent you will *drive* from Week 2 onward to build your software. **Important:** a coding agent is only as good as the model behind it, and a *tiny* local model is **not** good enough to drive one through real work. So OpenCode needs a **capable** model — a strong endpoint your course provides (if it has one), or your own subscription to a capable agentic model (Qwen, DeepSeek, Pi, MiniMax; Claude if you are serious about this). Keep the small local Ollama model for the *experiments*; use the capable model for *driving the agent*. (We explain this two-model split again in Week 2 — it confuses everyone at first, so don't worry if it isn't fully clear yet.) Learn more: <https://opencode.ai>.
+- **OpenCode** — l'agent d'IA de programació que *pilotaràs* a partir de la segona setmana per construir el teu programari. **Important:** un agent de programació és tan bo com el model que té al darrere, i un model local *diminut* **no** és prou bo per pilotar-ne un en feina de debò. Per això OpenCode necessita un model **potent**: un endpoint sòlid que et proporcioni el curs (si en té), o la teva pròpia subscripció a un model agèntic potent (Qwen, DeepSeek, Pi, MiniMax; Claude si t'ho vols prendre seriosament). Reserva el model local petit d'Ollama per als *experiments*; fes servir el model potent per *pilotar l'agent*. (Aquesta divisió en dos models la tornem a explicar a la segona setmana — al principi confon tothom, així que no pateixis si encara no ho tens del tot clar.) Més informació: <https://opencode.ai>.
 
-Now follow the section for **your** operating system.
+Ara segueix la secció del **teu** sistema operatiu.
 
 ---
 
 ## macOS
 
-macOS comes with a terminal (open **Terminal.app**, or install **iTerm2** if you prefer). We install everything with **Homebrew**, the standard package manager for macOS — it's the tool that downloads and installs developer software for you. If you don't have it yet, install it with this one line (it will explain what it's doing and ask for your password):
+macOS ja porta una terminal (obre **Terminal.app**, o instal·la **iTerm2** si ho prefereixes). Ho instal·lem tot amb **Homebrew**, el gestor de paquets estàndard de macOS — l'eina que et descarrega i instal·la el programari de desenvolupament. Si encara no el tens, instal·la'l amb aquesta única línia (t'explicarà què fa i et demanarà la contrasenya):
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-(More on Homebrew: <https://brew.sh>.) Then install the tools:
+(Més sobre Homebrew: <https://brew.sh>.) Després, instal·la les eines:
 
 ```bash
 # Python, git, and uv
@@ -52,13 +52,13 @@ ollama pull qwen3:1.7b         # downloads the small model (~1.5 GB) — be pati
 curl -fsSL https://opencode.ai/install | bash
 ```
 
-After installing, **open a new terminal window** so that `uv` and `opencode` are found (the installers add them to your `PATH`, the list of places your terminal looks for commands, and that only takes effect in a fresh window).
+Un cop instal·lat, **obre una finestra de terminal nova** perquè es trobin `uv` i `opencode` (els instal·ladors els afegeixen al teu `PATH`, la llista de llocs on la terminal busca les ordres, i això només té efecte en una finestra nova).
 
 ---
 
 ## Linux (Ubuntu / Debian)
 
-You already have a real terminal. Install the system basics with `apt` (Ubuntu's package manager), then the rest:
+Ja tens una terminal de debò. Instal·la els elements bàsics del sistema amb `apt` (el gestor de paquets d'Ubuntu) i, després, la resta:
 
 ```bash
 # System basics
@@ -76,36 +76,36 @@ ollama pull qwen3:1.7b         # the small model (~1.5 GB)
 curl -fsSL https://opencode.ai/install | bash
 ```
 
-Then open a new terminal (or run `source ~/.bashrc`) so the new tools are on your `PATH`.
+Després, obre una terminal nova (o executa `source ~/.bashrc`) perquè les eines noves quedin al teu `PATH`.
 
 ---
 
-## Windows — you need a real Unix terminal (PowerShell will not do)
+## Windows — necessites una terminal Unix de debò (PowerShell no serveix)
 
-This course runs in a **Unix** terminal (the kind macOS and Linux have). Windows' built-in **PowerShell is a different system** — many of our commands and tools simply don't work there, and fighting that difference all term is not worth it. So on Windows you run a small Linux *inside* Windows. The easy, recommended way is **WSL2** (the Windows Subsystem for Linux) — it gives you a genuine Ubuntu terminal that behaves exactly like the Linux section above, with no separate virtual machine to manage.
+Aquest curs funciona en una terminal **Unix** (del tipus que tenen macOS i Linux). El **PowerShell** que ve amb Windows **és un sistema diferent**: moltes de les nostres ordres i eines senzillament no hi funcionen, i barallar-se amb aquesta diferència tot el curs no val la pena. Per això, a Windows executes un petit Linux *dins* de Windows. La manera fàcil i recomanada és **WSL2** (el subsistema de Windows per a Linux): et dona una terminal d'Ubuntu autèntica que es comporta exactament com la de la secció de Linux anterior, sense cap màquina virtual a part per gestionar.
 
-1. Open **PowerShell as Administrator** (right-click → "Run as administrator") and run:
+1. Obre el **PowerShell com a administrador** (clic dret → «Executa com a administrador») i executa:
    ```powershell
    wsl --install
    ```
-   Reboot when it asks. By default this installs Ubuntu. (Microsoft's official guide, if you want the details: <https://learn.microsoft.com/windows/wsl/install>.)
-2. From the Start menu, launch **Ubuntu**. The first time, it asks you to create a Linux username and password — these are separate from your Windows login.
-3. Inside that Ubuntu terminal, follow the **Linux (Ubuntu / Debian)** section above. Everything works the same.
+   Reinicia quan t'ho demani. Per defecte instal·la Ubuntu. (Guia oficial de Microsoft, si en vols els detalls: <https://learn.microsoft.com/windows/wsl/install>.)
+2. Des del menú d'Inici, obre l'**Ubuntu**. El primer cop et demanarà que creïs un nom d'usuari i una contrasenya de Linux — són independents del teu compte de Windows.
+3. Dins d'aquesta terminal d'Ubuntu, segueix la secció **Linux (Ubuntu / Debian)** d'aquí sobre. Tot funciona igual.
 
-> **Can't run WSL2?** (Very old hardware, or a locked-down work laptop that won't allow it.) Don't fight it alone — email us before the course starts and we'll help you find a working setup.
+> **No pots executar WSL2?** (Maquinari molt antic, o un portàtil de la feina blindat que no ho permet.) No t'hi barallis tot sol — escriu-nos abans que comenci el curs i t'ajudarem a trobar una configuració que funcioni.
 
 ---
 
-## Do one git round-trip now (so it isn't new on day one)
+## Fes un cicle complet de git ara (perquè no et sigui nou el primer dia)
 
-git has a small vocabulary you'll use constantly. Practising it once, now, on a throwaway repository means it won't be unfamiliar when your grade depends on it. First, tell git who you are — you only ever do this once:
+git té un vocabulari reduït que faràs servir constantment. Practicar-lo un cop, ara, en un repositori d'usar i llençar fa que no et resulti estrany quan la nota en depengui. Primer, digues a git qui ets — això només ho fas un cop:
 
 ```bash
 git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 ```
 
-Then clone a public repository, look inside it, and read its history:
+Després, clona un repositori públic, mira'n el contingut i llegeix-ne l'historial:
 
 ```bash
 git clone https://github.com/octocat/Hello-World.git   # copy a repo to your machine
@@ -114,13 +114,13 @@ git status                                              # what's changed right n
 git log --oneline                                       # the history, one line per commit
 ```
 
-That is the rhythm you'll repeat all term: **clone → change → `add` → `commit` → `push`.** If any of these words are fuzzy, the *Pro Git* chapters linked above explain each one clearly.
+Aquest és el ritme que repetiràs tot el curs: **clonar → modificar → `add` → `commit` → `push`.** Si algun d'aquests termes et balla, els capítols de *Pro Git* enllaçats més amunt els expliquen tots amb claredat.
 
 ---
 
-## Smoke test — are you ready?
+## Prova de foc — estàs a punt?
 
-Run these five commands. Each one checks that a tool is installed and working. If all five answer cleanly, you're set for day one:
+Executa aquestes cinc ordres. Cadascuna comprova que una eina està instal·lada i funciona. Si totes cinc responen sense problemes, estàs llest per al primer dia:
 
 ```bash
 python3 --version    # should print 3.11 or higher
@@ -130,6 +130,6 @@ ollama run qwen3:1.7b "reply with exactly one short sentence"
 opencode --version   # any version
 ```
 
-The fourth command is the interesting one: the first time you run it, it finishes downloading the model, and then it prints a single sentence **generated on your own computer** — no internet, no account, no cost. When you see that sentence appear, the hard part of setup is done.
+La quarta ordre és la interessant: el primer cop que l'executes, acaba de baixar el model i tot seguit imprimeix una única frase **generada al teu propi ordinador** — sense internet, sense compte, sense cost. Quan vegis aparèixer aquesta frase, la part difícil de la configuració ja està feta.
 
-**If any command gives an error:** read the message carefully (errors are printed on a separate channel called `stderr` — see the cheatsheet), make sure you opened a fresh terminal after installing, and try asking ChatGPT or Claude to explain the exact error text. If you're still stuck, **email us before the course starts.**
+**Si alguna ordre dona error:** llegeix el missatge amb atenció (els errors s'imprimeixen en un canal a part anomenat `stderr` — consulta la xuleta), assegura't d'haver obert una terminal nova després d'instal·lar i prova de demanar a ChatGPT o Claude que t'expliqui el text exacte de l'error. Si tot i així et quedes encallat, **escriu-nos abans que comenci el curs.**

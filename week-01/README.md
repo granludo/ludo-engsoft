@@ -1,25 +1,25 @@
-# Week 1 — Foundations: LLMs, the API call, and the universal interface
+# Setmana 1 — Bases: els LLM, la crida a l'API i la interfície universal
 
-Companion code for **BSC Agents Course · Week 1**. The lectures lay the theory; the exercises here are where you touch it.
+Codi complementari per al **curs d'agents del BSC · Setmana 1**. Les classes expliquen la teoria; els exercicis d'aquí són on la toques amb les mans.
 
-## What Week 1 covers
+## Què cobreix la Setmana 1
 
-- **Tokenization** — what the model actually sees, and why your bill is in tokens not words.
-- **Base vs. aligned** — GPT-2 (a base model, never RLHF'd) vs. Qwen3-1.7B (aligned). The same prompt produces a quiz on one side and an answer on the other. The alignment stack from Lecture 2 is the difference.
-- **The API call** — JSON in, JSON out, over HTTP. Universal wire format across providers (OpenAI, Anthropic via OpenRouter, Mistral, …) and local servers (Ollama, vLLM, LM Studio). See [`demos/context-explorer/`](./demos/context-explorer/) and [`demos/the-api-call/`](./demos/the-api-call/) — the bare chat-completions call in `curl` and via the SDK, plus streaming and images.
+- **Tokenization** — què veu realment el model, i per què la teva factura es mesura en tokens i no en paraules.
+- **Base contra alineat** — GPT-2 (un base model, mai passat per RLHF) enfront de Qwen3-1.7B (aligned). El mateix prompt genera un qüestionari en un cantó i una resposta en l'altre. La diferència és l'stack d'alineació de la Conferència 2.
+- **La crida a l'API** — JSON d'entrada, JSON de sortida, sobre HTTP. Un wire format universal per a tots els proveïdors (OpenAI, Anthropic mitjançant OpenRouter, Mistral, …) i servidors locals (Ollama, vLLM, LM Studio). Consulta [`demos/context-explorer/`](./demos/context-explorer/) i [`demos/the-api-call/`](./demos/the-api-call/) — la crida bàsica a chat completions amb `curl` i mitjançant l'SDK, més streaming i imatges.
 
-## Exercises
+## Exercicis
 
-| # | What you do | Folder |
+| # | Què fas | Carpeta |
 |---|---|---|
-| **1 — Tokenize** | Load a tokenizer locally, count tokens, measure the multilingual penalty, compare two tokenizers on four kinds of input. | [`ex-01-tokenise/`](ex-01-tokenise/) |
-| **2 — Base vs. aligned** | Run GPT-2 (base, ~124M) and Qwen3-1.7B (aligned) side by side. Ask both the same four prompts; observe the gap. | [`ex-02-base-vs-aligned/`](ex-02-base-vs-aligned/) |
-| **3 — Call an LLM** | Use [`demos/context-explorer/`](./demos/context-explorer/) against a local Ollama-served Qwen3-1.7B. Same model as Exercise 2, this time wrapped in the OpenAI wire format. No API key, no money. | [`demos/context-explorer/`](./demos/context-explorer/) |
-| **4 — Call the LLM from code** | The bare call: `curl` and a short Python script against your own Ollama, on the model you can run. Same wire format that reaches a frontier model — only the `.env` changes. | [`ex-04-call-the-llm/`](ex-04-call-the-llm/) |
+| **1 — Tokenize** | Carrega un tokenizer localment, compta tokens, mesura la penalització multilingüe i compara dos tokenizers amb quatre tipus d'entrada. | [`ex-01-tokenise/`](ex-01-tokenise/) |
+| **2 — Base contra alineat** | Executa GPT-2 (base, ~124M) i Qwen3-1.7B (aligned) un al costat de l'altre. Fes a tots dos els mateixos quatre prompts i observa la diferència. | [`ex-02-base-vs-aligned/`](ex-02-base-vs-aligned/) |
+| **3 — Crida un LLM** | Fes servir [`demos/context-explorer/`](./demos/context-explorer/) contra un Qwen3-1.7B servit localment amb Ollama. El mateix model que a l'exercici 2, però aquest cop embolcallat en el wire format d'OpenAI. Sense clau API, sense diners. | [`demos/context-explorer/`](./demos/context-explorer/) |
+| **4 — Crida el LLM des del codi** | La crida bàsica: `curl` i un breu script de Python contra el teu propi Ollama, amb el model que pots executar. El mateix wire format que arriba a un model de frontera: només canvia el `.env`. | [`ex-04-call-the-llm/`](ex-04-call-the-llm/) |
 
-## How to run anything in this folder
+## Com executar qualsevol cosa d'aquesta carpeta
 
-Each exercise sub-folder is independent — its own `pyproject.toml`, its own `.venv`. Standard pattern:
+Cada subcarpeta d'exercici és independent: té el seu propi `pyproject.toml` i el seu propi `.venv`. Patró estàndard:
 
 ```bash
 cd week-01/ex-01-tokenise
@@ -28,15 +28,15 @@ uv sync
 python ex_01_tokenise.py
 ```
 
-`.venv/` and `.env` are gitignored everywhere — never commit them.
+`.venv/` i `.env` estan al `.gitignore` a tot arreu: no els facis commit mai.
 
-## Course VM
+## VM del curs
 
-If you don't have a working Python 3.10+ environment, the canonical course VM build is at [`../pre-course/vm-setup.md`](../pre-course/vm-setup.md) (VirtualBox + Ubuntu Server, OVA image distributed by the course); the [`../pre-course/cheatsheet.md`](../pre-course/cheatsheet.md) has the day-one commands.
+Si no tens un entorn de Python 3.10+ funcional, la VM oficial del curs està a [`../pre-course/vm-setup.md`](../pre-course/vm-setup.md) (VirtualBox + Ubuntu Server, imatge OVA distribuïda pel curs); a [`../pre-course/cheatsheet.md`](../pre-course/cheatsheet.md) hi trobaràs les ordres del primer dia.
 
-## License
+## Llicència
 
-[CC BY-NC-SA 4.0](../LICENSE) — share + adapt for non-commercial use, with attribution and same-license redistribution.
+[CC BY-NC-SA 4.0](../LICENSE) — comparteix i adapta per a usos no comercials, amb atribució i redistribució sota la mateixa llicència.
 
 
 ---

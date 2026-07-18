@@ -1,34 +1,29 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents de BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 # =============================================================================================================== #
 # Universitat Politècnica de Catalunya (UPC)                                                                      #
 # =============================================================================================================== #
 
 """
-🔌 A minimal MCP server — one tool, one resource.
+🔌 Un servidor MCP mínim: una eina, un recurs.
 
-MCP (the Model Context Protocol) is a standard way to plug capabilities into an
-LLM-driven app without hand-wiring each one. A server advertises its capabilities
-over JSON-RPC; a client (your agent) discovers and calls them. The three primitives:
+MCP (el Model Context Protocol) és una manera estàndard d'afegir capacitats a una aplicació impulsada per un LLM sense haver de cablejar-les una a una. Un servidor anuncia les seves capacitats per JSON-RPC; un client (el teu agent) les descobreix i les crida. Les tres primitives:
 
-  - tools     : actions the model can invoke      (here: get_robot_spec)
-  - resources : data the model can read           (here: acme://company)
-  - prompts   : reusable prompt templates         (omitted — keep it minimal)
+  - eines      : accions que el model pot invocar     (aquí: get_robot_spec)
+  - recursos   : dades que el model pot llegir         (aquí: acme://company)
+  - prompts    : plantilles de prompt reutilitzables   (omès — simplifiquem)
 
-When a client connects, the server hands it a REGISTRY: each tool's name,
-description, and JSON schema. That registry is loaded into the model's context at
-the head of the session — true and useful to know, and the exact structure a later
-chapter's cost model takes apart.
+Quan un client es connecta, el servidor li lliura un REGISTRE: el nom, la descripció i l'esquema JSON de cada eina. Aquest registre es carrega en el context del model al començament de la sessió —cert i útil de saber—, i és l'estructura exacta que desmuntarà el model de costos d'un capítol posterior.
 
-Run it directly to serve over stdio:  uv run server.py
+Executa'l directament per servir sobre stdio:  uv run server.py
 """
 from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("acme-robotics")
 
-# canned data — offline, so the demo needs no network
+# dades predefinides — fora de línia, així la demo no necessita xarxa
 _SPECS = {
     "pallet pup": "Pallet Pup: top speed 2.4 m/s, 9 h battery, carries up to 600 kg, runs PupOS.",
     "shelf cat":  "Shelf Cat: top speed 0.9 m/s, reaches 8 m racking, shares the PupOS platform.",
@@ -37,16 +32,16 @@ _SPECS = {
 
 @mcp.tool()
 def get_robot_spec(model: str) -> str:
-    """Return the spec sheet for an Acme Robotics model (e.g. 'Pallet Pup', 'Shelf Cat')."""
+    """Retorna el full d'especificacions d'un model d'Acme Robotics (p. ex. 'Pallet Pup', 'Shelf Cat')."""
     return _SPECS.get(model.strip().lower(), f"No spec on file for {model!r}.")
 
 
 @mcp.resource("acme://company")
 def company() -> str:
-    """Background facts about Acme Robotics that the model may read."""
+    """Informació de context sobre Acme Robotics que el model pot llegir."""
     return ("Acme Robotics, founded 2019 in Girona, builds small autonomous warehouse "
             "robots. CEO Berta Comas. Motto: 'small robots, heavy lifting.'")
 
 
 if __name__ == "__main__":
-    mcp.run()  # stdio transport (JSON-RPC over stdin/stdout)
+    mcp.run()  # transport stdio (JSON-RPC sobre stdin/stdout)

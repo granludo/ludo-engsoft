@@ -1,61 +1,60 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs per a agents de BSC — Transformers, LLMs, RAG i Agents: Des del teòric fins a la pràctica
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 # =============================================================================================================== #
 # Universitat Politècnica de Catalunya (UPC)                                                                      #
 # =============================================================================================================== #
 
 """
-📚 Context Explorer — single-file RAG: what the app stores vs. what the LLM receives.
+📚 Explorador de context — RAG d'un sol fitxer: què desa l'aplicació vs. què rep el LLM.
 
-Single-file RAG is the crudest thing that earns the name: paste a whole file into
-the prompt as context and ask. This explorer shows the part everyone gets wrong —
-the difference between the conversation the CHAT UI keeps and the call the LLM
-actually receives. They are not the same, and the gap is the lesson.
+El RAG d'un sol fitxer és el més rudimentari que es mereix aquest nom: enganxes tot un
+fitxer a la prompt com a context i preguntes. Aquest explorador mostra la part que
+tothom entén malament — la diferència entre la conversa que guarda la CHAT UI i la
+crida que rep realment el LLM. No són el mateix, i aquest desfasament és la lliçó.
 
-THREE LAYERS (the same shape as serving an assistant over an OpenAI-compatible API,
-e.g. LAMB):
+TRES CAPES (amb la mateixa forma que servir un assistent sobre una API compatible amb
+OpenAI, p. ex. LAMB):
 
-    🖥️  CHAT UI        sends:  history (bare) + your latest message
-                                  |   history = what you see; no system prompt, no augmentation
+    🖥️  CHAT UI        envia:    historial (nu) + el teu darrer missatge
+                                  |   historial = el que veus; sense system prompt, sense augmentació
                                   v
-    🛠️  ASSISTANT ENDPOINT  (STATELESS; the model id selects system prompt + template + RAG)
-            builds:  [system] + [history] + [ template(your message, RAG augmentation) ]
-                                  |   rebuilt every call — it has no state to keep it in
+    🛠️  ASSISTANT ENDPOINT  (STATELESS; l'id del model tria system prompt + plantilla + RAG)
+            construeix:  [system] + [history] + [ plantilla(el teu missatge, augmentació RAG) ]
+                                  |   es reconstrueix a cada crida — no té estat per conservar-lo
                                   v
-    🧠  LLM            returns:  the response only
+    🧠  LLM            retorna:   només la resposta
                                   ^
-    🖥️  CHAT UI        appends (your message, response) to history   ✗ augmentation NOT saved
+    🖥️  CHAT UI        afegeix (el teu missatge, la resposta) a l'historial   ✗ augmentació NO desada
 
-Because the endpoint is stateless, the augmentation is built fresh every turn and
-thrown away. The UI history stays bare. To KEEP the augmentation you would have to
-store augmented history and make the chat stateful — try `/stateful` to see what
-that costs.
+Com que l'endpoint és stateless, l'augmentació es construeix de nou a cada torn i es
+llença. L'historial de la UI es manté nu. Per CONSERVAR l'augmentació hauries de desar
+l'historial augmentat i fer el xat stateful — prova `/stateful` per veure què costa.
 
-TWO PLACEMENT MODES (switch live with /mode):
-- user-augment    (default) — the file is injected into the USER message every turn.
-                              Volatile: it rides in the tail of the prompt, re-sent and
-                              re-billed every call, never cacheable.
-- system-grounding          — the file is placed in the SYSTEM prompt ONCE (part of the
-                              assistant's config). Retrieve once, at the start. The
-                              conversation stays "pure" (bare Q&A), and the file sits in
-                              the stable, cacheable prefix (KV cache).
+DOS MODES DE COL·LOCACIÓ (commuta en directe amb /mode):
+- user-augment    (per defecte) — el fitxer s'injecta al missatge de l'USUARI a cada torn.
+                              Volàtil: viatja a la cua de la prompt, es reenvia i es torna
+                              a facturar a cada crida, mai no és cacheable.
+- system-grounding          — el fitxer es col·loca a la SYSTEM prompt UN sol cop (part de la
+                              configuració de l'assistent). Es recupera un cop, al principi. La
+                              conversa es manté "pura" (només preguntes i respostes) i el fitxer
+                              seu al prefix estable i cacheable (KV cache).
 
-Usage:
-    1. Copy .env.example to .env and fill in your values
+Ús:
+    1. Copia .env.example a .env i omple els teus valors
     2. uv run context_explorer_rag.py
-    3. (optional) RAG_MODE=system-grounding  KNOWLEDGE_FILE=mynotes.txt  uv run context_explorer_rag.py
+    3. (opcional) RAG_MODE=system-grounding  KNOWLEDGE_FILE=mynotes.txt  uv run context_explorer_rag.py
 
-In-chat commands:
-    /mode [user-augment|system-grounding]   switch placement (resets the conversation);
-                                            no argument toggles. Spaces/underscores/dashes
-                                            and short aliases (system, grounding, sg / user,
-                                            augment, ua) all resolve.
-    /stateful                                toggle storing augmented history (the stateful alternative)
-    /file <path>                             load a different knowledge file
-    /context                                 print the loaded knowledge file
-    (empty line)                             quit
+Ordres dins del xat:
+    /mode [user-augment|system-grounding]   canvia la col·locació (reinicia la conversa);
+                                            sense argument, commuta. Espais/guions baixos/guions
+                                            i àlies curts (system, grounding, sg / user,
+                                            augment, ua) es resolen tots.
+    /stateful                                commuta el desament de l'historial augmentat (l'alternativa stateful)
+    /file <ruta>                             carrega un altre fitxer de coneixement
+    /context                                 imprimeix el fitxer de coneixement carregat
+    (línia buida)                            sortir
 """
 import os
 import json
@@ -73,7 +72,7 @@ from rich import box
 
 load_dotenv()
 
-# High-contrast Rich theme — avoids deep blue / muted gray on dark panel backgrounds.
+# Tema Rich d'alt contrast — evita el blau fosc i els grisos apagats sobre fons de panell foscos.
 BG = "grey23"
 ON_BG = f"on {BG}"
 TEXT = f"bright_white {ON_BG}"
@@ -85,30 +84,30 @@ ALERT = f"salmon1 {ON_BG}"
 COST = f"orange1 {ON_BG}"
 BORDER = "bright_cyan"
 BORDER_ALERT = "light_coral"
-INPUT_PROMPT = "[bold bright_cyan]👤 You: [/bold bright_cyan]"
+INPUT_PROMPT = "[bold bright_cyan]👤 Tu: [/bold bright_cyan]"
 
 console = Console()
 client = None
 
-# Configuration from .env
+# Configuració des de .env
 MODEL = os.getenv("MODEL", "gpt-4.1-mini")
-OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")  # Optional: alternative OpenAI-compatible endpoint
+OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")  # Opcional: endpoint alternatiu compatible amb OpenAI
 KNOWLEDGE_FILE = os.getenv("KNOWLEDGE_FILE", "knowledge.txt")
 
 MODE_USER_AUGMENT = "user-augment"
 MODE_SYSTEM_GROUNDING = "system-grounding"
 RAG_MODE = os.getenv("RAG_MODE", MODE_USER_AUGMENT)
 
-# Grounding instruction: answer from the context, admit it when the answer is not there.
+# Instrucció de grounding: respon a partir del context i admet quan la resposta no hi és.
 SYSTEM_PROMPT_BASE = "Answer using only the context provided. If the answer is not in the context, say you don't know."
 
-# The RAG prompt template — the shape students reuse all week.
+# La plantilla de prompt RAG — la forma que els estudiants reutilitzen tota la setmana.
 PROMPT_TEMPLATE = "Context:\n----\n{context}\n----\n\nQuestion: {question}"
 
-# Accept loosely-typed mode arguments. The two canonical names are hyphenated
-# ("user-augment", "system-grounding"), but on camera (and for students) it is
-# easy to type a space instead of the hyphen, or to autocorrect the hyphen into a
-# dash. Map all of those — plus short aliases — onto the canonical mode.
+# Accepta arguments de mode poc tipats. Els dos noms canònics van amb guió
+# ("user-augment", "system-grounding"), però davant la càmera (i per als estudiants) és
+# fàcil escriure un espai en lloc del guió, o que l'autocorrecció el converteixi en un
+# guió llarg. Mapem tots aquests casos —més els àlies curts— al mode canònic.
 _MODE_ALIASES = {
     "user-augment": MODE_USER_AUGMENT, "user": MODE_USER_AUGMENT,
     "augment": MODE_USER_AUGMENT, "ua": MODE_USER_AUGMENT,
@@ -118,32 +117,33 @@ _MODE_ALIASES = {
 
 
 def _resolve_mode(raw: str, current: str):
-    """Map a loosely-typed `/mode` argument to a canonical mode.
+    """Converteix un argument poc tipat de `/mode` en un mode canònic.
 
-    Empty argument → toggle to the other mode. Spaces, underscores and any dash
-    variant are normalised to a single hyphen, so "system grounding",
-    "system_grounding" and "system–grounding" all resolve. Returns None if the
-    argument is non-empty and still unrecognised.
+    Argument buit → commuta a l'altre mode. Els espais, els guions baixos i qualsevol
+    variant de guió es normalitzen a un sol guió, de manera que "system grounding",
+    "system_grounding" i "system–grounding" es resolen tots. Retorna None si l'argument
+    no és buit i tot i així no es reconeix.
     """
     s = raw.strip().lower()
-    for dash in ("–", "—", "−", "_"):  # – — − _  → hyphen
+    for dash in ("–", "—", "−", "_"):  # – — − _  → guió
         s = s.replace(dash, "-")
-    s = "-".join(s.split())  # collapse whitespace runs into a single hyphen
+    s = "-".join(s.split())  # col·lapsa les tandes d'espais en un sol guió
     if not s:
         return MODE_SYSTEM_GROUNDING if current == MODE_USER_AUGMENT else MODE_USER_AUGMENT
     return _MODE_ALIASES.get(s)
 
 
 # =============================================================================================================== #
-# Retrieval — the one part that changes between single-file RAG and embeddings RAG.                               #
+# Recuperació — l'única part que canvia entre el RAG d'un sol fitxer i el RAG amb embeddings.                     #
 # =============================================================================================================== #
 
 class WholeFileRetriever:
-    """Single-file RAG: ignore the question, return the WHOLE file. Cheating at solitaire.
+    """RAG d'un sol fitxer: ignora la pregunta i retorna TOT el fitxer. Fer trampes al solitari.
 
-    No chunking, no embeddings, no vector store. The "retrieval" step is `open().read()`.
-    Later in the course this is swapped for an EmbeddingsRetriever that returns only the
-    top-k nearest chunks — and nothing else in this program changes. That is the point.
+    Sense chunking, sense embeddings, sense vector store. L'etapa de "recuperació" és
+    `open().read()`. Més endavant al curs se substitueix per un EmbeddingsRetriever que
+    retorna només els top-k chunks més propers — i res més d'aquest programa canvia.
+    Aquest és el punt clau.
     """
 
     def __init__(self, path: str):
@@ -152,37 +152,37 @@ class WholeFileRetriever:
             self.text = f.read()
 
     def retrieve(self, question: str) -> str:
-        return self.text  # the whole file — the question is ignored on purpose
+        return self.text  # tot el fitxer — la pregunta s'ignora expressament
 
     def describe(self) -> str:
         return f"WholeFileRetriever · {os.path.basename(self.path)} · whole file"
 
 
 # =============================================================================================================== #
-# The two layers that matter — and the boundary between them.                                                    #
+# Les dues capes que importen — i el límit entre elles.                                                           #
 # =============================================================================================================== #
 
 class AssistantEndpoint:
-    """A STATELESS RAG endpoint — the same shape as serving an assistant over an
-    OpenAI-compatible API (this is what LAMB does).
+    """Un endpoint RAG STATELESS — amb la mateixa forma que servir un assistent sobre una
+    API compatible amb OpenAI (això és el que fa LAMB).
 
-    It holds NO conversation state. On every call it receives the bare history + the
-    latest user message from the UI, looks up its configuration (system prompt, prompt
-    template, RAG source — here fixed at construction, in production keyed by model id),
-    and BUILDS the real LLM call from scratch:
+    NO manté cap estat de conversa. A cada crida rep l'historial nu + el darrer missatge
+    de l'usuari des de la UI, consulta la seva configuració (system prompt, plantilla de
+    prompt, font RAG — aquí fixada en la construcció, en producció indexada per l'id del
+    model) i CONSTRUEIX la crida real al LLM des de zero:
 
         user-augment      → [system] + history + [user: template(retrieve(msg), msg)]
-        system-grounding  → [system + file] + history + [user: msg]   (bare; file is in system)
+        system-grounding  → [system + file] + history + [user: msg]   (nu; el fitxer és al system)
 
-    The augmentation it builds is never returned and never stored. Next call it builds again.
+    L'augmentació que construeix no es retorna ni es desa mai. A la crida següent la torna a construir.
     """
 
     def __init__(self, retriever: WholeFileRetriever, mode: str):
         self.retriever = retriever
         self.mode = mode
         if mode == MODE_SYSTEM_GROUNDING:
-            # Retrieve ONCE, at setup: the file becomes part of the assistant's system prompt.
-            grounding = retriever.retrieve("")  # whole file; query ignored
+            # Recupera UN sol cop, en la configuració: el fitxer esdevé part del system prompt de l'assistent.
+            grounding = retriever.retrieve("")  # fitxer sencer; consulta ignorada
             self.system_prompt = (
                 SYSTEM_PROMPT_BASE
                 + "\n\nContext:\n----\n" + grounding + "\n----"
@@ -193,31 +193,31 @@ class AssistantEndpoint:
             self.retrieved_at_setup = False
 
     def build(self, history: list, user_message: str) -> dict:
-        """Build the LLM call from the bare history + the latest user message.
+        """Construeix la crida al LLM a partir de l'historial nu + el darrer missatge de l'usuari.
 
-        Returns a dict describing the build so the explorer can render the boundary:
-          messages          — the actual list sent to the LLM
-          augmented_index   — index of the message the endpoint augmented (or None)
-          retrieval         — what retrieval did this turn (string), or None
+        Retorna un diccionari que descriu la construcció perquè l'explorador pugui mostrar el límit:
+          messages          — la llista real que s'envia al LLM
+          augmented_index   — índex del missatge que l'endpoint ha augmentat (o None)
+          retrieval         — què ha fet la recuperació en aquest torn (string), o None
         """
         messages = [{"role": "system", "content": self.system_prompt}]
-        messages += history  # passed straight through from the UI — still bare
+        messages += history  # passa directament des de la UI — encara nu
 
         if self.mode == MODE_SYSTEM_GROUNDING:
-            # File already lives in the system prompt. The user turn is bare. No retrieval now.
+            # El fitxer ja viu al system prompt. El torn de l'usuari és nu. Cap recuperació ara.
             messages.append({"role": "user", "content": user_message})
             return {"messages": messages, "augmented_index": None,
-                    "retrieval": "none this turn — the file is in the system prompt (retrieved once, at setup)"}
+                    "retrieval": "cap en aquest torn — el fitxer és a la system prompt (recuperat un sol cop, a la configuració)"}
 
-        # user-augment: retrieve now and inject the file into THIS user message.
+        # user-augment: recupera ara i injecta el fitxer en AQUEST missatge de l'usuari.
         context = self.retriever.retrieve(user_message)
         built = PROMPT_TEMPLATE.format(context=context, question=user_message)
         messages.append({"role": "user", "content": built})
         return {"messages": messages, "augmented_index": len(messages) - 1,
-                "retrieval": f"retrieved {len(context)} chars (~{_approx_tokens(context)} tokens) and injected into THIS user message"}
+                "retrieval": f"recuperats {len(context)} caràcters (~{_approx_tokens(context)} tokens) i injectats en AQUEST missatge de l'usuari"}
 
     def complete(self, history: list, user_message: str) -> dict:
-        """Build → call the LLM → return the response. The endpoint keeps nothing."""
+        """Construeix → crida el LLM → retorna la resposta. L'endpoint no guarda res."""
         build = self.build(history, user_message)
         with wait_spinner():
             response = client.chat.completions.create(
@@ -228,17 +228,17 @@ class AssistantEndpoint:
 
 
 class ChatUI:
-    """The chat UI. It holds the conversation the USER sees — bare turns only.
-    No system prompt, no augmentation: those live behind the endpoint."""
+    """La interfície de xat. Conté la conversa que veu l'USUARI — només els torns nus.
+    Sense system prompt, sense augmentació: això viu darrere de l'endpoint."""
 
     def __init__(self, stateful_augment: bool = False):
         self.history = []
-        # If True, the UI stores the AUGMENTED user message instead of the bare one —
-        # the "make the chat stateful" alternative. Off by default (the realistic model).
+        # Si és True, la UI desa el missatge augmentat de l'usuari en lloc del nu —
+        # l'alternativa "fer el xat stateful". Desactivat per defecte (el model realista).
         self.stateful_augment = stateful_augment
 
     def outgoing(self, user_message: str) -> list:
-        """What the UI sends to the endpoint: its history + the new message (all bare)."""
+        """El que la UI envia a l'endpoint: el seu historial + el nou missatge (tot nu)."""
         return self.history + [{"role": "user", "content": user_message}]
 
     def record(self, user_message: str, assistant_message: str, augmented_user: str = None):
@@ -248,11 +248,11 @@ class ChatUI:
 
 
 # =============================================================================================================== #
-# Panels                                                                                                          #
+# Panells                                                                                                         #
 # =============================================================================================================== #
 
 def _approx_tokens(text: str) -> int:
-    """Rough estimate before the API answers (≈ 4 chars/token). The real number is usage.prompt_tokens."""
+    """Estimació aproximada abans que respongui l'API (≈ 4 caràcters/token). El nombre real és usage.prompt_tokens."""
     return max(1, len(text) // 4)
 
 
@@ -264,108 +264,108 @@ def _truncate(text: str, width: int = 88) -> str:
 
 
 def show_flow(mode: str, stateful: bool) -> Panel:
-    """The three-layer boundary diagram — shown at start and on mode/stateful switch."""
-    aug = "store AUGMENTED history (stateful)" if stateful else "augmentation NOT saved (stateless)"
+    """El diagrama de límits de tres capes — es mostra a l'inici i en canviar de mode/stateful."""
+    aug = "desa l'historial AUGMENTAT (stateful)" if stateful else "augmentació NO desada (stateless)"
     body = Text()
     body.append("🖥️  CHAT UI", style=f"bold {ROLE}")
-    body.append("        sends:  history (bare) + your latest message\n", style=TEXT)
-    body.append("                       │  history = what you see; no system, no augmentation\n", style=TEXT_DIM)
+    body.append("        envia:  historial (nu) + el teu darrer missatge\n", style=TEXT)
+    body.append("                       │  historial = el que veus; sense system, sense augmentació\n", style=TEXT_DIM)
     body.append("                       ▼\n", style=TEXT_DIM)
     body.append("🛠️  ASSISTANT ENDPOINT", style=f"bold bright_yellow {ON_BG}")
     body.append(f"  (STATELESS; mode = {mode})\n", style=TEXT)
     if mode == MODE_SYSTEM_GROUNDING:
-        builds = "        builds:  [system ＋ FILE] + [history] + [user: your message — bare]\n"
+        builds = "        construeix:  [system ＋ FILE] + [history] + [user: el teu missatge — nu]\n"
     else:
-        builds = "        builds:  [system] + [history] + [user: template(FILE, your message)]\n"
+        builds = "        construeix:  [system] + [history] + [user: template(FILE, el teu missatge)]\n"
     body.append(builds, style=TEXT)
-    body.append("                       │  rebuilt every call — no state to keep it in\n", style=TEXT_DIM)
+    body.append("                       │  es reconstrueix a cada crida — no té estat on desar-lo\n", style=TEXT_DIM)
     body.append("                       ▼\n", style=TEXT_DIM)
     body.append("🧠  LLM", style=f"bold bright_green {ON_BG}")
-    body.append("            returns:  the response only\n", style=TEXT)
+    body.append("            retorna:  només la resposta\n", style=TEXT)
     body.append("                       ▲\n", style=TEXT_DIM)
     body.append("🖥️  CHAT UI", style=f"bold {ROLE}")
-    body.append(f"        appends (your message, response) → history   ✗ {aug}", style=TEXT)
-    return Panel(body, title="🔁 The three layers", border_style="bright_magenta", style=ON_BG, padding=(1, 2))
+    body.append(f"        afegeix (el teu missatge, resposta) → historial   ✗ {aug}", style=TEXT)
+    return Panel(body, title="🔁 Les tres capes", border_style="bright_magenta", style=ON_BG, padding=(1, 2))
 
 
 def show_ui_send(outgoing: list) -> Panel:
-    """What the Chat UI sends to the endpoint — bare history + the new message."""
+    """Què envia la Chat UI a l'endpoint — historial nu + el nou missatge."""
     table = Table(box=box.SIMPLE, show_header=True, header_style=f"bold {TEXT}", style=ON_BG)
     table.add_column("#", style=f"bright_cyan {ON_BG}", width=3)
-    table.add_column("Role", style=ROLE, width=10)
-    table.add_column("Content (bare — no system, no augmentation)", style=TEXT)
+    table.add_column("Rol", style=ROLE, width=10)
+    table.add_column("Contingut (nu — sense system, sense augmentació)", style=TEXT)
     for i, m in enumerate(outgoing):
         table.add_row(str(i), m["role"], _truncate(m["content"]))
-    return Panel(table, title="🖥️ → 🛠️  Chat UI sends to the endpoint", border_style=BORDER, style=ON_BG, padding=(0, 1))
+    return Panel(table, title="🖥️ → 🛠️  La Chat UI envia a l'endpoint", border_style=BORDER, style=ON_BG, padding=(0, 1))
 
 
 def show_endpoint_build(build: dict, mode: str) -> Panel:
-    """What the stateless endpoint builds for the LLM — system + history + this turn's user content."""
+    """Què construeix l'endpoint stateless per al LLM — system + historial + el contingut de l'usuari d'aquest torn."""
     messages = build["messages"]
     aug_idx = build["augmented_index"]
     table = Table(box=box.SIMPLE, show_header=True, header_style=f"bold {TEXT}", style=ON_BG)
     table.add_column("#", style=f"bright_cyan {ON_BG}", width=3)
-    table.add_column("Role", style=f"bright_magenta {ON_BG}", width=10)
-    table.add_column("Source / lifetime", style=f"bright_yellow {ON_BG}", width=26)
-    table.add_column("Content", style=TEXT)
+    table.add_column("Rol", style=f"bright_magenta {ON_BG}", width=10)
+    table.add_column("Font / vida útil", style=f"bright_yellow {ON_BG}", width=26)
+    table.add_column("Contingut", style=TEXT)
     last = len(messages) - 1
     grounded = mode == MODE_SYSTEM_GROUNDING
     for i, m in enumerate(messages):
         if m["role"] == "system":
-            # In system-grounding the file lives in this system message — flag it.
-            src = "config ＋ FILE · static" if grounded else "assistant config · static"
+            # En system-grounding el fitxer viu dins d'aquest missatge de sistema — marca'l.
+            src = "config ＋ FILE · estàtic" if grounded else "config de l'assistent · estàtic"
         elif i == aug_idx:
-            src = "★ built here · discarded"
+            src = "★ construït aquí · descartat"
         elif i == last:
-            src = "from UI (bare) · this turn"
+            src = "des de la UI (nu) · aquest torn"
         else:
-            src = "from UI · passed through"
+            src = "des de la UI · passa directament"
         table.add_row(str(i), m["role"], src, _truncate(m["content"]))
-    note = Text(f"\nretrieval: {build['retrieval']}", style=f"bright_yellow {ON_BG}")
+    note = Text(f"\nrecuperació: {build['retrieval']}", style=f"bright_yellow {ON_BG}")
     grid = Table.grid()
     grid.add_row(table)
     grid.add_row(note)
     if aug_idx is not None:
-        grid.add_row(Text("★ the augmented message is built fresh now and thrown away — it never returns to the UI",
+        grid.add_row(Text("★ el missatge augmentat es construeix de nou ara i es llença — mai no torna a la UI",
                           style=f"bold {ALERT}"))
-    return Panel(grid, title="🛠️ → 🧠  Endpoint builds the LLM call (stateless)", border_style="yellow", style=ON_BG, padding=(0, 1))
+    return Panel(grid, title="🛠️ → 🧠  L'endpoint construeix la crida al LLM (stateless)", border_style="yellow", style=ON_BG, padding=(0, 1))
 
 
 def show_api_request(messages: list) -> Panel:
     json_str = json.dumps({"model": MODEL, "messages": messages, "temperature": 0.7}, indent=2, ensure_ascii=False)
     syntax = Syntax(json_str, "json", theme="monokai", background_color=BG, word_wrap=True)
-    return Panel(syntax, title="📤 The actual request to the LLM", border_style="yellow", style=ON_BG, padding=(0, 1))
+    return Panel(syntax, title="📤 La crida real al LLM", border_style="yellow", style=ON_BG, padding=(0, 1))
 
 
 def show_api_response(response_data: dict) -> Panel:
     json_str = json.dumps(response_data, indent=2, ensure_ascii=False)
     syntax = Syntax(json_str, "json", theme="monokai", background_color=BG, word_wrap=True)
-    return Panel(syntax, title="📥 LLM response", border_style="bright_cyan", style=ON_BG, padding=(0, 1))
+    return Panel(syntax, title="📥 Resposta del LLM", border_style="bright_cyan", style=ON_BG, padding=(0, 1))
 
 
 def show_ui_history(history: list, stateful: bool) -> Panel:
-    """What the Chat UI keeps after the turn — what the user sees / what gets stored."""
+    """Què manté la Chat UI després del torn — què veu l'usuari / què es desa."""
     table = Table(box=box.SIMPLE, show_header=True, header_style=f"bold {TEXT}", style=ON_BG)
     table.add_column("#", style=f"bright_cyan {ON_BG}", width=3)
-    table.add_column("Role", style=ROLE, width=10)
-    table.add_column("Content", style=TEXT)
+    table.add_column("Rol", style=ROLE, width=10)
+    table.add_column("Contingut", style=TEXT)
     for i, m in enumerate(history):
         table.add_row(str(i), m["role"], _truncate(m["content"]))
     if stateful:
-        cap = "STATEFUL: augmented user turns ARE stored — the file now rides in history too"
+        cap = "STATEFUL: els torns augmentats de l'usuari SÍ que es desen — ara el fitxer també viatja a l'historial"
         style = f"bold {ALERT}"
     else:
-        cap = "no system prompt · no augmentation · just the turns the user saw"
+        cap = "sense system prompt · sense augmentació · només els torns que l'usuari ha vist"
         style = TEXT_DIM
     grid = Table.grid()
     grid.add_row(table)
     grid.add_row(Text(cap, style=style))
-    return Panel(grid, title="🖥️  Chat UI history (what the user sees / what is stored)", border_style=BORDER, style=ON_BG, padding=(0, 1))
+    return Panel(grid, title="🖥️  Historial de la Chat UI (el que veu l'usuari / el que es desa)", border_style=BORDER, style=ON_BG, padding=(0, 1))
 
 
 def show_cost(history_tokens: list) -> Panel:
     table = Table(box=box.SIMPLE, show_header=True, header_style=f"bold {TEXT}", style=ON_BG)
-    table.add_column("Turn", style=f"bright_cyan {ON_BG}", width=5)
+    table.add_column("Torn", style=f"bright_cyan {ON_BG}", width=5)
     table.add_column("prompt_tokens", style=f"bright_yellow {ON_BG}", width=14)
     table.add_column("cached", style=f"bright_green {ON_BG}", width=8)
     table.add_column("", style=COST)
@@ -373,13 +373,13 @@ def show_cost(history_tokens: list) -> Panel:
     for i, (pt, cached) in enumerate(history_tokens, start=1):
         bar = "█" * max(1, int(26 * pt / peak))
         table.add_row(str(i), str(pt), ("—" if cached is None else str(cached)), bar)
-    return Panel(table, title="💸 Token cost per turn (prompt_tokens · cached)", border_style=BORDER_ALERT, style=ON_BG, padding=(0, 1))
+    return Panel(table, title="💸 Cost en tokens per torn (prompt_tokens · cached)", border_style=BORDER_ALERT, style=ON_BG, padding=(0, 1))
 
 
 def show_message(role: str, content: str) -> Panel:
     styles = {
-        "user": ("bright_white on dodger_blue1", BORDER, "👤 You"),
-        "assistant": ("bright_white on dark_green", "green", "🤖 Assistant"),
+        "user": ("bright_white on dodger_blue1", BORDER, "👤 Tu"),
+        "assistant": ("bright_white on dark_green", "green", "🤖 Assistent"),
     }
     text_style, border, title = styles.get(role, (TEXT, "white", role))
     return Panel(Text(content, style=text_style), title=title, border_style=border, padding=(0, 1))
@@ -387,15 +387,14 @@ def show_message(role: str, content: str) -> Panel:
 
 def wait_spinner():
     return Live(
-        Panel(Spinner("dots", text=Text(" Waiting for the LLM...", style="bold black on yellow")),
+        Panel(Spinner("dots", text=Text("Esperant el LLM...", style="bold black on yellow")),
               border_style="yellow", style="on yellow", padding=(0, 1)),
         console=console, refresh_per_second=10
     )
 
 
 def show_setup(retriever: "WholeFileRetriever", mode: str) -> Panel:
-    """Disclose the assistant's configuration before any message: the system prompt, the
-    prompt template, and the knowledge file — plus where the file goes in this mode."""
+    """Mostra la configuració de l'assistent abans de cap missatge: el system prompt, la plantilla de prompt i el fitxer de coneixement — a més d'on va el fitxer en aquest mode."""
     file_text = retriever.text
     if len(file_text) > 1500:
         file_text = file_text[:1500] + f"\n… [+{len(retriever.text) - 1500} more chars]"
@@ -404,44 +403,44 @@ def show_setup(retriever: "WholeFileRetriever", mode: str) -> Panel:
 
     g = Table.grid(padding=(0, 0))
 
-    # ① SYSTEM PROMPT — in system-grounding the file is concatenated INTO it.
+    # ① SYSTEM PROMPT — en system-grounding el fitxer es concatena A DINS.
     g.add_row(Text("① SYSTEM PROMPT", style=f"bold bright_magenta {ON_BG}"))
     g.add_row(Text(SYSTEM_PROMPT_BASE, style=TEXT))
     if sg:
-        g.add_row(Text("        ＋ knowledge file ③ concatenated here — retrieved ONCE, at setup",
+        g.add_row(Text("        ＋ fitxer de coneixement ③ concatenat aquí — recuperat UN sol cop, a la configuració",
                        style=f"bold bright_green {ON_BG}"))
-        g.add_row(Text("   ↳ in system-grounding the file IS part of the system prompt; the template below is dead",
+        g.add_row(Text("   ↳ en system-grounding el fitxer ÉS part de la system prompt; la template de sota és morta",
                        style=TEXT_DIM))
     else:
-        g.add_row(Text("   ↳ user-augment: just the instruction — the file is NOT here; it rides in each user "
-                       "message via the template ↓", style=TEXT_DIM))
+        g.add_row(Text("   ↳ user-augment: només la instrucció — el fitxer NO és aquí; viatja a cada missatge "
+                       "de l'usuari via la template ↓", style=TEXT_DIM))
     g.add_row(Text("", style=ON_BG))
 
-    # ② PROMPT TEMPLATE — active in user-augment, dead in system-grounding.
+    # ② PROMPT TEMPLATE — activa en user-augment, morta en system-grounding.
     if sg:
-        g.add_row(Text("② PROMPT TEMPLATE   ⛔ NOT USED IN THIS MODE", style=f"bold bright_red {ON_BG}"))
+        g.add_row(Text("② PROMPT TEMPLATE   ⛔ NO S'USA EN AQUEST MODE", style=f"bold bright_red {ON_BG}"))
         g.add_row(Text(PROMPT_TEMPLATE, style=TEXT_DIM))
-        g.add_row(Text("   ↳ inactive — your message is sent bare; the file already lives in the system prompt above",
+        g.add_row(Text("   ↳ inactiva — el teu missatge s'envia nu; el fitxer ja viu a la system prompt de dalt",
                        style=TEXT_DIM))
     else:
-        g.add_row(Text("② PROMPT TEMPLATE   ✅ USED EVERY TURN", style=f"bold bright_yellow {ON_BG}"))
+        g.add_row(Text("② PROMPT TEMPLATE   ✅ S'USA A CADA TORN", style=f"bold bright_yellow {ON_BG}"))
         g.add_row(Text(PROMPT_TEMPLATE, style=TEXT))
-        g.add_row(Text("   ↳ rebuilt every turn — the file goes into {context}, your message into {question}",
+        g.add_row(Text("   ↳ es reconstrueix a cada torn — el fitxer va a {context}, el teu missatge a {question}",
                        style=TEXT_DIM))
     g.add_row(Text("", style=ON_BG))
 
-    # ③ KNOWLEDGE FILE — and where it flows in THIS mode.
-    where = "the SYSTEM PROMPT ① (once, at setup)" if sg else "the PROMPT TEMPLATE ② {context} (every turn)"
+    # ③ KNOWLEDGE FILE — i cap on flueix en AQUEST mode.
+    where = "la SYSTEM PROMPT ① (un cop, a la configuració)" if sg else "la PROMPT TEMPLATE ② {context} (a cada torn)"
     g.add_row(Text(f"③ KNOWLEDGE FILE · {os.path.basename(retriever.path)} "
-                   f"({len(retriever.text)} chars, ~{_approx_tokens(retriever.text)} tokens)   "
-                   f"→  goes into {where}", style=f"bold bright_green {ON_BG}"))
+                   f"({len(retriever.text)} caràcters, ~{_approx_tokens(retriever.text)} tokens)   "
+                   f"→  va a {where}", style=f"bold bright_green {ON_BG}"))
     g.add_row(Text(file_text, style=TEXT_DIM))
-    return Panel(g, title=f"🧩 Assistant setup — mode = {mode}",
+    return Panel(g, title=f"🧩 Configuració de l'assistent — mode = {mode}",
                  border_style="bright_cyan", style=ON_BG, padding=(1, 2))
 
 
 # =============================================================================================================== #
-# Chat loop                                                                                                       #
+# Cicle de conversa                                                                                               #
 # =============================================================================================================== #
 
 def run_chat(retriever: WholeFileRetriever, mode: str):
@@ -451,11 +450,11 @@ def run_chat(retriever: WholeFileRetriever, mode: str):
 
     console.print()
     console.print(Panel(
-        Text("Ask about the knowledge file. Each turn shows the gap between what the\n"
-             "CHAT UI keeps (bare turns) and what the stateless ENDPOINT builds for the LLM.\n\n"
-             "/mode [user-augment | system-grounding]  (no arg = toggle)   ·   /stateful   ·   /file <path>   ·   /context   ·   (empty = quit)",
+        Text("Pregunta sobre el fitxer de coneixement. Cada torn mostra el desfasament entre el que\n"
+             "la CHAT UI guarda (torns nus) i el que l'ENDPOINT stateless construeix per al LLM.\n\n"
+             "/mode [user-augment | system-grounding]  (sense arg = commuta)   ·   /stateful   ·   /file <ruta>   ·   /context   ·   (buit = surt)",
              style=TEXT),
-        title="📚 Context Explorer — single-file RAG", border_style="bright_magenta", style=ON_BG, padding=(1, 2)))
+        title="📚 Explorador de context — RAG d'un sol fitxer", border_style="bright_magenta", style=ON_BG, padding=(1, 2)))
     console.print()
     console.print(show_flow(mode, ui.stateful_augment))
     console.print()
@@ -467,7 +466,7 @@ def run_chat(retriever: WholeFileRetriever, mode: str):
         cmd = user_input.strip()
 
         if not cmd:
-            console.print(Panel(Text("Goodbye!", style=TEXT), border_style="dim"))
+            console.print(Panel(Text("Adéu!", style=TEXT), border_style="dim"))
             break
         if cmd == "/context":
             console.print(Panel(Text(retriever.text, style=TEXT_DIM),
@@ -476,26 +475,26 @@ def run_chat(retriever: WholeFileRetriever, mode: str):
         if cmd == "/stateful":
             ui.stateful_augment = not ui.stateful_augment
             ui.history = []
-            console.print(Panel(Text(f"stateful_augment = {ui.stateful_augment} · conversation reset.",
+            console.print(Panel(Text(f"stateful_augment = {ui.stateful_augment} · conversa reiniciada.",
                                      style=TEXT), border_style="green", style=ON_BG))
             console.print(show_flow(mode, ui.stateful_augment))
             continue
         if cmd == "/mode" or cmd.startswith("/mode "):
             new_mode = _resolve_mode(cmd[len("/mode"):], mode)
             if new_mode is None:
-                console.print(Panel(Text(f"unknown mode. Use: {MODE_USER_AUGMENT} | {MODE_SYSTEM_GROUNDING} "
-                                         f"(or just /mode to toggle).",
+                console.print(Panel(Text(f"mode desconegut. Usa: {MODE_USER_AUGMENT} | {MODE_SYSTEM_GROUNDING} "
+                                         f"(o simplement /mode per commutar).",
                                          style="bold bright_white on dark_red"), border_style="red", style="on dark_red"))
                 continue
             if new_mode == mode:
-                console.print(Panel(Text(f"already in mode = {mode}.", style=TEXT),
+                console.print(Panel(Text(f"ja ets al mode = {mode}.", style=TEXT),
                                     border_style="green", style=ON_BG))
                 continue
             mode = new_mode
             endpoint = AssistantEndpoint(retriever, mode)
             ui.history = []
             token_history = []
-            console.print(Panel(Text(f"mode = {mode} · conversation reset.", style=TEXT),
+            console.print(Panel(Text(f"mode = {mode} · conversa reiniciada.", style=TEXT),
                                 border_style="green", style=ON_BG))
             console.print(show_flow(mode, ui.stateful_augment))
             console.print()
@@ -508,23 +507,23 @@ def run_chat(retriever: WholeFileRetriever, mode: str):
                 endpoint = AssistantEndpoint(retriever, mode)
                 ui.history = []
                 token_history = []
-                console.print(Panel(Text(f"Loaded {new_path} ({len(retriever.text)} chars) · conversation reset.",
+                console.print(Panel(Text(f"S'ha carregat {new_path} ({len(retriever.text)} caràcters) · conversa reiniciada.",
                                          style=TEXT), border_style="green", style=ON_BG))
                 console.print()
                 console.print(show_setup(retriever, mode))
             except OSError as exc:
-                console.print(Panel(Text(f"Could not load {new_path}: {exc}", style="bold bright_white on dark_red"),
+                console.print(Panel(Text(f"No s'ha pogut carregar {new_path}: {exc}", style="bold bright_white on dark_red"),
                                     border_style="red", style="on dark_red"))
             continue
 
-        # 1) The UI sends its bare history + the new message to the endpoint.
+        # 1) La UI envia el seu historial nu + el nou missatge a l'endpoint.
         outgoing = ui.outgoing(user_input)
         console.print()
         console.print(show_message("user", user_input))
         console.print()
         console.print(show_ui_send(outgoing))
 
-        # 2) The stateless endpoint builds the real LLM call and runs it.
+        # 2) L'endpoint stateless construeix la crida real al LLM i l'executa.
         build = endpoint.complete(ui.history, user_input)
         console.print()
         console.print(show_endpoint_build(build, mode))
@@ -547,7 +546,7 @@ def run_chat(retriever: WholeFileRetriever, mode: str):
         console.print()
         console.print(show_message("assistant", assistant_content))
 
-        # 3) The response flows back to the UI; only the bare turn + reply are stored.
+        # 3) La resposta torna a la UI; només s'hi desen el torn nu + la resposta.
         augmented_user = build["messages"][build["augmented_index"]]["content"] if build["augmented_index"] is not None else None
         ui.record(user_input, assistant_content, augmented_user=augmented_user)
         console.print()
@@ -564,12 +563,12 @@ def main():
 
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        console.print(Panel(Text("OPENAI_API_KEY not found!\n\nCopy .env.example to .env and fill it in.",
+        console.print(Panel(Text("No s'ha trobat OPENAI_API_KEY!\n\nCopia .env.example a .env i omple-la.",
                                  style="bold bright_white on dark_red"), title="❌ Error", border_style="red", style="on dark_red"))
         return
 
     if RAG_MODE not in (MODE_USER_AUGMENT, MODE_SYSTEM_GROUNDING):
-        console.print(Panel(Text(f"Unknown RAG_MODE '{RAG_MODE}'. Use {MODE_USER_AUGMENT} or {MODE_SYSTEM_GROUNDING}.",
+        console.print(Panel(Text(f"RAG_MODE desconegut '{RAG_MODE}'. Usa {MODE_USER_AUGMENT} o {MODE_SYSTEM_GROUNDING}.",
                                  style="bold bright_white on dark_red"), title="❌ Error", border_style="red", style="on dark_red"))
         return
 
@@ -579,19 +578,19 @@ def main():
     try:
         retriever = WholeFileRetriever(knowledge_path)
     except OSError as exc:
-        console.print(Panel(Text(f"Could not load knowledge file '{knowledge_path}':\n{exc}",
+        console.print(Panel(Text(f"No s'ha pogut carregar el fitxer de coneixement '{knowledge_path}':\n{exc}",
                                  style="bold bright_white on dark_red"), title="❌ Error", border_style="red", style="on dark_red"))
         return
 
     client = OpenAI(api_key=api_key, base_url=OPENAI_ENDPOINT) if OPENAI_ENDPOINT else OpenAI(api_key=api_key)
 
     console.print(Panel(
-        Text(f"Model     : {MODEL}\n"
-             f"Endpoint  : {OPENAI_ENDPOINT or 'https://api.openai.com/v1'}\n"
-             f"Knowledge : {os.path.basename(knowledge_path)} ({len(retriever.text)} chars, ~{_approx_tokens(retriever.text)} tokens)\n"
-             f"Mode      : {RAG_MODE}",
+        Text(f"Model      : {MODEL}\n"
+             f"Endpoint   : {OPENAI_ENDPOINT or 'https://api.openai.com/v1'}\n"
+             f"Coneixement: {os.path.basename(knowledge_path)} ({len(retriever.text)} caràcters, ~{_approx_tokens(retriever.text)} tokens)\n"
+             f"Mode       : {RAG_MODE}",
              style=TEXT),
-        title="⚙️ Configuration", border_style="bright_cyan", style=ON_BG))
+        title="⚙️ Configuració", border_style="bright_cyan", style=ON_BG))
 
     run_chat(retriever, RAG_MODE)
 

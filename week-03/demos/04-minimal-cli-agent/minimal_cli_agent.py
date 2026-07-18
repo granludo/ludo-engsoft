@@ -1,24 +1,24 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents de BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-A minimal CLI agent — agents in 2026, in one file.
+Un agent mínim de línia d'ordres (CLI) — agents el 2026, tot en un sol fitxer.
 
-Three folders give the agent a self:
-    agent.md   — who it is and what it must do (top of the system prompt)
-    memory/    — markdown files, loaded whole at startup (fixed memory)
-    skills/    — one folder per skill; only the FIRST LINE of each skill.md
-                 is loaded at startup — the full text is read ON DEMAND
+Tres carpetes donen una identitat a l'agent:
+    agent.md   — qui és i què ha de fer (a l'inici del system prompt)
+    memory/    — fitxers Markdown, carregats sencers a l'arrencada (memòria fixa)
+    skills/    — una carpeta per habilitat; a l'arrencada només se'n carrega la
+                 PRIMERA LÍNIA de cada skill.md; el text complet es llegeix SOTA DEMANDA
 
-Two tools give it hands:
-    run_command — one shell command, printed and y-gated before it runs
-    read_skill  — fetch the full instructions of a skill by name
+Dues eines li donen mans:
+    run_command — una ordre de shell, que s'imprimeix i es bloqueja amb la porta «y» abans d'executar-se
+    read_skill  — obté les instruccions completes d'una habilitat pel seu nom
 
-The engine is the same six-line loop from 'give the LLM hands'.
+El motor és el mateix bucle de sis línies de «donar mans a l'LLM».
 
-Usage:
-    uv run minimal_cli_agent.py "make me a word report of the workspace"
+Ús:
+    uv run minimal_cli_agent.py "fes-me un informe en Word de l'espai de treball"
 """
 
 import json
@@ -37,7 +37,7 @@ MODEL = os.getenv("MODEL", "qwen3:1.7b")
 HOME = Path(__file__).resolve().parent
 
 
-# --- The self: agent.md + memory, loaded whole; skills, listed by first line --
+# --- El "jo": agent.md + memòria, carregats sencers; habilitats, llistades per la primera línia --
 def build_system():
     parts = [(HOME / "agent.md").read_text()]
 
@@ -56,7 +56,7 @@ def build_system():
     return "\n\n".join(parts)
 
 
-# --- The hands ---------------------------------------------------------------
+# --- Les mans ---------------------------------------------------------------
 TOOLS = [
     {"type": "function", "function": {
         "name": "run_command",
@@ -75,9 +75,9 @@ TOOLS = [
 
 
 def tool_run_command(command):
-    """The y-gate: security lives here, in the scaffolding — never in the prompt."""
-    print(f"\n⚠️  The agent wants to run:\n    $ {command}")
-    if input("    Allow? (type 'y'): ").strip().lower() != "y":
+    """La porta «y»: la seguretat viu aquí, en l'entramat de suport — mai en el prompt."""
+    print(f"\n⚠️  L'agent vol executar:\n    $ {command}")
+    if input("    Permet-ho? (escriu \"y\"): ").strip().lower() != "y":
         return "USER DENIED: the user refused this command. Do not retry it."
     r = subprocess.run(command, shell=True, capture_output=True, text=True,
                        timeout=120, cwd=HOME)
@@ -93,25 +93,25 @@ def tool_read_skill(name):
 DISPATCH = {"run_command": tool_run_command, "read_skill": tool_read_skill}
 
 
-# --- The engine: the same six lines ------------------------------------------
+# --- El motor: les mateixes sis línies ---------------------------------------------
 def run(user_prompt):
     messages = [{"role": "system", "content": build_system()},
                 {"role": "user", "content": user_prompt}]
-    while True:                                                # 1  the loop
-        resp = client.chat.completions.create(                 # 2  ask, with tools
+    while True:                                                # 1. el bucle
+        resp = client.chat.completions.create(                 # 2. pregunta, amb eines
             model=MODEL, messages=messages, tools=TOOLS)
         print(f"  prompt_tokens: {resp.usage.prompt_tokens}")
         msg = resp.choices[0].message
         messages.append(msg.model_dump(exclude_none=True))
-        if not msg.tool_calls:                                 # 3  answer → stop
+        if not msg.tool_calls:                                 # 3. resposta → atura
             print(f"\n✅ {msg.content}")
             return msg.content
-        for tc in msg.tool_calls:                              # 4-5 run what it asked
+        for tc in msg.tool_calls:                              # 4-5. executa el que ha demanat
             args = json.loads(tc.function.arguments or "{}")
             print(f"  → {tc.function.name}({args})")
             result = DISPATCH.get(tc.function.name,
                                   lambda **_: "ERROR: unknown tool")(**args)
-            messages.append({"role": "tool", "tool_call_id": tc.id,  # 6 feed back
+            messages.append({"role": "tool", "tool_call_id": tc.id,  # 6. retorna els resultats
                              "content": result})
 
 

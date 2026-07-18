@@ -1,40 +1,40 @@
 
-# 🐷 OpenAI Function Calling Demo: The Three Little Pigs 🐺
+# 🐷 Demostració de function calling amb OpenAI: els tres porquets 🐺
 
-A didactic Python script that demonstrates the difference between a regular LLM conversation and one with **function calling** capabilities, using the classic Three Little Pigs tale.
+Un script de Python didàctic que mostra la diferència entre una conversa normal amb un LLM i una que fa servir **function calling**, a partir del conte clàssic dels tres porquets.
 
-## 📚 What You'll Learn
+## 📚 Què aprendràs
 
-- How to define **tools/functions** for the OpenAI API
-- How the LLM **decides when** to call functions based on context
-- How to **process function calls** and feed results back to the LLM
-- The difference between an LLM that can only talk vs. one that can **take action**
+- Com definir **eines/funcions** per a l'API d'OpenAI.
+- Com **decideix** l'LLM **quan** cridar funcions segons el context.
+- Com **processar les crides a funcions** i retornar-ne els resultats a l'LLM.
+- La diferència entre un LLM que només pot parlar i un que pot **actuar**.
 
-## 🎭 The Demo
+## 🎭 La demostració
 
-The script runs two scenarios with the same conversation:
+L'script executa dos escenaris amb la mateixa conversa:
 
-| Scenario | Tools Available | What Happens |
+| Escenari | Eines disponibles | Què passa |
 |----------|----------------|--------------|
-| **Scenario 1** | ❌ None | The pig can only *talk* about calling for help |
-| **Scenario 2** | ✅ `call_hunter()` | The pig can *actually* call the hunter! |
+| **Escenari 1** | ❌ Cap | El porquet només pot *parlar* de demanar ajuda. |
+| **Escenari 2** | ✅ `call_hunter()` | El porquet pot cridar el caçador *de debò*! |
 
-### The Conversation
+### La conversa
 
-1. **User:** "knock knock..."
-2. **Pig:** *(cautiously asks who's there)*
-3. **User:** "I am the wolf! Open the door or I will blow away your house!"
-4. **Pig:** *(In Scenario 2, calls the hunter for help!)*
+1. **Usuari:** «Toc, toc…»
+2. **Porquet:** *(pregunta amb cautela qui hi ha)*
+3. **Usuari:** «Sóc el llop! Obre la porta o t'esbufegaré la casa!»
+4. **Porquet:** *(a l'Escenari 2, crida el caçador perquè l'ajudi!)*
 
-## 🚀 Setup & Run
+## 🚀 Configuració i execució
 
-### Prerequisites
+### Requisits previs
 
-- Python 3.10 or higher
-- An OpenAI API key ([get one here](https://platform.openai.com/api-keys))
-- `uv` package manager ([install uv](https://docs.astral.sh/uv/getting-started/installation/))
+- Python 3.10 o superior
+- Una clau API d'OpenAI ([aconsegueix-ne una aquí](https://platform.openai.com/api-keys))
+- El gestor de paquets `uv` ([instal·la uv](https://docs.astral.sh/uv/getting-started/installation/))
 
-### Step 1: Create and activate the virtual environment
+### Pas 1: Crea i activa l'entorn virtual
 
 ```bash
 cd week-03/demos/01-function-calling
@@ -44,15 +44,15 @@ source .venv/bin/activate  # On macOS/Linux
 .venv\Scripts\activate     # On Windows
 ```
 
-### Step 2: Install dependencies
+### Pas 2: Instal·la les dependències
 
 ```bash
 uv sync
 ```
 
-### Step 3: Configure your API key
+### Pas 3: Configura la teva clau API
 
-Create a `.env` file in this folder:
+Crea un fitxer `.env` dins d'aquesta carpeta:
 
 ```bash
 # Required
@@ -66,17 +66,17 @@ MODEL=gpt-4.1-mini
 # OPENAI_ENDPOINT=https://your-azure-endpoint.openai.azure.com/v1
 ```
 
-> ⚠️ **Never commit your `.env` file!** It's already in `.gitignore`.
+> ⚠️ **Mai no commitis el fitxer `.env`!** Ja està present a `.gitignore`.
 
-### Step 4: Run the demo
+### Pas 4: Executa la demostració
 
 ```bash
 python three_pigs_function_calling.py
 ```
 
-## 🔧 How Function Calling Works
+## 🔧 Com funciona Function Calling
 
-### 1. Define the Tool
+### 1. Defineix l'eina
 
 ```python
 AVAILABLE_TOOLS = [
@@ -104,7 +104,7 @@ AVAILABLE_TOOLS = [
 ]
 ```
 
-### 2. Pass Tools to the API
+### 2. Passa les eines a l'API
 
 ```python
 response = client.chat.completions.create(
@@ -114,7 +114,7 @@ response = client.chat.completions.create(
 )
 ```
 
-### 3. Check if the LLM Wants to Call a Function
+### 3. Comprova si l'LLM vol cridar una funció
 
 ```python
 if response.choices[0].message.tool_calls:
@@ -124,29 +124,29 @@ if response.choices[0].message.tool_calls:
         # Execute the function and return results to the LLM
 ```
 
-## 💡 Key Takeaway
+## 💡 La idea clau
 
-> **Function calling transforms LLMs from chatbots into agents that can take real-world actions!**
+> **El function calling converteix els LLM de simples chatbots en agents capaços de dur a terme accions reals al món!**
 
-Without function calling, the pig can only *say* "I'll call the hunter." With function calling, the pig can *actually* call the hunter and get a response.
+Sense function calling, el porquet només pot *dir* «trucaré al caçador». Amb function calling, el porquet pot cridar el caçador de debò i rebre'n una resposta.
 
-## 📖 Further Reading
+## 📚 Per aprofundir
 
-- [OpenAI Function Calling Documentation](https://platform.openai.com/docs/guides/function-calling)
-- [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
+- [Documentació de function calling d'OpenAI](https://platform.openai.com/docs/guides/function-calling)
+- [Referència de l'API d'OpenAI](https://platform.openai.com/docs/api-reference)
 
-## 📖 License
+## 📖 Llicència
 
 This repository is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](../../../LICENSE) (`CC BY-NC-SA 4.0`).
 
-## 👤 Author
+## 👤 Autor
 
-[@granludo](https://github.com/granludo) - Marc Alier
+[@granludo](https://github.com/granludo) — Marc Alier
 
 
 
 ---
 
 © 2026 **Marc Alier i Forment** (Universitat Politècnica de Catalunya) · <https://wasabi.essi.upc.edu/ludo> · <https://lamb-project.org>
-BSC Agents Course — *Transformers, LLMs, RAG and Agents: From Theory to Production*.
+Curs d'agents del BSC — *Transformers, LLMs, RAG i Agents: De la teoria a la producció*.
 Licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): reuse must credit the author, no commercial use, derivatives under the same license.

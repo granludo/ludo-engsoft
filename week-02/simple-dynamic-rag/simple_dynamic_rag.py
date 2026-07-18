@@ -1,21 +1,21 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents de BSC — Transformers, LLMs, RAG i Agents: De la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
-"""Simple dynamic RAG — the single-file cheat, with a database behind it.
+"""Simple dynamic RAG — el truc d'un sol fitxer, però amb una base de dades al darrere.
 
-Same shape as single-file RAG: a prompt template with {context} and {user_input},
-bare turns in history, the model grounded on what we hand it. ONE thing changed —
-where the context comes from. Instead of pasting a whole file every turn:
+La mateixa forma que el RAG d'un sol fitxer: una plantilla de prompt amb {context} i {user_input},
+només els torns nus a l'historial, el model fonamentat en el que li donem. UNA cosa ha canviat:
+d'on ve el context. En comptes d'enganxar un fitxer sencer a cada torn:
 
-  1. take the {user_input} and use it as the QUERY,
-  2. query the collection: the top-K chunks over the similarity threshold,
-  3. format them (markdown, with their source metadata),
-  4. insert that into the prompt template, ask, and answer.
+  1. agafa el {user_input} i fes-lo servir com a CONSULTA,
+  2. consulta la col·lecció: els top-K chunks que superen el llindar de similitud,
+  3. formata'ls (markdown, amb les metadades del seu origen),
+  4. insereix això a la plantilla de prompt, pregunta i respon.
 
-The knowledge can now be as big as you want — fifty documents, a thousand — and
-every turn still sends only a handful of relevant chunks. Ingest documents first
-with ingest.py. Empty line to quit.
+Ara el coneixement pot ser tan gran com vulguis — cinquanta documents, mil — i cada torn continua
+enviant només un grapat de chunks rellevants. Primer ingesta els documents amb ingest.py.
+Línia en blanc per sortir.
 """
 import os
 from dotenv import load_dotenv
@@ -31,7 +31,7 @@ client = OpenAI(
 )
 MODEL = os.environ.get("MODEL", "qwen3:1.7b")
 TOP_K = int(os.environ.get("TOP_K", "4"))
-THRESHOLD = float(os.environ.get("THRESHOLD", "0.4"))   # min cosine similarity
+THRESHOLD = float(os.environ.get("THRESHOLD", "0.4"))   # similitud de cosinus mínima
 
 col = create_collection(os.environ.get("COLLECTION", "handbook"),
                         metric="cosine",
@@ -42,7 +42,7 @@ TEMPLATE = "Context:\n----\n{context}\n----\n\nQuestion: {user_input}"
 
 
 def format_context(hits: list[dict]) -> str:
-    """Format the retrieved chunks as markdown, each with its provenance."""
+    """Formata els chunks recuperats com a markdown, cadascun amb la seva procedència."""
     blocks = []
     for h in hits:
         m = h["metadata"]
@@ -53,16 +53,16 @@ def format_context(hits: list[dict]) -> str:
 
 print(f"Simple dynamic RAG · model={MODEL} · collection={col.name} ({col.count()} chunks) "
       f"· top-{TOP_K} over {THRESHOLD}")
-print("Ask about the ingested documents. Empty line to quit.\n")
+print("Pregunta sobre els documents ingerits. Línia en blanc per sortir.\n")
 
-history = []  # BARE turns only — retrieved chunks are rebuilt each turn, never stored
+history = []  # només torns nus — els chunks recuperats es reconstrueixen a cada torn, mai s'emmagatzemen
 
 while True:
-    user_input = input("you> ").strip()
+    user_input = input("tu> ").strip()
     if not user_input:
         break
 
-    # Dynamic augmentation: the user input IS the query.
+    # Augmentació dinàmica: l'entrada de l'usuari ÉS la consulta.
     hits = query(col, user_input, top_k=TOP_K, threshold=THRESHOLD)
     if not hits:
         print(f"bot> (nothing in the collection passes similarity {THRESHOLD} — "

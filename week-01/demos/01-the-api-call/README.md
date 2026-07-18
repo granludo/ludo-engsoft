@@ -1,10 +1,10 @@
-# Lecture 3 — calling the LLM
+# Conferència 3 — crida a l'LLM
 
-It is all **JSON over HTTP**. The same **Chat Completions** call — `messages`
-in, `choices[0].message.content` out — reaches OpenAI, OpenRouter, Groq, Mistral
-and your laptop's local model alike. One wire format, every provider. Here it is
-two ways (raw `curl` and the Python SDK), plus two variations on the same call:
-streaming and images.
+Tot és **JSON sobre HTTP**. La mateixa crida a **Chat Completions** — `messages`
+d'entrada, `choices[0].message.content` de sortida — arriba igual a OpenAI, OpenRouter,
+Groq, Mistral i al model local del teu portàtil. Un sol wire format, tots els
+proveïdors. Aquí la tens de dues maneres (`curl` pelat i l'SDK de Python), més dues
+variants de la mateixa crida: streaming i imatges.
 
 ```
 chat-completions/   the call itself      (/v1/chat/completions)
@@ -17,37 +17,38 @@ multimodal/         send an image, not just text
   send_image.py       content as a list of parts (text + image)
 ```
 
-## Run it
+## Executar-ho
 
-Each folder is self-contained and reads its own `.env`. Copy the example,
-fill it in, and run **from inside the folder** so the right `.env` is picked up:
+Cada carpeta és autònoma i llegeix el seu propi `.env`. Copia l'exemple, omple'l i
+executa **des de dins de la carpeta** perquè s'agafi el `.env` correcte:
 
 ```bash
 cd chat-completions
 cp ../.env.example .env        # set OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL
 ```
 
-Raw HTTP — nothing but `curl` (the script sources `.env` for you):
+HTTP pelat — només `curl` (l'script carrega el `.env` per tu):
 
 ```bash
 bash curl.sh
 ```
 
-Python — via `uv`, no manual install:
+Python — mitjançant `uv`, sense instal·lació manual:
 
 ```bash
 uv run --with openai --with python-dotenv python call.py
 ```
 
-The same two commands work in `streaming/` and `multimodal/`. One caveat:
-**vision** (`multimodal/`) needs a vision-capable model, so point its `.env` at a
-provider that has one. Plain chat completions (`chat-completions/`, `streaming/`)
-run against anything that speaks the wire format, including a local model.
+Les mateixes dues ordres funcionen a `streaming/` i `multimodal/`. Un advertiment:
+la **visió** (`multimodal/`) necessita un model amb capacitat de visió, així que
+apunta el seu `.env` a un proveïdor que en tingui. Les chat completions normals
+(`chat-completions/`, `streaming/`) funcionen contra qualsevol cosa que parli el wire
+format, inclòs un model local.
 
-## Same wire, different substrate
+## El mateix cable, un substrat diferent
 
-The Chat Completions shape is not OpenAI-only. Point the same Python code at a
-different `base_url` and it calls a different machine:
+La forma de les Chat Completions no és exclusiva d'OpenAI. Apunta el mateix codi de
+Python a un `base_url` diferent i cridarà una màquina diferent:
 
 ```python
 from openai import OpenAI
@@ -56,9 +57,10 @@ from openai import OpenAI
 client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
 ```
 
-Same client, same call, same JSON. The substrate is replaceable; the interface
-is portable. That portability is the whole point — so we build on the format
-everyone speaks, not on any one vendor's proprietary endpoint.
+El mateix client, la mateixa crida, el mateix JSON. El substrat és substituïble; la
+interfície és portable. Aquesta portabilitat és tot el sentit de la cosa: per això
+construïm sobre el format que tothom parla, i no sobre l'endpoint propietari de cap
+proveïdor concret.
 
 
 ---

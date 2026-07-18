@@ -1,8 +1,8 @@
-# word-report: produce a word-count report of the documents in the workspace
+# word-report: genera un informe del recompte de paraules dels documents del workspace
 
-How to make the report:
+Com fer l'informe:
 
-1. List the files: `ls workspace/`.
-2. Count words per file: `wc -w workspace/*.txt` (the last line is the total).
-3. Report as a bullet list — one bullet per file with its word count, then a final bullet with the total.
-4. End the report with the line: `Report by Clerk.`
+1. Llista els fitxers: `ls workspace/`.
+2. Compta les paraules de cada fitxer: `wc -w workspace/*.txt` (l'última línia és el total).
+3. Presenta'l com una llista de punts: un punt per fitxer amb el seu recompte de paraules i, al final, un punt amb el total.
+4. Acaba l'informe amb la línia: `Report by Clerk.`

@@ -1,43 +1,43 @@
-# Graph expansion + RRF — retrieve by connection, then fuse
+# Expansió de graf + RRF — recuperar per connexió i, després, fusionar
 
-The fourth rung of Week 2. `rag-context-aware` fixed the *query*; this fixes a
-problem a perfect query can't touch: the **multi-hop** question, where the answer
-is a chain across documents and the bridge chunk shares no words with the question.
+El quart esglaó de la setmana 2. `rag-context-aware` va arreglar la *consulta*; això arregla un
+problema que una consulta perfecta no pot tocar: la pregunta **multi-salt**, on la resposta
+és una cadena que travessa diversos documents i el chunk pont no comparteix cap paraula amb la pregunta.
 
-Worked example: *"How fast is the robot built by the company that acquired Acme
-Robotics?"* The answer needs three links — Acme → Northwind → Pallet Pup → 2.1 m/s
-— and the bridge sentence (*"Northwind builds the Pallet Pup"*) mentions neither
-"Acme" nor "fast". Cosine ranks it low, so vector RAG never sees it.
+Exemple treballat: *«Què és de ràpid el robot fabricat per l'empresa que va adquirir Acme
+Robotics?»* La resposta necessita tres enllaços —Acme → Northwind → Pallet Pup → 2,1 m/s—
+i la frase pont (*«Northwind fabrica el Pallet Pup»*) no esmenta ni
+«Acme» ni «ràpid». El cosinus la classifica avall, així que el RAG vectorial no la veu mai.
 
-The pipeline, in ~90 honest lines:
+La canonada, en unes 90 línies honestes:
 
-1. **Vector retriever** (Chroma) — the baseline, ranked by similarity. It misses
-   the bridge.
-2. **Graph retriever** — pull the entities out of the question, **walk the graph**
-   one or two hops over typed relations (`acquired_by`, `builds`, `has_spec`), and
-   collect the chunks you land on. This reaches the bridge by *connection*.
-3. **Reciprocal Rank Fusion** — `score(id) = Σ weight / (k + rank)` across both
-   lists, re-sorted. Five lines. `RRF_K=20` and `GRAPH_WEIGHT=0.85` are the values
-   Adrià picked from a 98-config sweep. The fused top-K recovers the bridge **without**
-   displacing what vector search already got right.
+1. **Recuperador vectorial** (Chroma) —la línia de base, ordenada per similitud. No arriba
+   al pont.
+2. **Recuperador de graf** —extreu les entitats de la pregunta, **recorre el graf**
+   un o dos salts sobre relacions tipades (`acquired_by`, `builds`, `has_spec`) i
+   recull els chunks on aterres. Això arriba al pont per *connexió*.
+3. **Reciprocal Rank Fusion** —`score(id) = Σ weight / (k + rank)` sobre totes dues
+   llistes, tornades a ordenar. Cinc línies. `RRF_K=20` i `GRAPH_WEIGHT=0.85` són els valors
+   que l'Adrià va triar d'un escombratge de 98 configuracions. El top-K fusionat recupera el pont **sense**
+   desplaçar allò que la cerca vectorial ja havia encertat.
 
-### Why the relations come from an LLM (not classic NER)
+### Per què les relacions surten d'un LLM (i no del NER clàssic)
 
-This demo ships the graph **pre-extracted** (`TRIPLES`) so it's deterministic. In
-production the relations are extracted at ingestion by an **LLM** with structured
-output, because classic NER (spaCy, TF-IDF) gives you *entities* and at best
-*co-occurrence* — "these two words appeared near each other" — which is semantically
-empty and impossible for a human to curate. **Named-entity recognition is not
-relation extraction.** The extraction cost lands once, at ingest, not per query.
+Aquesta demostració ve amb el graf **ja extret** (`TRIPLES`) perquè sigui determinista. En
+producció, les relacions s'extreuen en el moment de la ingesta amb un **LLM** de sortida
+estructurada, perquè el NER clàssic (spaCy, TF-IDF) et dona *entitats* i, com a molt,
+*coocurrència* —«aquestes dues paraules apareixen a prop l'una de l'altra»—, cosa que és semànticament
+buida i impossible de curar per a un humà. **El reconeixement d'entitats no és
+extracció de relacions.** El cost de l'extracció es paga un sol cop, en la ingesta, no per consulta.
 
-### Knobs
+### Manetes
 
-- `TOP_K` — chunks passed to the model.
-- `RRF_K` — rank dampening (RRF paper uses 60; lower = top ranks dominate more).
-- `GRAPH_WEIGHT` — how much the graph list counts. Turn it to `0.0` and the bridge
-  falls back out of top-K — that's the demo for "fusion is doing the work."
+- `TOP_K` — chunks passats al model.
+- `RRF_K` — esmorteïment del rang (l'article de RRF fa servir 60; com més baix, més dominen els rangs superiors).
+- `GRAPH_WEIGHT` — quant compta la llista del graf. Posa'l a `0.0` i el pont
+  torna a caure fora del top-K —aquesta és la demostració que «la fusió és qui fa la feina».
 
-### Run it
+### Executar-ho
 
 ```bash
 cd week-02/demos/rag-graph-expansion
@@ -45,15 +45,15 @@ uv venv && source .venv/bin/activate && uv sync
 python rag_graph_expansion.py
 ```
 
-Needs a local Ollama serving a chat model and `nomic-embed-text`
-(`ollama pull nomic-embed-text`). No API key, no money. See `.env.example`.
+Necessita un Ollama local que serveixi un model de xat i `nomic-embed-text`
+(`ollama pull nomic-embed-text`). Sense clau API, sense diners. Vegeu `.env.example`.
 
-### The lesson
+### La lliçó
 
-The graph **never degrades** the baseline and adds recall **in proportion to how
-multi-hop your corpus is** — big on entity-chain corpora, near-zero on generalist
-ones. The cost is one extra LLM call per query (entity extraction), not the graph
-traversal itself. The measured numbers behind all of this come from **Adrià Guilera
-Bernabé's TFG** (FIB-UPC, 2026), which built and benchmarked a graph layer over the
-LAMB `kb-server` on three public multi-hop QA datasets. Diagnose your corpus before
-reaching for it.
+El graf **mai no degrada** la línia de base i afegeix cobertura **en proporció al grau
+multi-salt del teu corpus** —molt en corpus de cadenes d'entitats, gairebé zero en els
+generalistes. El cost és una crida addicional a l'LLM per consulta (extracció d'entitats), no el recorregut
+del graf en si. Els nombres mesurats darrere de tot això surten del **TFG de l'Adrià Guilera
+Bernabé** (FIB-UPC, 2026), que va construir i avaluar una capa de graf sobre el
+`kb-server` de LAMB en tres conjunts de dades públics de QA multi-salt. Diagnostica el teu corpus abans de
+recórrer-hi.

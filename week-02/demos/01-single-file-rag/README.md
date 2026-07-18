@@ -1,27 +1,27 @@
-# single-file RAG — cheating at solitaire
+# RAG d'un sol fitxer — fer trampes al solitari
 
-The simplest thing that could possibly be called RAG: read the whole knowledge
-file, paste it into the prompt, and chat with it. No chunking, no embeddings, no
-vector store. The model answers because the answer is sitting in its context
-window. It is a tiny chat loop — about thirty lines you can read end to end.
+El més senzill que encara es pot anomenar RAG: llegeix tot el fitxer de coneixement, enganxa'l
+al prompt i xerra-hi. Sense chunking, sense embeddings, sense magatzem vectorial. El model respon
+perquè la resposta és allà mateix, dins del seu context window. És un bucle de xat minúscul —una
+trentena de línies que pots llegir de dalt a baix.
 
-This works, and for a small enough corpus you should just do this. The lesson is
-where it breaks: the **entire file is re-sent on every turn**, so `prompt_tokens`
-scales with the size of your knowledge base, not the size of the question. Ask a
-few questions and watch the `prompt_tokens` line climb while your questions stay
-short. Then ask an off-corpus one (e.g. "Who is the CEO of Tesla?") and watch the
-grounded answer fail honestly — proof the model is reading the context, not its
-training data.
+Això funciona, i per a un corpus prou petit és exactament el que has de fer. La lliçó és on es
+trenca: **el fitxer sencer es torna a enviar a cada torn**, de manera que els `prompt_tokens`
+creixen amb la mida de la teva base de coneixement, no amb la de la pregunta. Fes unes quantes
+preguntes i mira com la línia de `prompt_tokens` va pujant mentre les teves preguntes segueixen sent
+curtes. Després fes-ne una que quedi fora del corpus (per exemple, «Qui és el CEO de Tesla?») i mira
+com la resposta fonamentada falla amb honestedat: la prova que el model llegeix el context, i no pas
+les seves dades d'entrenament.
 
-## Setup
+## Configuració
 
 ```bash
 cd single-file-rag
 uv venv && source .venv/bin/activate && uv sync
 ```
 
-Copy `.env.example` to `.env`. The defaults assume a local Ollama (no API key, no
-money, no internet):
+Copia `.env.example` a `.env`. Els valors per defecte pressuposen un Ollama local (sense clau API,
+sense diners, sense internet):
 
 ```bash
 OPENAI_API_KEY=ollama
@@ -29,16 +29,16 @@ MODEL=qwen3:1.7b
 OPENAI_ENDPOINT=http://localhost:11434/v1
 ```
 
-Point `OPENAI_ENDPOINT` at any OpenAI-compatible API to use a different provider
-(and spell `MODEL` the way that provider spells it).
+Apunta `OPENAI_ENDPOINT` a qualsevol API compatible amb OpenAI per fer servir un altre proveïdor (i
+escriu `MODEL` tal com l'escriu aquell proveïdor).
 
-## Run
+## Execució
 
 ```bash
 uv run single_file_rag.py
 ```
 
-Chat with the document; each turn prints the answer and the `prompt_tokens` count.
-The whole file lands in `prompt_tokens` — on every turn — so the number climbs as
-you go, even when your questions are tiny. That is the cost this approach pays, and
-the reason the next rung (embeddings + retrieval) exists. Empty line to quit.
+Xerra amb el document; cada torn imprimeix la resposta i el recompte de `prompt_tokens`. El fitxer
+sencer va a parar als `prompt_tokens` —a cada torn—, així que el número puja a mesura que avances,
+fins i tot quan les teves preguntes són minúscules. Aquest és el preu que paga aquest enfocament, i
+la raó per la qual existeix el graó següent (embeddings + recuperació). Línia en blanc per sortir.

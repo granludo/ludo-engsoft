@@ -1,25 +1,26 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents del BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-Week 1 · Exercise 2 — GPT-2 (base model, 124M, 2019).
+Setmana 1 · Exercici 2 — GPT-2 (base model, 124M, 2019).
 
-Never instruction-tuned, never RLHF'd. Pure next-token prediction over its
-2019 web crawl. The point of this script: feel what a base model is.
+Mai no s'ha ajustat amb instruccions ni se li ha aplicat RLHF. Pura predicció
+del següent token a partir del seu rastreig web de 2019. L'objectiu d'aquest
+script és que copsis què és un base model.
 
-Setup:
+Configuració:
     uv venv && source .venv/bin/activate && uv sync
     python simple_gpt2.py
 
-CPU-only, ~500 MB download on first run, cached afterward.
+Només CPU, ~500 MB de descàrrega a la primera execució; després queda a la memòria cau.
 """
 from transformers import pipeline
 
-# Load GPT-2 on CPU (default)
+# Carrega GPT-2 a la CPU (per defecte)
 generator = pipeline("text-generation", model="gpt2")
 
-print("GPT-2 CLI (Ctrl+C to quit)")
+print("GPT-2 CLI (prem Ctrl+C per sortir)")
 
 while True:
     try:
@@ -37,5 +38,5 @@ while True:
         print("\n" + output[0]["generated_text"])
 
     except KeyboardInterrupt:
-        print("\nBye.")
+        print("\nAdéu.")
         break

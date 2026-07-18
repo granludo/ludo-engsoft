@@ -1,18 +1,18 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents de BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-🐷 OpenAI Function Calling Demo: The Three Little Pigs 🐺
+🐷 Demostració de function calling amb OpenAI: els tres porquets 🐺
 
-Interactive demo where YOU play the wolf!
-Compare how the pig responds with and without function calling.
+Demostració interactiva on el llop ets TU!
+Compara com respon el porquet amb i sense function calling.
 
-Requirements:
+Requisits:
     pip install -r requirements.txt
 
-Usage:
-    1. Create a .env file with your API key
+Ús:
+    1. Crea un fitxer .env amb la teva clau API.
     2. python three_pigs_function_calling.py
 """
 
@@ -21,7 +21,7 @@ import json
 from dotenv import load_dotenv
 from openai import OpenAI
 
-# Rich library for beautiful terminal UI
+# Biblioteca Rich per a una interfície de terminal atractiva
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
@@ -31,21 +31,21 @@ from rich.spinner import Spinner
 from rich.table import Table
 from rich import box
 
-# Load environment variables from .env file
+# Carregar les variables d'entorn del fitxer .env
 load_dotenv()
 
-# Initialize Rich console
+# Inicialitzar la consola de Rich
 console = Console()
 
-# Initialize the OpenAI client
+# Inicialitzar el client d'OpenAI
 client = None
 
-# Configuration from .env
+# Configuració des del fitxer .env
 MODEL = os.getenv("MODEL", "gpt-4.1-mini")
-OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")  # Optional: for alternative API endpoints
+OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")  # Opcional: per a endpoints d'API alternatius
 
 # ============================================================================
-# CONFIGURATION
+# CONFIGURACIÓ
 # ============================================================================
 
 SYSTEM_PROMPT = """
@@ -68,7 +68,7 @@ Keep your responses short and in character (2-3 sentences max).
 """
 
 # ============================================================================
-# FUNCTION DEFINITIONS FOR THE LLM
+# DEFINICIÓ DE FUNCIONS PER A L'LLM
 # ============================================================================
 
 AVAILABLE_TOOLS = [
@@ -98,7 +98,7 @@ AVAILABLE_TOOLS = [
 
 
 def call_hunter(urgency: str, message: str) -> str:
-    """Simulates calling the hunter for help."""
+    """Simula la crida al caçador per demanar ajuda."""
     responses = {
         "low": "The hunter received your message and will check on you later.",
         "medium": "The hunter is on his way, should arrive in 10 minutes.",
@@ -109,16 +109,16 @@ def call_hunter(urgency: str, message: str) -> str:
 
 
 # ============================================================================
-# UI HELPER FUNCTIONS
+# FUNCIONS AUXILIARS DE LA INTERFÍCIE D'USUARI
 # ============================================================================
 
 def create_message_panel(role: str, content: str) -> Panel:
-    """Create a styled panel for a chat message."""
+    """Crea un panell amb estil per a un missatge de xat."""
     styles = {
-        "user": ("bright_white on blue", "blue", "🐺 You (The Wolf)"),
-        "assistant": ("bright_white on dark_green", "green", "🐷 Pig"),
-        "system": ("bright_white on purple4", "magenta", "⚙️ System"),
-        "tool": ("black on yellow", "yellow", "🔧 Tool Result")
+        "user": ("bright_white on blue", "blue", "🐺 Tu (El Llop)"),
+        "assistant": ("bright_white on dark_green", "green", "🐷 Porquet"),
+        "system": ("bright_white on purple4", "magenta", "⚙️ Sistema"),
+        "tool": ("black on yellow", "yellow", "🔧 Resultat de l'eina")
     }
     
     text_style, border_color, title = styles.get(role, ("bright_white on grey23", "white", role))
@@ -133,7 +133,7 @@ def create_message_panel(role: str, content: str) -> Panel:
 
 
 def show_context_stack(messages: list, tools_available: bool) -> Panel:
-    """Show the current conversation context stack."""
+    """Mostra la pila de context actual de la conversa."""
     table = Table(
         box=box.SIMPLE,
         show_header=True,
@@ -141,8 +141,8 @@ def show_context_stack(messages: list, tools_available: bool) -> Panel:
         style="on grey23"
     )
     table.add_column("#", style="bright_cyan on grey23", width=3)
-    table.add_column("Role", style="bright_magenta on grey23", width=12)
-    table.add_column("Content Preview", style="bright_white on grey23")
+    table.add_column("Rol", style="bright_magenta on grey23", width=12)
+    table.add_column("Vista prèvia del contingut", style="bright_white on grey23")
     
     for i, msg in enumerate(messages):
         role = msg.get("role", "unknown")
@@ -153,11 +153,11 @@ def show_context_stack(messages: list, tools_available: bool) -> Panel:
             preview = "(tool_calls)"
         table.add_row(str(i), role, preview)
     
-    tools_text = "✅ Tools: [call_hunter]" if tools_available else "❌ No Tools"
-    
+    tools_text = "✅ Eines: [call_hunter]" if tools_available else "❌ Sense eines"
+
     return Panel(
         table,
-        title=f"📚 Context Stack ({len(messages)} messages) | {tools_text}",
+        title=f"📚 Pila de context ({len(messages)} missatges) | {tools_text}",
         border_style="magenta",
         style="on grey23",
         padding=(0, 1)
@@ -165,13 +165,13 @@ def show_context_stack(messages: list, tools_available: bool) -> Panel:
 
 
 def show_api_request(request_data: dict) -> Panel:
-    """Show the raw API request."""
+    """Mostra la sol·licitud API en brut."""
     json_str = json.dumps(request_data, indent=2, ensure_ascii=False)
     syntax = Syntax(json_str, "json", theme="monokai", background_color="grey23", word_wrap=True)
     
     return Panel(
         syntax,
-        title="📤 API Request (sent to OpenAI)",
+        title="📤 Petició a l'API (enviada a OpenAI)",
         border_style="yellow",
         style="on grey23",
         padding=(0, 1)
@@ -179,13 +179,13 @@ def show_api_request(request_data: dict) -> Panel:
 
 
 def show_api_response(response_data: dict) -> Panel:
-    """Show the raw API response."""
+    """Mostra la resposta API en brut."""
     json_str = json.dumps(response_data, indent=2, ensure_ascii=False)
     syntax = Syntax(json_str, "json", theme="monokai", background_color="grey23", word_wrap=True)
     
     return Panel(
         syntax,
-        title="📥 API Response (from OpenAI)",
+        title="📥 Resposta de l'API (d'OpenAI)",
         border_style="cyan",
         style="on grey23",
         padding=(0, 1)
@@ -193,10 +193,10 @@ def show_api_response(response_data: dict) -> Panel:
 
 
 def wait_for_llm():
-    """Show a spinner while waiting for the LLM."""
+    """Mostra un indicador giratori mentre s'espera l'LLM."""
     return Live(
         Panel(
-            Spinner("dots", text=Text(" Waiting for LLM response...", style="bold black on yellow")),
+            Spinner("dots", text=Text("Esperant la resposta de l'LLM...", style="bold black on yellow")),
             border_style="yellow",
             style="on yellow",
             padding=(0, 1)
@@ -207,20 +207,20 @@ def wait_for_llm():
 
 
 # ============================================================================
-# CHAT FUNCTION
+# FUNCIÓ DE XAT
 # ============================================================================
 
 def run_chat(use_tools: bool):
-    """Run an interactive chat session."""
+    """Executa una sessió de xat interactiva."""
     
-    scenario_name = "WITH Function Calling" if use_tools else "WITHOUT Function Calling"
+    scenario_name = "AMB Function Calling" if use_tools else "SENSE Function Calling"
     scenario_color = "green" if use_tools else "red"
-    
+
     console.print()
     console.print(Panel(
-        Text(f"Scenario: {scenario_name}\n\nYou are the wolf! Type your messages.\nPress Enter with empty message to end.", 
+        Text(f"Escenari: {scenario_name}\n\nEts el llop! Escriu els teus missatges.\nPrem Enter amb un missatge buit per acabar.",
              style=f"bold bright_white on dark_{scenario_color}"),
-        title=f"🎭 Starting Chat",
+        title=f"🎭 Comença el xat",
         border_style=scenario_color,
         style=f"on dark_{scenario_color}",
         padding=(1, 2)
@@ -230,7 +230,7 @@ def run_chat(use_tools: bool):
         console.print()
         console.print(Panel(
             Syntax(json.dumps(AVAILABLE_TOOLS, indent=2), "json", theme="monokai", background_color="grey23", word_wrap=True),
-            title="🔧 Tools Available to the Pig",
+            title="🔧 Eines disponibles per al porquet",
             border_style="cyan",
             style="on grey23",
             padding=(0, 1)
@@ -238,30 +238,30 @@ def run_chat(use_tools: bool):
     
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     
-    # Show initial context
+    # Mostrar el context inicial
     console.print()
     console.print(show_context_stack(messages, use_tools))
     
     while True:
-        # Get user input
+        # Obtenir l'entrada de l'usuari
         console.print()
-        user_input = console.input("[bold blue]🐺 You (wolf): [/bold blue]")
+        user_input = console.input("[bold blue]🐺 Tu (llop): [/bold blue]")
         
-        # Empty input = end conversation
+        # Entrada buida = finalitzar la conversa
         if not user_input.strip():
             console.print()
             console.print(Panel(
-                Text("Conversation ended. Returning to menu...", style="bold bright_white on grey23"),
+                Text("S'ha acabat la conversa. Es torna al menú...", style="bold bright_white on grey23"),
                 border_style="dim",
                 style="on grey23"
             ))
             break
         
-        # Add user message
+        # Afegir missatge de l'usuari
         messages.append({"role": "user", "content": user_input})
         console.print(create_message_panel("user", user_input))
         
-        # Build request data for display
+        # Dades de sol·licitud per mostrar-les
         request_data = {
             "model": MODEL,
             "messages": messages,
@@ -272,11 +272,11 @@ def run_chat(use_tools: bool):
         if OPENAI_ENDPOINT:
             request_data["_endpoint"] = OPENAI_ENDPOINT
         
-        # Show the request
+        # Mostrar la sol·licitud
         console.print()
         console.print(show_api_request(request_data))
         
-        # Call API
+        # Cridar l'API
         with wait_for_llm():
             if use_tools:
                 response = client.chat.completions.create(
@@ -294,7 +294,7 @@ def run_chat(use_tools: bool):
         
         assistant_message = response.choices[0].message
         
-        # Build response data for display
+        # Generar dades de resposta per a mostrar-les
         response_data = {
             "id": response.id,
             "model": response.model,
@@ -306,7 +306,7 @@ def run_chat(use_tools: bool):
             }
         }
         
-        # Check for tool calls
+        # Comprovar si hi ha crides a eines
         if assistant_message.tool_calls:
             response_data["message"]["tool_calls"] = [
                 {
@@ -319,13 +319,13 @@ def run_chat(use_tools: bool):
                 for tc in assistant_message.tool_calls
             ]
         
-        # Show raw API response
+        # Mostrar la resposta API en brut
         console.print()
         console.print(show_api_response(response_data))
         
-        # Process tool calls if any
+        # Processar les crides a eines, si n'hi ha
         if assistant_message.tool_calls:
-            # Add assistant message with tool calls
+            # Afegir el missatge de l'assistent amb les crides a eines
             messages.append({
                 "role": "assistant",
                 "content": assistant_message.content,
@@ -346,24 +346,24 @@ def run_chat(use_tools: bool):
                 console.print()
                 console.print(create_message_panel("assistant", assistant_message.content))
             
-            # Execute each tool call
+            # Executar cada crida a la funció corresponent.
             for tool_call in assistant_message.tool_calls:
                 function_name = tool_call.function.name
                 function_args = json.loads(tool_call.function.arguments)
                 
                 console.print()
                 console.print(Panel(
-                    Text(f"🔧 FUNCTION CALLED: {function_name}(\n   urgency=\"{function_args.get('urgency')}\",\n   message=\"{function_args.get('message')}\"\n)", 
+                    Text(f"🔧 FUNCIÓ CRIDADA: {function_name}(\n   urgency=\"{function_args.get('urgency')}\",\n   message=\"{function_args.get('message')}\"\n)",
                          style="bold black on yellow"),
                     border_style="yellow",
                     style="on yellow",
                     padding=(0, 1)
                 ))
                 
-                # Execute function
+                # Executar la funció
                 result = call_hunter(**function_args)
                 
-                # Add tool result to messages
+                # Afegir el resultat de l'eina als missatges
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tool_call.id,
@@ -374,7 +374,7 @@ def run_chat(use_tools: bool):
                 console.print()
                 console.print(create_message_panel("tool", result))
             
-            # Show follow-up request
+            # Mostrar sol·licitud de seguiment
             follow_request = {
                 "model": MODEL,
                 "messages": messages,
@@ -386,7 +386,7 @@ def run_chat(use_tools: bool):
             console.print()
             console.print(show_api_request(follow_request))
             
-            # Get follow-up response
+            # Obtenir una resposta de seguiment
             with wait_for_llm():
                 follow_up = client.chat.completions.create(
                     model=MODEL,
@@ -409,31 +409,31 @@ def run_chat(use_tools: bool):
             console.print()
             console.print(create_message_panel("assistant", follow_up_content))
         else:
-            # No tool calls - just a regular response
+            # Sense crides a eines – només una resposta normal.
             messages.append({"role": "assistant", "content": assistant_message.content})
             console.print()
             console.print(create_message_panel("assistant", assistant_message.content))
         
-        # Show updated context
+        # Mostrar el context actualitzat
         console.print()
         console.print(show_context_stack(messages, use_tools))
 
 
 # ============================================================================
-# MAIN MENU
+# MENÚ PRINCIPAL
 # ============================================================================
 
 def show_menu():
-    """Show the main menu."""
+    """Mostra el menú principal."""
     console.print()
     console.print(Panel(
         Text.from_markup(
-            "[bold bright_white]🐷 OpenAI Function Calling Demo 🐺[/bold bright_white]\n\n"
-            "[bright_cyan]The Three Little Pigs Edition[/bright_cyan]\n\n"
-            "[bright_white]You play as the wolf. Try both scenarios\n"
-            "and see how function calling changes behavior![/bright_white]"
+            "[bold bright_white]🐷 Demo de Function Calling amb OpenAI 🐺[/bold bright_white]\n\n"
+            "[bright_cyan]Edició dels Tres Porquets[/bright_cyan]\n\n"
+            "[bright_white]Fas de llop. Prova els dos escenaris\n"
+            "i mira com el function calling canvia el comportament![/bright_white]"
         ),
-        title="🏠 Menu 🏠",
+        title="🏠 Menú 🏠",
         title_align="center",
         border_style="bright_magenta",
         style="on grey23",
@@ -442,25 +442,25 @@ def show_menu():
     
     console.print()
     menu_table = Table(box=box.ROUNDED, show_header=False, style="on grey23", border_style="cyan")
-    menu_table.add_column("Option", style="bold bright_cyan on grey23", width=5)
-    menu_table.add_column("Description", style="bright_white on grey23")
-    menu_table.add_row("1", "Scenario 1: Chat WITHOUT function calling (pig can only talk)")
-    menu_table.add_row("2", "Scenario 2: Chat WITH function calling (pig can call hunter)")
-    menu_table.add_row("q", "Quit")
+    menu_table.add_column("Opció", style="bold bright_cyan on grey23", width=5)
+    menu_table.add_column("Descripció", style="bright_white on grey23")
+    menu_table.add_row("1", "Escenari 1: Xat SENSE function calling (el porquet només pot parlar)")
+    menu_table.add_row("2", "Escenari 2: Xat AMB function calling (el porquet pot cridar el caçador)")
+    menu_table.add_row("q", "Surt")
     console.print(Panel(menu_table, border_style="cyan", style="on grey23", padding=(0, 1)))
 
 
 def main():
-    """Main function."""
+    """Funció principal."""
     global client
     
     console.clear()
     
-    # Check for API key
+    # Comprovar si existeix la clau API
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         console.print(Panel(
-            Text("OPENAI_API_KEY not found!\n\nCreate a .env file with:\nOPENAI_API_KEY=your-key-here",
+            Text("No s'ha trobat OPENAI_API_KEY!\n\nCrea un fitxer \".env\" amb:\nOPENAI_API_KEY=la-teva-clau",
                  style="bold bright_white on dark_red"),
             title="❌ Error",
             border_style="red",
@@ -468,17 +468,17 @@ def main():
         ))
         return
     
-    # Initialize client with optional custom endpoint
+    # Inicialitzar el client amb opcions personalitzades endpoint (opcional)
     if OPENAI_ENDPOINT:
         client = OpenAI(api_key=api_key, base_url=OPENAI_ENDPOINT)
     else:
         client = OpenAI(api_key=api_key)
     
-    # Show configuration
+    # Mostrar la configuració
     console.print(Panel(
         Text(f"Model: {MODEL}\nEndpoint: {OPENAI_ENDPOINT or 'https://api.openai.com/v1'}", 
              style="bright_white on grey23"),
-        title="⚙️ Configuration",
+        title="⚙️ Configuració",
         border_style="cyan",
         style="on grey23"
     ))
@@ -487,7 +487,7 @@ def main():
         show_menu()
         
         console.print()
-        choice = console.input("[bold cyan]Choose option (1/2/q): [/bold cyan]").strip().lower()
+        choice = console.input("[bold cyan]Tria una opció (1/2/q): [/bold cyan]").strip().lower()
         
         if choice == "1":
             run_chat(use_tools=False)
@@ -496,7 +496,7 @@ def main():
         elif choice == "q":
             console.print()
             console.print(Panel(
-                Text("Goodbye! 🐷👋", style="bold bright_white on grey23"),
+                Text("Adéu! 🐷👋", style="bold bright_white on grey23"),
                 border_style="magenta",
                 style="on grey23"
             ))
@@ -504,7 +504,7 @@ def main():
         else:
             console.print()
             console.print(Panel(
-                Text("Invalid option. Please choose 1, 2, or q.", style="bold black on yellow"),
+                Text("Opció no vàlida. Tria 1, 2 o q.", style="bold black on yellow"),
                 border_style="yellow",
                 style="on yellow"
             ))

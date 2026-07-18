@@ -1,26 +1,26 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents del BSC — Transformers, LLMs, RAG i Agents: de la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
 """
-Call an LLM through the OpenAI-compatible Chat Completions API.
+Crida un LLM a través de l'API de Chat Completions compatible amb OpenAI.
 
-Runs UNCHANGED against:
-  - your local Ollama          (the default below — no key, no money, no internet)
-  - OpenAI / OpenRouter / Groq (set OPENAI_ENDPOINT + OPENAI_API_KEY in .env)
+Funciona SENSE CANVIS contra:
+  - el teu Ollama local        (l'opció per defecte: sense clau, sense diners, sense Internet)
+  - OpenAI / OpenRouter / Groq (defineix OPENAI_ENDPOINT i OPENAI_API_KEY al .env)
 
-The wire format is the same everywhere. Only the .env changes.
+El wire format és el mateix a tot arreu. Només canvia el .env.
 """
 import os
 
 from openai import OpenAI
 from dotenv import load_dotenv
 
-load_dotenv()  # pull OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL from a local .env
+load_dotenv()  # carrega OPENAI_ENDPOINT / OPENAI_API_KEY / MODEL d'un fitxer .env local
 
 client = OpenAI(
     base_url=os.environ.get("OPENAI_ENDPOINT", "http://localhost:11434/v1"),
-    api_key=os.environ.get("OPENAI_API_KEY", "ollama"),  # Ollama ignores the value
+    api_key=os.environ.get("OPENAI_API_KEY", "ollama"),  # Ollama ignora el valor
 )
 model = os.environ.get("MODEL", "ministral-3:8b")
 
@@ -35,5 +35,5 @@ resp = client.chat.completions.create(
 
 print(resp.choices[0].message.content)
 print("---")
-print("usage        :", resp.usage)             # prompt / completion / total tokens
-print("finish_reason:", resp.choices[0].finish_reason)
+print("Ús:", resp.usage)             # tokens del prompt / de la resposta / totals
+print("Motiu de finalització:", resp.choices[0].finish_reason)

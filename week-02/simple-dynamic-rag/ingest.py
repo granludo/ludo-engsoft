@@ -1,25 +1,25 @@
 # © 2026 Marc Alier i Forment (Universitat Politècnica de Catalunya) · https://wasabi.essi.upc.edu/ludo · https://lamb-project.org
-# BSC Agents Course — Transformers, LLMs, RAG and Agents: From Theory to Production
-# Licensed under Creative Commons BY-NC-SA 4.0 — reuse must credit the author, no commercial use, derivatives under the same license.
+# Curs d'agents de BSC — Transformers, LLMs, RAG i Agents: De la teoria a la producció
+# Amb llicència Creative Commons BY-NC-SA 4.0 – és obligatori citar l'autor, no es pot fer ús comercial, i les obres derivades han de tenir la mateixa llicència.
 
-"""Ingestion — how a document gets into a collection.
+"""Ingesta — com un document entra en una col·lecció.
 
-Ingestion is the process where a document is added to a collection, in four steps:
+La ingesta és el procés pel qual un document s'afegeix a una col·lecció, en quatre passos:
 
-  1. CONVERT the document to markdown (here: markitdown — pdf, docx, pptx, html,
-     txt... all become md). For scanned documents you would use an OCR model
-     instead: mistral-ocr in the cloud, or deepseek-ocr running locally (mlx on
-     Apple Silicon, CUDA on NVIDIA).
-  2. STORE both the original and its markdown distillation somewhere linkable —
-     here `static/` (the same idea as /static in a FastAPI app), so every chunk
-     can point back to its document by URL.
-  3. CHUNK the markdown — see chunking.py: a sliding window of characters with
-     overlap, or the document's own ## sections.
-  4. INSERT each chunk into the collection with its metadata: the document url,
-     the title, the url of the md distilation, the chunk number, the chunking
-     strategy, and the date of ingestion.
+  1. CONVERTEIX el document a markdown (aquí: markitdown — pdf, docx, pptx, html,
+     txt... tot acaba en md). Per a documents escanejats faries servir un model
+     d'OCR: mistral-ocr al núvol, o deepseek-ocr executant-se en local (mlx a
+     Apple Silicon, CUDA a NVIDIA).
+  2. DESA tant l'original com la seva destil·lació en markdown en un lloc enllaçable —
+     aquí `static/` (la mateixa idea que /static en una aplicació FastAPI), de manera
+     que cada chunk pugui apuntar al seu document per URL.
+  3. FES CHUNK del markdown — veure chunking.py: una finestra lliscant de caràcters amb
+     overlap, o les seccions ## pròpies del document.
+  4. INSEREIX cada chunk a la col·lecció amb les seves metadades: la url del document,
+     el títol, la url de la destil·lació md, el número de chunk, l'estratègia de
+     chunking i la data d'ingesta.
 
-Usage:
+Ús:
     uv run ingest.py path/to/document.pdf
     uv run ingest.py handbook.md --strategy sections --level 2
     uv run ingest.py notes.txt   --strategy chars --size 800 --overlap 100
@@ -48,13 +48,13 @@ def ingest(path: str, collection_name: str = "handbook", persist_path: str = "./
         raise SystemExit(f"no such file: {doc}")
     STATIC.mkdir(exist_ok=True)
 
-    # 1 — convert to markdown
+    # 1 — converteix a markdown
     result = MarkItDown().convert(str(doc))
     markdown = result.text_content
     title = (result.title or doc.stem).strip()
     print(f"1. converted {doc.name} -> markdown ({len(markdown)} chars) · title: {title!r}")
 
-    # 2 — store original + distillation where they can be linked
+    # 2 — desa l'original i la destil·lació allà on es puguin enllaçar
     doc_url = f"static/{doc.name}"
     md_name = f"{doc.stem}.md" if doc.suffix.lower() != ".md" else f"{doc.stem}.distilled.md"
     md_url = f"static/{md_name}"
@@ -71,7 +71,7 @@ def ingest(path: str, collection_name: str = "handbook", persist_path: str = "./
         strategy_label = f"chars(size={size},overlap={overlap})"
     print(f"3. chunked    {len(chunks)} chunks · strategy {strategy_label}")
 
-    # 4 — insert with metadata
+    # 4 — insereix amb les metadades
     col = create_collection(collection_name, description="simple-dynamic-rag knowledge",
                             metric="cosine", persist_path=persist_path)
     ok = 0
